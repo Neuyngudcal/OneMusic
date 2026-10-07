@@ -335,11 +335,17 @@ Chỉ cắt/dán, **không** đổi một dòng logic nào:
 - Khối LAYER 0 vốn thụt lề lệch trong bản gốc, đã chỉnh lại (chỉ đổi khoảng trắng). Kiểm tra ngược tự động: khớp nội dung với bản gốc; `NowPlayingSheet.kt` chỉ đổi đúng 3 chỗ.
 - Dọn import thừa trong cả thư mục `player/` (vd `key`, `alpha`, `size` thực chất là tên tham số hoặc thuộc tính của DrawScope/View, không phải hàm được import).
 
-### 2.4 Bước 4 – Tách khung Lời bài hát và Hàng đợi (PR 4, ⭐⭐⭐)
+### 2.4 Bước 4 – Tách khung Lời bài hát và Hàng đợi (PR 4, ⭐⭐⭐) ✅ Đã xong (07/10/2026)
 
 - `NowPlayingLyricsPane(track, positionState, activeLyricIndex, listState, nestedScrollConnection, onSeek, ...)`.
 - `NowPlayingQueuePane(queue, currentIndex, listState, nestedScrollConnection, onPlayQueueIndex, onMoveQueueItem, onRemoveQueueItem, ...)`.
 - `lyricsListState`, `queueListState` và các `LaunchedEffect` tự cuộn (dòng 920–1000) **vẫn tạo ở `NowPlayingSheet()`** (xem 3.4) – vì `AnimatedContent` hủy nhánh LYRICS khi chuyển sang QUEUE.
+
+**Kết quả thực tế:** `NowPlayingSheet.kt` 1.805 → 1.287 dòng.
+- `lyrics/NowPlayingLyricsPane.kt` (223 dòng): `NowPlayingLyricsPane(track, listState, nestedScrollConnection, activeLyricIndex: () -> Int, positionState, onSeekToLine)`. `activeLyricIndex` truyền dạng lambda để giá trị vẫn chỉ được đọc trong từng dòng lời như trước (đổi câu không làm vẽ lại cả khung). Việc đặt lại `lastLyricsUserScrollTimeMs` + cuộn tới dòng khi bấm một từ vẫn chạy ở sheet qua `onSeekToLine`.
+- `queue/NowPlayingQueuePane.kt` (~460 dòng): nhận `playbackState` + các callback; mở dialog (`isSpeedMenuOpen = true`…) đổi thành callback `onOpenSpeedMenu`, `onOpenSleepTimer`, `onOpenDetails`, `onOpenOptions`.
+- `lyricsListState`, `queueListState`, 2 nested scroll connection và mọi `LaunchedEffect` tự cuộn **vẫn ở `NowPlayingSheet()`**. Kiểm tra ngược tự động: hoàn tác đổi tên thì thân 2 hàm khớp tuyệt đối với nhánh gốc.
+- **Còn lại (bước 2.4b, ⭐⭐):** hàm `NowPlayingQueuePane` vẫn dài ~380 dòng. Nên tách hàng "Tiếp tục phát" (vuốt xóa + kéo đổi thứ tự, ~130 dòng) thành `LazyItemScope.QueueReorderableRow(...)` – phải là hàm mở rộng của `LazyItemScope` vì dùng `Modifier.animateItem`.
 
 ### 2.5 Bước 5 – Tách cụm điều khiển (PR 5, ⭐⭐)
 
