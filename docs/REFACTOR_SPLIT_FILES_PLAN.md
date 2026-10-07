@@ -305,13 +305,15 @@ ui/screens/player/
 
 Các dialog đã là component dùng chung (`TrackDetailsDialog`, `ApexEqualizerDialog`, `ApexTrackActionSheet` – dòng 2570–2624) thì **giữ nguyên lời gọi** trong `NowPlayingSheet.kt`.
 
-### 2.1 Bước 1 – Chuyển các hàm đã là top-level (PR 1, ⭐)
+### 2.1 Bước 1 – Chuyển các hàm đã là top-level (PR 1, ⭐) ✅ Đã xong (07/10/2026)
 
 Chỉ cắt/dán, **không** đổi một dòng logic nào:
 `CapsuleSlider`, `NowPlayingProgressSection`, `NowPlayingActionDock`, `NowPlayingCenterView`, `isInstrumentalLine` + 3 composable lời bài hát, `StaticAlbumArtwork`, `MotionArtworkPlayer`, `ApexDynamicEqualizerBars`, 3 composable hàng đợi.
 
 - Dùng `F6` (Move) cho từng hàm; đổi `private` → `internal`.
 - Kết quả: `NowPlayingSheet.kt` còn ~2.300 dòng, **~1.400 dòng đã ra file riêng** mà rủi ro gần như bằng 0.
+
+**Kết quả thực tế:** `NowPlayingSheet.kt` 3.722 → 2.357 dòng; 1.333 dòng code chuyển sang 9 file (`NowPlayingCenterView.kt`, `controls/` ×4, `lyrics/LyricLineItems.kt`, `artwork/` ×2, `queue/QueueComponents.kt`), đã đối chiếu tự động là giống hệt bản gốc. Chỉ đổi `private` → `internal` cho 5 hàm được gọi từ file khác (`NowPlayingProgressSection`, `isInstrumentalLine`, `WordByWordLyricItem`, `StaticAlbumArtwork`, `MotionArtworkPlayer`); `InstrumentalDotsLyricItem` và `LyricWordChip` vẫn `private` vì chỉ dùng trong `LyricLineItems.kt`. Xóa 30 import không còn dùng trong `NowPlayingSheet.kt`. `ApexDynamicEqualizerBars` đặt ở `controls/` nhưng hiện chỉ hàng đợi (`QueueTopHeader`) dùng.
 
 ### 2.2 Bước 2 – Tách dialog & toast trong thân hàm (PR 2, ⭐)
 
