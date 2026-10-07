@@ -110,11 +110,12 @@ if (showSleepTimerDialog) {
 // SAU – NowPlayingSheet.kt
 if (showSleepTimerDialog) {
     SleepTimerDialog(
-        activeMinutes = playbackState.sleepTimerMinutes,
-        remainingSeconds = playbackState.sleepTimerRemainingSeconds,
-        onSetTimer = onSetSleepTimer,
-        onSetEndOfTrack = onSetSleepTimerEndOfTrack,
-        onCancel = onCancelSleepTimer,
+        sleepTimerMinutes = playbackState.sleepTimerMinutes,
+        sleepTimerRemainingSeconds = playbackState.sleepTimerRemainingSeconds,
+        hazeState = nowPlayingHazeState,
+        onSetSleepTimer = onSetSleepTimer,
+        onSetSleepTimerEndOfTrack = onSetSleepTimerEndOfTrack,
+        onCancelSleepTimer = onCancelSleepTimer,
         onDismiss = { showSleepTimerDialog = false }
     )
 }
@@ -122,13 +123,14 @@ if (showSleepTimerDialog) {
 // SAU – player/dialogs/SleepTimerDialog.kt
 @Composable
 internal fun SleepTimerDialog(
-    activeMinutes: Int?,
-    remainingSeconds: Long?,
-    onSetTimer: (Int) -> Unit,
-    onSetEndOfTrack: () -> Unit,
-    onCancel: () -> Unit,
-    onDismiss: () -> Unit,
-) { /* dán nguyên khối giao diện cũ vào đây */ }
+    sleepTimerMinutes: Int?,
+    sleepTimerRemainingSeconds: Long?,
+    hazeState: HazeState,
+    onSetSleepTimer: (Int) -> Unit,
+    onSetSleepTimerEndOfTrack: () -> Unit,
+    onCancelSleepTimer: () -> Unit,
+    onDismiss: () -> Unit
+) { /* dán nguyên khối giao diện cũ vào đây, `showSleepTimerDialog = false` → `onDismiss()` */ }
 ```
 
 ### 3.2 Tách nội dung `LazyColumn` → hàm mở rộng `LazyListScope`
@@ -315,9 +317,11 @@ Chỉ cắt/dán, **không** đổi một dòng logic nào:
 
 **Kết quả thực tế:** `NowPlayingSheet.kt` 3.722 → 2.357 dòng; 1.333 dòng code chuyển sang 9 file (`NowPlayingCenterView.kt`, `controls/` ×4, `lyrics/LyricLineItems.kt`, `artwork/` ×2, `queue/QueueComponents.kt`), đã đối chiếu tự động là giống hệt bản gốc. Chỉ đổi `private` → `internal` cho 5 hàm được gọi từ file khác (`NowPlayingProgressSection`, `isInstrumentalLine`, `WordByWordLyricItem`, `StaticAlbumArtwork`, `MotionArtworkPlayer`); `InstrumentalDotsLyricItem` và `LyricWordChip` vẫn `private` vì chỉ dùng trong `LyricLineItems.kt`. Xóa 30 import không còn dùng trong `NowPlayingSheet.kt`. `ApexDynamicEqualizerBars` đặt ở `controls/` nhưng hiện chỉ hàng đợi (`QueueTopHeader`) dùng.
 
-### 2.2 Bước 2 – Tách dialog & toast trong thân hàm (PR 2, ⭐)
+### 2.2 Bước 2 – Tách dialog & toast trong thân hàm (PR 2, ⭐) ✅ Đã xong (07/10/2026)
 
 `PlaybackSpeedDialog`, `SleepTimerDialog`, `FavoriteToastBanner` theo mẫu ở mục 3.1. Biến `isSpeedMenuOpen`, `showSleepTimerDialog`, `favoriteToastMessage` **vẫn ở `NowPlayingSheet()`** (vì `BackHandler` dòng 1084 và nút ở dock cũng dùng).
+
+**Kết quả thực tế:** `NowPlayingSheet.kt` 2.357 → 2.102 dòng; 3 file mới trong `dialogs/`. Mỗi dialog nhận giá trị + lambda thay vì đọc biến của sheet: `isSpeedMenuOpen = false` / `showSleepTimerDialog = false` → `onDismiss()`, `playbackState.xxx` → tham số, `nowPlayingHazeState` → `hazeState`. `FavoriteToastBanner` nhận `Modifier.align(Alignment.BottomCenter)` từ Box cha qua tham số `modifier` (thứ tự modifier giữ nguyên). Đã kiểm tra ngược tự động: hoàn tác các phép đổi tên thì thân 3 hàm khớp tuyệt đối với khối gốc, và thân `NowPlayingSheet.kt` chỉ khác đúng 3 chỗ gọi.
 
 ### 2.3 Bước 3 – Tách nền (backdrop) (PR 3, ⭐⭐)
 

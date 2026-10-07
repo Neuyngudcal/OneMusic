@@ -27,7 +27,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -56,7 +55,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
@@ -68,7 +66,6 @@ import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Reorder
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
@@ -131,7 +128,6 @@ import com.example.onemusic.data.model.Track
 import com.example.onemusic.playback.AudioEffectManager
 import com.example.onemusic.playback.AudioOutputManager
 import com.example.onemusic.playback.PlaybackState
-import com.example.onemusic.ui.components.ApexDialogContainer
 import com.example.onemusic.ui.components.ApexEqualizerDialog
 import com.example.onemusic.ui.components.ApexTrackActionSheet
 import com.example.onemusic.ui.components.AppleBackwardIcon
@@ -149,8 +145,10 @@ import com.example.onemusic.ui.screens.player.lyrics.isInstrumentalLine
 import com.example.onemusic.ui.screens.player.queue.QueueFlatTrackRow
 import com.example.onemusic.ui.screens.player.queue.QueuePlaybackModesRow
 import com.example.onemusic.ui.screens.player.queue.QueueTopHeader
+import com.example.onemusic.ui.screens.player.dialogs.FavoriteToastBanner
+import com.example.onemusic.ui.screens.player.dialogs.PlaybackSpeedDialog
+import com.example.onemusic.ui.screens.player.dialogs.SleepTimerDialog
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.ui.utils.formatDuration
 import com.example.onemusic.ui.utils.rememberArtworkColors
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -159,7 +157,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import com.example.onemusic.theme.TextPrimary
 import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.Brand
 import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.IvoryBody
 import com.example.onemusic.theme.IvoryDisabled
@@ -172,12 +169,8 @@ import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.ScrimColor
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceCard
-import com.example.onemusic.theme.SurfaceDivider
 import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.theme.TextDisabled
-import com.example.onemusic.theme.apexFrostedGlass
 
 /**
  * Modern Fullscreen Music Player (Now Playing Sheet) - ONE PAGE ARCHITECTURE
@@ -2023,230 +2016,25 @@ fun NowPlayingSheet(
 
         // LAYER 3: Playback Speed Selection Dialog
         if (isSpeedMenuOpen) {
-            ApexDialogContainer(
-                onDismissRequest = { isSpeedMenuOpen = false },
-                hazeState = nowPlayingHazeState
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(22.dp)
-                ) {
-                    Text(
-                        text = "Tốc độ phát",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
-                            fontSize = 20.sp
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    val speedOptions = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(18.dp))
-                            .border(0.8.dp, SurfaceDivider, RoundedCornerShape(18.dp))
-                            .background(SurfaceCard)
-                    ) {
-                        speedOptions.forEachIndexed { index, sp ->
-                            val isSelected = playbackState.playbackSpeed == sp
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .apexBounceClick(scaleDown = 0.97f, enableHaptic = true) {
-                                        onSetPlaybackSpeed?.invoke(sp)
-                                        isSpeedMenuOpen = false
-                                    }
-                                    .padding(horizontal = 18.dp, vertical = 13.5.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = "${sp}x",
-                                    style = MaterialTheme.typography.bodyLarge.copy(
-                                        fontSize = 15.sp,
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                        color = if (isSelected) Brand else TextPrimary
-                                    )
-                                )
-                                if (isSelected) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Check,
-                                        contentDescription = null,
-                                        tint = Brand,
-                                        modifier = Modifier.size(19.dp)
-                                    )
-                                }
-                            }
-
-                            if (index < speedOptions.lastIndex) {
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                    thickness = 0.5.dp,
-                                    color = SurfaceDivider
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(PillShape)
-                            .background(SurfaceActiveIndicator)
-                            .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) {
-                                isSpeedMenuOpen = false
-                            }
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Đóng",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextPrimary,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.5.sp
-                            )
-                        )
-                    }
-                }
-            }
+            PlaybackSpeedDialog(
+                currentSpeed = playbackState.playbackSpeed,
+                hazeState = nowPlayingHazeState,
+                onSelectSpeed = { speed -> onSetPlaybackSpeed?.invoke(speed) },
+                onDismiss = { isSpeedMenuOpen = false }
+            )
         }
 
         // LAYER 4: Sleep Timer Dialog
         if (showSleepTimerDialog) {
-            ApexDialogContainer(
-                onDismissRequest = { showSleepTimerDialog = false },
-                hazeState = nowPlayingHazeState
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(22.dp)
-                ) {
-                    Text(
-                        text = "Hẹn giờ tắt nhạc",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
-                            fontSize = 20.sp
-                        )
-                    )
-
-                    if (playbackState.sleepTimerRemainingSeconds != null) {
-                        val rem = playbackState.sleepTimerRemainingSeconds
-                        val display = if (rem < 0) "Sau khi kết thúc bài hát" else formatDuration(rem * 1000, padMinutes = true)
-
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "Đang chạy: $display",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = Brand,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    val timerOptions = listOf(
-                        15 to "15 phút",
-                        30 to "30 phút",
-                        45 to "45 phút",
-                        60 to "60 phút",
-                        -1 to "Sau khi kết thúc bài hát",
-                        0 to "Tắt hẹn giờ"
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(18.dp))
-                            .border(0.8.dp, SurfaceDivider, RoundedCornerShape(18.dp))
-                            .background(SurfaceCard)
-                    ) {
-                        timerOptions.forEachIndexed { index, (mins, label) ->
-                            val isSelected = when (mins) {
-                                0 -> playbackState.sleepTimerMinutes == null
-                                -1 -> playbackState.sleepTimerMinutes == -1
-                                else -> playbackState.sleepTimerMinutes == mins
-                            }
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .apexBounceClick(scaleDown = 0.97f, enableHaptic = true) {
-                                        when (mins) {
-                                            0 -> onCancelSleepTimer()
-                                            -1 -> onSetSleepTimerEndOfTrack()
-                                            else -> onSetSleepTimer(mins)
-                                        }
-                                        showSleepTimerDialog = false
-                                    }
-                                    .padding(horizontal = 18.dp, vertical = 13.5.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = label,
-                                    style = MaterialTheme.typography.bodyLarge.copy(
-                                        fontSize = 15.sp,
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                        color = if (isSelected) Brand else TextPrimary
-                                    )
-                                )
-                                if (isSelected) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Check,
-                                        contentDescription = null,
-                                        tint = Brand,
-                                        modifier = Modifier.size(19.dp)
-                                    )
-                                }
-                            }
-
-                            if (index < timerOptions.lastIndex) {
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                    thickness = 0.5.dp,
-                                    color = SurfaceDivider
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(PillShape)
-                            .background(SurfaceActiveIndicator)
-                            .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) {
-                                showSleepTimerDialog = false
-                            }
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Đóng",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextPrimary,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.5.sp
-                            )
-                        )
-                    }
-                }
-            }
+            SleepTimerDialog(
+                sleepTimerMinutes = playbackState.sleepTimerMinutes,
+                sleepTimerRemainingSeconds = playbackState.sleepTimerRemainingSeconds,
+                hazeState = nowPlayingHazeState,
+                onSetSleepTimer = onSetSleepTimer,
+                onSetSleepTimerEndOfTrack = onSetSleepTimerEndOfTrack,
+                onCancelSleepTimer = onCancelSleepTimer,
+                onDismiss = { showSleepTimerDialog = false }
+            )
         }
 
         // LAYER 5: Track Audio Inspector Dialog
@@ -2305,53 +2093,10 @@ fun NowPlayingSheet(
         }
 
         // LAYER 8: Floating Favorite Toast Banner (1:1 Apple Music Floating Squircle Pill)
-        AnimatedVisibility(
-            visible = favoriteToastMessage != null,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 36.dp)
-                .navigationBarsPadding(),
-            enter = slideInVertically(
-                initialOffsetY = { it },
-                animationSpec = spring(dampingRatio = 0.8f, stiffness = 400f)
-            ) + fadeIn(tween(200)),
-            exit = slideOutVertically(
-                targetOffsetY = { it },
-                animationSpec = tween(200)
-            ) + fadeOut(tween(180))
-        ) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(18.dp))
-                    .border(0.7.dp, IvoryStroke, RoundedCornerShape(18.dp))
-                    .apexFrostedGlass(
-                        backgroundColor = SurfaceElevated.copy(alpha = 0.92f),
-                        blurRadius = 24.dp,
-                        hazeState = nowPlayingHazeState
-                    )
-                    .padding(horizontal = 20.dp, vertical = 13.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    val isFavoritedMsg = favoriteToastMessage?.contains("Đã ưa thích") == true
-                    Icon(
-                        imageVector = if (isFavoritedMsg) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                        contentDescription = null,
-                        tint = PrimaryIvory,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Text(
-                        text = favoriteToastMessage ?: "",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextPrimary,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 14.5.sp
-                        )
-                    )
-                }
-            }
-        }
+        FavoriteToastBanner(
+            message = favoriteToastMessage,
+            hazeState = nowPlayingHazeState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
