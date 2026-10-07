@@ -347,9 +347,15 @@ Chỉ cắt/dán, **không** đổi một dòng logic nào:
 - `lyricsListState`, `queueListState`, 2 nested scroll connection và mọi `LaunchedEffect` tự cuộn **vẫn ở `NowPlayingSheet()`**. Kiểm tra ngược tự động: hoàn tác đổi tên thì thân 2 hàm khớp tuyệt đối với nhánh gốc.
 - **Bước 2.4b ✅ Đã xong (07/10/2026):** tách hàng "Tiếp tục phát" (vuốt xóa + kéo đổi thứ tự) thành `queue/QueueReorderableRow.kt` (188 dòng): `LazyItemScope.QueueReorderableRow(track, actualIndex, queueLastIndex, minReorderIndex, onPlayQueueIndex, onMoveQueueItem, onRemoveQueueItem)` – là hàm mở rộng của `LazyItemScope` vì dùng `Modifier.animateItem`. `actualIndex` vẫn tính ở `NowPlayingQueuePane`; các `rememberUpdatedState` giữ nguyên trong hàng nên cử chỉ kéo không bị khởi động lại. `NowPlayingQueuePane.kt` còn 321 dòng (hàm ~230 dòng). Kiểm tra ngược: chỉ 5 dòng khác bản gốc, đúng là các dòng đổi tên (`nTrack` → `track`, 2 giới hạn kéo thành tham số).
 
-### 2.5 Bước 5 – Tách cụm điều khiển (PR 5, ⭐⭐)
+### 2.5 Bước 5 – Tách cụm điều khiển (PR 5, ⭐⭐) ✅ Đã xong (07/10/2026)
 
 `NowPlayingControlsDeck` chứa `NowPlayingTrackHeader`, `AudioQualityBadge`, `NowPlayingProgressSection`, `MasterPlaybackControls`, `NowPlayingActionDock`. Giữ `positionState` dạng `State<Long>` (3.5).
+
+**Kết quả thực tế:** `NowPlayingSheet.kt` 1.287 → 1.004 dòng. Thêm 3 file trong `controls/`:
+- `NowPlayingTrackHeader.kt` (156 dòng): `NowPlayingTrackHeader(track, onToggleFavorite, onOpenOptions)` – tên bài, nghệ sĩ, nút tim, nút ⋯.
+- `AudioQualityBadge.kt` (179 dòng): `rememberAudioQualityInfo(track)` (nhận dạng FLAC/Hi-Res/định dạng, đọc MIME trên luồng IO) + `AudioQualityBadge(visible, info, onClick, modifier)`. Phần nhận dạng vẫn được gọi **đúng chỗ cũ** trong cụm điều khiển (không chuyển vào slot `centerBadge` vẽ lại 25 lần/giây); chỉ phần giao diện nằm trong slot.
+- `MasterPlaybackControls.kt` (89 dòng): `MasterPlaybackControls(isPlaying, onPrevious, onPlayPause, onNext)`. Biến chống bấm liên tục (`lastButtonSkipTimeMs`) **vẫn ở sheet**, nằm trong lambda `onPrevious`/`onNext` – nếu chuyển vào hàm con sẽ bị reset mỗi lần cụm điều khiển ẩn/hiện.
+- Khung `AnimatedVisibility` + `onSizeChanged` (đo chiều cao cụm) và `NowPlayingActionDock` vẫn ở sheet vì gắn chặt với `centerView`, `controlsDeckHeightPx` – sẽ xem lại ở bước 2.6. Báo cáo tự động: mọi dòng khác bản gốc đều là phép đổi tên (`displayedTrack` → `track`, mở dialog → callback…).
 
 ### 2.6 Bước 6 – Tách state holder (PR 6, ⭐⭐⭐⭐)
 

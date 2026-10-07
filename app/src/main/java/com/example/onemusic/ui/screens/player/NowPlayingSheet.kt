@@ -1,6 +1,5 @@
 package com.example.onemusic.ui.screens.player
 
-import androidx.compose.material3.minimumInteractiveComponentSize
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -12,8 +11,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
@@ -21,38 +18,26 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Lyrics
-import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -69,7 +54,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -81,12 +65,9 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import com.example.onemusic.data.local.AppSettings
 import com.example.onemusic.data.model.Track
@@ -95,13 +76,12 @@ import com.example.onemusic.playback.AudioOutputManager
 import com.example.onemusic.playback.PlaybackState
 import com.example.onemusic.ui.components.ApexEqualizerDialog
 import com.example.onemusic.ui.components.ApexTrackActionSheet
-import com.example.onemusic.ui.components.AppleBackwardIcon
-import com.example.onemusic.ui.components.AppleForwardIcon
-import com.example.onemusic.ui.components.AppleLosslessIcon
-import com.example.onemusic.ui.components.ApplePauseIcon
-import com.example.onemusic.ui.components.ApplePlayIcon
 import com.example.onemusic.ui.components.TrackDetailsDialog
 import com.example.onemusic.ui.screens.player.backdrop.NowPlayingBackdrop
+import com.example.onemusic.ui.screens.player.controls.AudioQualityBadge
+import com.example.onemusic.ui.screens.player.controls.MasterPlaybackControls
+import com.example.onemusic.ui.screens.player.controls.NowPlayingTrackHeader
+import com.example.onemusic.ui.screens.player.controls.rememberAudioQualityInfo
 import com.example.onemusic.ui.screens.player.controls.NowPlayingActionDock
 import com.example.onemusic.ui.screens.player.controls.NowPlayingProgressSection
 import com.example.onemusic.ui.screens.player.lyrics.NowPlayingLyricsPane
@@ -109,20 +89,11 @@ import com.example.onemusic.ui.screens.player.queue.NowPlayingQueuePane
 import com.example.onemusic.ui.screens.player.dialogs.FavoriteToastBanner
 import com.example.onemusic.ui.screens.player.dialogs.PlaybackSpeedDialog
 import com.example.onemusic.ui.screens.player.dialogs.SleepTimerDialog
-import com.example.onemusic.ui.utils.apexBounceClick
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.CharcoalBlack
-import com.example.onemusic.theme.IvoryBody
-import com.example.onemusic.theme.IvoryHigh
-import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.ObsidianBlack
-import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.ScrimColor
 
 /**
  * Modern Fullscreen Music Player (Now Playing Sheet) - ONE PAGE ARCHITECTURE
@@ -866,110 +837,11 @@ fun NowPlayingSheet(
                 ) {
                     // 1. Track Title, Artist & Options Menu (Ẩn khi đang mở Hàng đợi để tối ưu diện tích và tránh lặp thông tin)
                     if (centerView != NowPlayingCenterView.QUEUE) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                val legibilityTextShadow = remember {
-                                    Shadow(color = ScrimColor, blurRadius = 8f)
-                                }
-
-                                Text(
-                                    text = displayedTrack?.title ?: "Không phát",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .basicMarquee(
-                                            iterations = Int.MAX_VALUE,
-                                            repeatDelayMillis = 2500,
-                                            initialDelayMillis = 2000,
-                                            spacing = androidx.compose.foundation.MarqueeSpacing(64.dp),
-                                            velocity = 32.dp
-                                        ),
-                                    style = MaterialTheme.typography.headlineSmall.copy(
-                                        fontWeight = FontWeight.Medium,
-                                        color = PrimaryIvory,
-                                        fontSize = 23.sp,
-                                        letterSpacing = (-0.3).sp,
-                                        shadow = legibilityTextShadow
-                                    ),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = displayedTrack?.artist ?: "—",
-                                    modifier = Modifier.basicMarquee(
-                                        iterations = Int.MAX_VALUE,
-                                        repeatDelayMillis = 2500,
-                                        initialDelayMillis = 2000,
-                                        spacing = androidx.compose.foundation.MarqueeSpacing(64.dp),
-                                        velocity = 28.dp
-                                    ),
-                                    style = MaterialTheme.typography.bodyLarge.copy(
-                                        color = IvoryBody,
-                                        fontWeight = FontWeight.Normal,
-                                        fontSize = 16.sp,
-                                        shadow = legibilityTextShadow
-                                    ),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            // Action Buttons: Favorite Star Button + 3-Dot More Menu Button (1:1 Apple Music)
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(3.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                // 1. Inverted Contrast Favorite Button (Solid white disc with black star when active)
-                                val isCurrentTrackFav = displayedTrack?.isFavorite == true
-                                Box(
-                                    modifier = Modifier
-                                        .minimumInteractiveComponentSize() // vùng chạm ≥ 48dp, hình giữ nguyên
-                                        .size(35.dp)
-                                        .clip(CircleShape)
-                                        .background(if (isCurrentTrackFav) PrimaryIvory else IvoryStroke)
-                                        .apexBounceClick(scaleDown = 0.88f, enableHaptic = true) {
-                                            displayedTrack?.let { trk ->
-                                                handleToggleFavorite(trk.id, isCurrentTrackFav)
-                                            }
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = if (isCurrentTrackFav) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                                        contentDescription = if (isCurrentTrackFav) "Bỏ yêu thích" else "Yêu thích",
-                                        tint = if (isCurrentTrackFav) CharcoalBlack else TextPrimary,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-
-                                // 2. Glass 3-dot More Options Button
-                                Box(
-                                    modifier = Modifier
-                                        .minimumInteractiveComponentSize() // vùng chạm ≥ 48dp, hình giữ nguyên
-                                        .size(35.dp)
-                                        .clip(CircleShape)
-                                        .background(IvoryStroke)
-                                        .apexBounceClick(scaleDown = 0.88f, enableHaptic = true) {
-                                            showOptionsMenu = true
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.MoreVert,
-                                        contentDescription = "Tùy chọn",
-                                        tint = PrimaryIvory,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-                        }
+                        NowPlayingTrackHeader(
+                            track = displayedTrack,
+                            onToggleFavorite = handleToggleFavorite,
+                            onOpenOptions = { showOptionsMenu = true }
+                        )
 
                         Spacer(modifier = Modifier.height(22.dp))
                     }
@@ -979,200 +851,45 @@ fun NowPlayingSheet(
                     // chỉ composable đó đọc positionState → mỗi 40ms chỉ phần này vẽ lại, không phải cả sheet.
                     val totalDurMs = if (playbackState.durationMs > 0) playbackState.durationMs else track?.durationMs ?: 0L
 
-                    // Lossless / Hi-Res Audio Tech Badge (Apple Music Precision Frosted capsule under scrubber)
-                    val isFlacByName = remember(displayedTrack) {
-                        displayedTrack?.let { trk ->
-                            val urlLower = trk.audioUrl.lowercase()
-                            urlLower.endsWith(".flac") ||
-                            urlLower.contains(".flac?") ||
-                            urlLower.contains(".flac/") ||
-                            trk.bitRate.contains("flac", ignoreCase = true)
-                        } ?: false
-                    }
-                    // contentResolver.getType là lệnh gọi hệ thống → chạy trên luồng IO thay vì luồng giao diện
-                    val isFlacByMime by androidx.compose.runtime.produceState(initialValue = false, displayedTrack) {
-                        val trk = displayedTrack
-                        value = if (trk != null && !isFlacByName && trk.audioUrl.startsWith("content://")) {
-                            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                                runCatching {
-                                    context.contentResolver.getType(android.net.Uri.parse(trk.audioUrl))?.contains("flac", ignoreCase = true) == true
-                                }.getOrDefault(false)
-                            }
-                        } else {
-                            false
-                        }
-                    }
-                    val isFlacTrack = isFlacByName || isFlacByMime
+                    val audioQuality = rememberAudioQualityInfo(displayedTrack)
+                    val showAudioBadge = (displayedTrack != null) && (appSettings?.isHiResBadgeEnabled != false)
 
-                        // isFlacTrack có thể đổi sau khi produceState chạy xong → phải nằm trong key
-                        val trackFormat = remember(displayedTrack, isFlacTrack) {
-                            displayedTrack?.let { trk ->
-                                val urlLower = trk.audioUrl.lowercase().substringBefore('?').substringBefore('#')
-                                when {
-                                    isFlacTrack -> "FLAC"
-                                    urlLower.endsWith(".wav") || trk.bitRate.contains("wav", ignoreCase = true) -> "WAV"
-                                    urlLower.endsWith(".alac") || trk.bitRate.contains("alac", ignoreCase = true) -> "ALAC"
-                                    urlLower.endsWith(".aiff") || trk.bitRate.contains("aiff", ignoreCase = true) -> "AIFF"
-                                    urlLower.endsWith(".dsd") || urlLower.endsWith(".dsf") || urlLower.endsWith(".dff") || trk.bitRate.contains("dsd", ignoreCase = true) -> "DSD"
-                                    urlLower.endsWith(".mp3") || trk.bitRate.contains("mp3", ignoreCase = true) -> "MP3"
-                                    urlLower.endsWith(".aac") || trk.bitRate.contains("aac", ignoreCase = true) -> "AAC"
-                                    urlLower.endsWith(".m4a") || trk.bitRate.contains("m4a", ignoreCase = true) -> "M4A"
-                                    urlLower.endsWith(".ogg") || trk.bitRate.contains("ogg", ignoreCase = true) -> "OGG"
-                                    urlLower.endsWith(".opus") || trk.bitRate.contains("opus", ignoreCase = true) -> "OPUS"
-                                    else -> {
-                                        val ext = urlLower.substringAfterLast('.', "")
-                                        if (ext.isNotBlank() && ext.length in 2..5 && !ext.contains('/')) ext.uppercase() else ""
-                                    }
-                                }
-                            } ?: ""
-                        }
-
-                        val isHiResTrack = displayedTrack?.let { trk ->
-                            trk.isHiRes ||
-                            trk.bitRate.contains("hi-res", ignoreCase = true) ||
-                            trk.bitRate.contains("24-bit", ignoreCase = true) ||
-                            trk.bitRate.contains("96khz", ignoreCase = true) ||
-                            trk.bitRate.contains("192khz", ignoreCase = true)
-                        } ?: false
-
-                        val isLosslessTrack = isFlacTrack || trackFormat in setOf("WAV", "ALAC", "AIFF", "DSD") || (displayedTrack?.bitRate?.contains("lossless", ignoreCase = true) == true)
-                        val isHighQualityTrack = displayedTrack?.let { trk ->
-                            trk.bitRate.contains("320", ignoreCase = true) ||
-                            trk.bitRate.contains("256", ignoreCase = true)
-                        } ?: false
-
-                        // Biểu tượng Lossless chỉ hiển thị độc quyền cho file FLAC chất lượng cao
-                        val hasAudioBadgeIcon = isFlacTrack
-
-                        val audioBadgeText = when {
-                            isHiResTrack -> "Hi-Res Lossless"
-                            isLosslessTrack -> "Lossless"
-                            isHighQualityTrack -> "High Quality"
-                            trackFormat.isNotBlank() -> trackFormat
-                            else -> "Lossless"
-                        }
-
-                        val showAudioBadge = (displayedTrack != null) && (appSettings?.isHiResBadgeEnabled != false)
                     NowPlayingProgressSection(
                         positionState = positionState,
                         totalDurMs = totalDurMs,
                         hasTrack = track != null,
                         onSeek = onSeek,
                         centerBadge = {
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = showAudioBadge,
-                            modifier = Modifier.align(Alignment.Center),
-                            enter = fadeIn(tween(220)) + scaleIn(tween(220), initialScale = 0.85f),
-                            exit = fadeOut(tween(180)) + scaleOut(tween(180), targetScale = 0.85f)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(PillShape)
-                                    .background(IvoryStroke)
-                                    .apexBounceClick(
-                                        scaleDown = 0.92f,
-                                        enableHaptic = true,
-                                        onClick = { showTrackDetailsDialog = true }
-                                    )
-                                    .padding(
-                                        horizontal = if (hasAudioBadgeIcon) 9.dp else 11.dp,
-                                        vertical = 2.5.dp
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                                ) {
-                                    if (hasAudioBadgeIcon) {
-                                        AppleLosslessIcon(
-                                            modifier = Modifier.size(width = 16.dp, height = 10.5.dp),
-                                            tint = IvoryHigh
-                                        )
-                                    }
-                                    Text(
-                                        text = audioBadgeText,
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            color = IvoryHigh,
-                                            fontSize = 11.5.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            letterSpacing = 0.1.sp
-                                        )
-                                    )
-                                }
-                            }
-                        }
+                            AudioQualityBadge(
+                                visible = showAudioBadge,
+                                info = audioQuality,
+                                onClick = { showTrackDetailsDialog = true },
+                                modifier = Modifier.align(Alignment.Center)
+                            )
                         }
                     )
 
                     Spacer(modifier = Modifier.height(43.dp))
 
                     // Master Playback Controls (Apple Music Precision: Prev, Play/Pause, Next)
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Previous Button
-                        Box(
-                            modifier = Modifier
-                                .size(width = 62.dp, height = 52.dp)
-                                .apexBounceClick(scaleDown = 0.88f, enableHaptic = true) {
-                                    val now = android.os.SystemClock.elapsedRealtime()
-                                    if (now - lastButtonSkipTimeMs >= buttonThrottleMs) {
-                                        lastButtonSkipTimeMs = now
-                                        onPrevious()
-                                    }
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AppleBackwardIcon(
-                                modifier = Modifier.size(width = 50.dp, height = 29.dp),
-                                tint = PrimaryIvory
-                            )
-                        }
-
-                        // Play / Pause Central Button
-                        Box(
-                            modifier = Modifier
-                                .size(width = 72.dp, height = 62.dp)
-                                .apexBounceClick(scaleDown = 0.90f, enableHaptic = true) {
-                                    onPlayPause()
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (playbackState.isPlaying) {
-                                ApplePauseIcon(
-                                    modifier = Modifier.size(width = 32.dp, height = 38.dp),
-                                    tint = PrimaryIvory
-                                )
-                            } else {
-                                ApplePlayIcon(
-                                    modifier = Modifier.size(width = 34.dp, height = 36.dp),
-                                    tint = PrimaryIvory
-                                )
+                    MasterPlaybackControls(
+                        isPlaying = playbackState.isPlaying,
+                        onPrevious = {
+                            val now = android.os.SystemClock.elapsedRealtime()
+                            if (now - lastButtonSkipTimeMs >= buttonThrottleMs) {
+                                lastButtonSkipTimeMs = now
+                                onPrevious()
+                            }
+                        },
+                        onPlayPause = onPlayPause,
+                        onNext = {
+                            val now = android.os.SystemClock.elapsedRealtime()
+                            if (now - lastButtonSkipTimeMs >= buttonThrottleMs) {
+                                lastButtonSkipTimeMs = now
+                                onNext()
                             }
                         }
-
-                        // Next Button
-                        Box(
-                            modifier = Modifier
-                                .size(width = 62.dp, height = 52.dp)
-                                .apexBounceClick(scaleDown = 0.88f, enableHaptic = true) {
-                                    val now = android.os.SystemClock.elapsedRealtime()
-                                    if (now - lastButtonSkipTimeMs >= buttonThrottleMs) {
-                                        lastButtonSkipTimeMs = now
-                                        onNext()
-                                    }
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AppleForwardIcon(
-                                modifier = Modifier.size(width = 50.dp, height = 29.dp),
-                                tint = PrimaryIvory
-                            )
-                        }
-                    }
+                    )
 
                     Spacer(modifier = Modifier.height(43.dp))
 
