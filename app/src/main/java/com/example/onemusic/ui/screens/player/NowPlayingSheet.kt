@@ -4,7 +4,6 @@ package com.example.onemusic.ui.screens.player
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -18,8 +17,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +28,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Lyrics
@@ -47,26 +43,16 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChange
-import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.example.onemusic.data.local.AppSettings
@@ -89,10 +75,12 @@ import com.example.onemusic.ui.screens.player.queue.NowPlayingQueuePane
 import com.example.onemusic.ui.screens.player.dialogs.FavoriteToastBanner
 import com.example.onemusic.ui.screens.player.dialogs.PlaybackSpeedDialog
 import com.example.onemusic.ui.screens.player.dialogs.SleepTimerDialog
+import com.example.onemusic.ui.screens.player.state.rememberArtworkPagerState
+import com.example.onemusic.ui.screens.player.state.rememberControlsDeckVisibility
+import com.example.onemusic.ui.screens.player.state.rememberNowPlayingSheetState
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.absoluteValue
 import com.example.onemusic.theme.ObsidianBlack
 
 /**
@@ -149,27 +137,14 @@ fun NowPlayingSheet(
         }
     }
 
-    val hapticEngine = com.example.onemusic.haptics.rememberApexHaptics()
-    val currentView = androidx.compose.ui.platform.LocalView.current
     val scope = rememberCoroutineScope()
-    val configuration = androidx.compose.ui.platform.LocalConfiguration.current
     val density = androidx.compose.ui.platform.LocalDensity.current
-    val screenHeightPx = with(density) { configuration.screenHeightDp.dp.toPx() }
     var controlsDeckHeightPx by remember {
         val initialPx = with(density) { 260.dp.roundToPx() }
         mutableIntStateOf(initialPx)
     }
     val controlsDeckHeightDp = remember(controlsDeckHeightPx, density) {
         with(density) { controlsDeckHeightPx.toDp() }
-    }
-
-    // Physical drag state & smooth physics
-    val sheetOffsetY = remember { Animatable(screenHeightPx) }
-    val sheetSlideSpec = remember {
-        spring<Float>(
-            dampingRatio = 0.90f,
-            stiffness = 280f
-        )
     }
 
     val track = playbackState.currentTrack
@@ -201,172 +176,25 @@ fun NowPlayingSheet(
     val lyricsListState = rememberLazyListState()
     val queueListState = rememberLazyListState()
 
-    // Dynamic Playback Deck Visibility on Lyrics Scroll: Giống bên danh sách chờ (Cuộn xuống dưới ẩn, cuộn lên trên hiện, ở đầu trang luôn hiện)
-    var isLyricsDeckVisible by remember { mutableStateOf(true) }
-    val isAtLyricsTop by remember {
-        derivedStateOf {
-            lyricsListState.firstVisibleItemIndex == 0 && lyricsListState.firstVisibleItemScrollOffset <= 30
-        }
-    }
-
-    LaunchedEffect(isAtLyricsTop) {
-        if (isAtLyricsTop) {
-            isLyricsDeckVisible = true
-        }
-    }
-
-    LaunchedEffect(centerView) {
-        if (centerView == NowPlayingCenterView.LYRICS) {
-            isLyricsDeckVisible = true
-        }
-    }
-
-    val lyricsNestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val deltaY = available.y
-                if (source == NestedScrollSource.UserInput) {
-                    // Kéo lên (cuộn xuống dưới để đọc tiếp lời): ẩn cụm playing
-                    if (deltaY < -12f) {
-                        if (isLyricsDeckVisible && !isAtLyricsTop) {
-                            isLyricsDeckVisible = false
-                        }
-                    }
-                    // Kéo xuống (cuộn ngược lên trên): hiện cụm playing
-                    else if (deltaY > 12f) {
-                        if (!isLyricsDeckVisible) {
-                            isLyricsDeckVisible = true
-                        }
-                    }
-                }
-                return Offset.Zero
-            }
-        }
-    }
-
-    // Dynamic Playback Deck Visibility on Queue Scroll: Cuộn xuống dưới để xem thêm bài thì ẨN cụm playing, cuộn lên trên thì HIỆN cụm playing
-    var isQueueDeckVisible by remember { mutableStateOf(true) }
-    val isAtQueueTop by remember {
-        derivedStateOf {
-            queueListState.firstVisibleItemIndex == 0 && queueListState.firstVisibleItemScrollOffset <= 15
-        }
-    }
-
-    LaunchedEffect(isAtQueueTop) {
-        if (isAtQueueTop) {
-            isQueueDeckVisible = true
-        }
-    }
-
-    LaunchedEffect(centerView) {
-        if (centerView == NowPlayingCenterView.QUEUE) {
-            isQueueDeckVisible = true
-        }
-    }
-
-    val queueNestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val deltaY = available.y
-                // Kéo lên (cuộn xuống dưới để xem bài): ẩn cụm playing
-                if (deltaY < -12f) {
-                    if (isQueueDeckVisible && !isAtQueueTop) {
-                        isQueueDeckVisible = false
-                    }
-                }
-                // Kéo xuống (cuộn ngược lên trên): hiện cụm playing
-                else if (deltaY > 12f) {
-                    if (!isQueueDeckVisible) {
-                        isQueueDeckVisible = true
-                    }
-                }
-                return Offset.Zero
-            }
-        }
-    }
+    val deckVisibility = rememberControlsDeckVisibility(
+        lyricsListState = lyricsListState,
+        queueListState = queueListState,
+        centerView = centerView
+    )
 
     val nowPlayingHazeState = remember { HazeState() }
 
-    // Interactive Horizontal Pager for Seamless Album Artwork Transitions
+    // Interactive Horizontal Pager for Seamless Album Artwork Transitions (xem state/ArtworkPagerSync.kt)
     val queue = playbackState.queue
-    val pageCount = if (queue.isNotEmpty()) queue.size else 1
-    val initialPage = if (playbackState.currentIndex in queue.indices) playbackState.currentIndex else 0
-    val pagerState = rememberPagerState(initialPage = initialPage, pageCount = { pageCount })
-
-    val currentPlaybackIndex by rememberUpdatedState(playbackState.currentIndex)
-    val onPlayQueueIndexUpdated by rememberUpdatedState(onPlayQueueIndex)
+    val pagerState = rememberArtworkPagerState(
+        queue = queue,
+        currentIndex = playbackState.currentIndex,
+        centerView = centerView,
+        onPlayQueueIndex = onPlayQueueIndex
+    )
 
     var lastButtonSkipTimeMs by remember { mutableLongStateOf(0L) }
     val buttonThrottleMs = 350L
-
-    // Synchronize external playback changes to Pager with Snappy 280ms Transition
-    LaunchedEffect(playbackState.currentIndex, pageCount, centerView) {
-        val target = playbackState.currentIndex
-        if (target in 0 until pageCount && pagerState.currentPage != target) {
-            if (centerView == NowPlayingCenterView.ARTWORK) {
-                val distance = kotlin.math.abs(pagerState.currentPage - target)
-                if (distance <= 2) {
-                    pagerState.animateScrollToPage(
-                        page = target,
-                        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing)
-                    )
-                } else {
-                    pagerState.scrollToPage(target)
-                }
-            } else {
-                pagerState.scrollToPage(target)
-            }
-        }
-    }
-
-    // Synchronize user horizontal swipe on Pager to PlayerController
-    // FIX: Chỉ phát bài mới khi NGƯỜI DÙNG thực sự kéo pager. Trang đổi do code
-    // (hàng đợi ngắn lại → pager tự kẹp trang, Next/Prev) không được kích hoạt phát bài.
-    val latestQueue by rememberUpdatedState(queue)
-    val isPagerDragged by pagerState.interactionSource.collectIsDraggedAsState()
-    var isUserSwipe by remember { mutableStateOf(false) }
-
-    LaunchedEffect(isPagerDragged) {
-        if (isPagerDragged) isUserSwipe = true
-    }
-
-    // Khi pager dừng hẳn sau một lần người dùng vuốt → phát bài ở trang đó
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.isScrollInProgress }.collect { scrolling ->
-            if (!scrolling && isUserSwipe) {
-                isUserSwipe = false
-                val page = pagerState.currentPage
-                if (page in latestQueue.indices && page != currentPlaybackIndex) {
-                    onPlayQueueIndexUpdated(page)
-                }
-            }
-        }
-    }
-
-    // Fail-Safe Snap: Đảm bảo pager không bao giờ bị kẹt lửng lơ giữa 2 trang khi thao tác bị gián đoạn
-    LaunchedEffect(pagerState.isScrollInProgress) {
-        if (!pagerState.isScrollInProgress && pagerState.currentPageOffsetFraction.absoluteValue > 0.001f) {
-            pagerState.animateScrollToPage(
-                page = pagerState.targetPage,
-                animationSpec = tween(durationMillis = 240, easing = FastOutSlowInEasing)
-            )
-        }
-    }
-
-    // Proactive Preloader: Tự động nạp trước ảnh bìa và trích xuất bảng màu của bài kế tiếp và bài trước đó vào RAM
-    LaunchedEffect(playbackState.currentIndex, queue) {
-        if (queue.isNotEmpty()) {
-            val curr = playbackState.currentIndex
-            val nextIdx = (curr + 1).coerceAtMost(queue.lastIndex)
-            val prevIdx = (curr - 1).coerceAtLeast(0)
-            if (nextIdx != curr) {
-                queue.getOrNull(nextIdx)?.artworkUrl?.let { com.example.onemusic.ui.utils.preloadArtworkAndColors(context, it) }
-            }
-            if (prevIdx != curr && prevIdx != nextIdx) {
-                queue.getOrNull(prevIdx)?.artworkUrl?.let { com.example.onemusic.ui.utils.preloadArtworkAndColors(context, it) }
-            }
-        }
-    }
 
     // Current displayed track (Đồng bộ với targetPage trong suốt hoạt ảnh cuộn để không bị giật/nhảy thông tin giữa chừng)
     val displayedTrack = if (centerView == NowPlayingCenterView.ARTWORK && queue.isNotEmpty()) {
@@ -376,110 +204,14 @@ fun NowPlayingSheet(
         track ?: (if (queue.isNotEmpty()) queue.firstOrNull() else null)
     }
 
-    // Smooth Entrance from Bottom
-    LaunchedEffect(Unit) {
-        sheetOffsetY.animateTo(0f, animationSpec = sheetSlideSpec)
-    }
+    // Kéo-để-đóng, hoạt ảnh trượt vào/ra (xem state/NowPlayingSheetState.kt)
+    val sheetState = rememberNowPlayingSheetState(
+        onCollapse = onCollapse,
+        isArtworkMode = { centerView == NowPlayingCenterView.ARTWORK }
+    )
 
-    var isDismissing by remember { mutableStateOf(false) }
-
-    fun collapseSheet(initialVelocity: Float = 0f) {
-        if (isDismissing) return
-        isDismissing = true
-        try {
-            hapticEngine.performCrispTap(scale = 0.40f, fallbackView = currentView)
-        } catch (_: Exception) {}
-        scope.launch {
-            sheetOffsetY.animateTo(
-                targetValue = screenHeightPx,
-                initialVelocity = initialVelocity.coerceAtLeast(0f),
-                animationSpec = sheetSlideSpec
-            )
-            onCollapse()
-        }
-    }
-
-    val dismissThresholdPx = screenHeightPx * 0.15f
-    var hasFiredThresholdHaptic by remember { mutableStateOf(false) }
-
-    val sheetNestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val currentOffset = sheetOffsetY.value
-                if (currentOffset > 0f && available.y < 0f && centerView == NowPlayingCenterView.ARTWORK) {
-                    val newOffset = (currentOffset + available.y).coerceAtLeast(0f)
-                    val consumedY = newOffset - currentOffset
-                    scope.launch { sheetOffsetY.snapTo(newOffset) }
-                    return Offset(0f, consumedY)
-                }
-                return Offset.Zero
-            }
-
-            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
-                if (available.y > 0f && !isDismissing && centerView == NowPlayingCenterView.ARTWORK) {
-                    val newOffset = (sheetOffsetY.value + available.y).coerceAtLeast(0f)
-                    scope.launch { sheetOffsetY.snapTo(newOffset) }
-
-                    if (!hasFiredThresholdHaptic && newOffset >= dismissThresholdPx) {
-                        try {
-                            hapticEngine.performSpringLatch(scale = 0.45f, fallbackView = currentView)
-                        } catch (_: Exception) {}
-                        hasFiredThresholdHaptic = true
-                    } else if (hasFiredThresholdHaptic && newOffset < dismissThresholdPx * 0.8f) {
-                        hasFiredThresholdHaptic = false
-                    }
-
-                    return Offset(0f, available.y)
-                }
-                return Offset.Zero
-            }
-
-            override suspend fun onPreFling(available: Velocity): Velocity {
-                if (sheetOffsetY.value > 0f && !isDismissing && centerView == NowPlayingCenterView.ARTWORK) {
-                    val velocityY = available.y
-                    val shouldDismiss = when {
-                        velocityY > 800f -> true
-                        velocityY < -800f -> false
-                        sheetOffsetY.value > dismissThresholdPx -> true
-                        else -> false
-                    }
-                    if (shouldDismiss) {
-                        collapseSheet(initialVelocity = velocityY)
-                    } else {
-                        sheetOffsetY.animateTo(
-                            targetValue = 0f,
-                            initialVelocity = velocityY.coerceAtMost(0f),
-                            animationSpec = sheetSlideSpec
-                        )
-                    }
-                    return available
-                }
-                return Velocity.Zero
-            }
-
-            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-                if (available.y > 0f && !isDismissing && centerView == NowPlayingCenterView.ARTWORK) {
-                    val velocityY = available.y
-                    val shouldDismiss = when {
-                        velocityY > 800f -> true
-                        sheetOffsetY.value > dismissThresholdPx -> true
-                        else -> false
-                    }
-                    if (shouldDismiss) {
-                        collapseSheet(initialVelocity = velocityY)
-                    } else {
-                        sheetOffsetY.animateTo(
-                            targetValue = 0f,
-                            initialVelocity = velocityY.coerceAtMost(0f),
-                            animationSpec = sheetSlideSpec
-                        )
-                    }
-                    return available
-                }
-                return Velocity.Zero
-            }
-        }
-    }
+    fun Modifier.sheetDragToDismiss(enabled: Boolean = true): Modifier =
+        then(sheetState.dragToDismissModifier(enabled) { pagerState.isScrollInProgress })
 
     // derivedStateOf: chỉ báo thay đổi khi SANG CÂU MỚI, không phải mỗi 40ms khi vị trí đổi
     val lyricLines = track?.lyrics.orEmpty()
@@ -560,99 +292,17 @@ fun NowPlayingSheet(
         }
     }
 
-    fun Modifier.sheetDragToDismiss(enabled: Boolean = true): Modifier = if (!enabled) this else this.pointerInput(enabled) {
-        val velocityTracker = VelocityTracker()
-        awaitEachGesture {
-            val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-            velocityTracker.resetTracking()
-            velocityTracker.addPosition(down.uptimeMillis, down.position)
-            hasFiredThresholdHaptic = false
-            var isDragging = false
-            var isHorizontalLocked = false
-            var totalDx = 0f
-            var totalDy = 0f
-            // Giữ vị trí trong biến cục bộ của cử chỉ: snapTo chạy bất đồng bộ nên đọc sheetOffsetY.value
-            // ngay sau khi launch sẽ ra giá trị cũ → cộng dồn lệch, sheet bị rung
-            var localOffset = sheetOffsetY.value
-
-            while (true) {
-                val event = awaitPointerEvent(pass = PointerEventPass.Initial)
-                val dragChange = event.changes.firstOrNull { it.id == down.id } ?: break
-                if (!dragChange.pressed) {
-                    break
-                }
-
-                velocityTracker.addPosition(dragChange.uptimeMillis, dragChange.position)
-                val delta = dragChange.positionChange()
-                totalDx += kotlin.math.abs(delta.x)
-                totalDy += delta.y
-
-                // Phân luồng cử chỉ (Directional Disambiguation): Nếu người dùng đang vuốt ngang thì khóa không cho kéo sheet
-                if (!isDragging && !isHorizontalLocked) {
-                    if (totalDx > 12f && totalDx > totalDy * 1.1f) {
-                        isHorizontalLocked = true
-                    } else if (totalDy > 16f && totalDy > totalDx * 1.8f && !pagerState.isScrollInProgress) {
-                        isDragging = true
-                    }
-                }
-
-                if (isDragging && !isHorizontalLocked && !isDismissing) {
-                    dragChange.consume()
-                    if (delta.y > 0 || localOffset > 0f) {
-                        localOffset = (localOffset + delta.y).coerceAtLeast(0f)
-                        val newOffset = localOffset
-                        scope.launch {
-                            sheetOffsetY.snapTo(newOffset)
-                        }
-
-                        if (!hasFiredThresholdHaptic && newOffset >= dismissThresholdPx) {
-                            try {
-                                hapticEngine.performSpringLatch(scale = 0.45f, fallbackView = currentView)
-                            } catch (_: Exception) {}
-                            hasFiredThresholdHaptic = true
-                        } else if (hasFiredThresholdHaptic && newOffset < dismissThresholdPx * 0.8f) {
-                            hasFiredThresholdHaptic = false
-                        }
-                    }
-                }
-            }
-
-            if (isDragging && !isDismissing) {
-                val velocityY = velocityTracker.calculateVelocity().y
-                val currentOffset = localOffset
-                val shouldDismiss = when {
-                    velocityY > 800f -> true
-                    velocityY < -800f -> false
-                    currentOffset > dismissThresholdPx -> true
-                    else -> false
-                }
-
-                scope.launch {
-                    if (shouldDismiss) {
-                        collapseSheet(initialVelocity = velocityY)
-                    } else {
-                        sheetOffsetY.animateTo(
-                            targetValue = 0f,
-                            initialVelocity = velocityY.coerceAtMost(0f),
-                            animationSpec = sheetSlideSpec
-                        )
-                    }
-                }
-            }
-        }
-    }
-
     BackHandler {
         if (showSleepTimerDialog) {
             showSleepTimerDialog = false
         } else if (centerView != NowPlayingCenterView.ARTWORK) {
             centerView = NowPlayingCenterView.ARTWORK
         } else {
-            collapseSheet()
+            sheetState.collapse()
         }
     }
 
-    val dismissProgress = (sheetOffsetY.value / screenHeightPx).coerceIn(0f, 1f)
+    val dismissProgress = sheetState.dismissProgress
     val sheetScale = lerp(1f, 0.92f, dismissProgress)
     val sheetAlpha = lerp(1f, 0.82f, dismissProgress)
     val topCornerRadius = lerp(32f, 36f, dismissProgress).dp
@@ -669,12 +319,12 @@ fun NowPlayingSheet(
             .fillMaxSize()
             .then(
                 if (centerView == NowPlayingCenterView.ARTWORK) {
-                    Modifier.nestedScroll(sheetNestedScrollConnection)
+                    Modifier.nestedScroll(sheetState.nestedScrollConnection)
                 } else Modifier
             )
             .sheetDragToDismiss(enabled = centerView == NowPlayingCenterView.ARTWORK)
             .graphicsLayer {
-                translationY = sheetOffsetY.value
+                translationY = sheetState.offsetY.value
                 scaleX = sheetScale
                 scaleY = sheetScale
                 this.alpha = sheetAlpha
@@ -697,7 +347,7 @@ fun NowPlayingSheet(
             motionVideoPath = motionVideoPath,
             motionPlayer = motionPlayer,
             hazeState = nowPlayingHazeState,
-            isSheetFullyVisible = !isDismissing,
+            isSheetFullyVisible = !sheetState.isDismissing,
             controlsDeckHeight = controlsDeckHeightDp,
             onArtworkLongClick = { showTrackDetailsDialog = true }
         )
@@ -770,7 +420,7 @@ fun NowPlayingSheet(
                             NowPlayingLyricsPane(
                                 track = track,
                                 listState = lyricsListState,
-                                nestedScrollConnection = lyricsNestedScrollConnection,
+                                nestedScrollConnection = deckVisibility.lyricsNestedScrollConnection,
                                 activeLyricIndex = { activeLyricIndex },
                                 positionState = positionState,
                                 onSeekToLine = { index, seekTime ->
@@ -786,7 +436,7 @@ fun NowPlayingSheet(
                             NowPlayingQueuePane(
                                 playbackState = playbackState,
                                 listState = queueListState,
-                                nestedScrollConnection = queueNestedScrollConnection,
+                                nestedScrollConnection = deckVisibility.queueNestedScrollConnection,
                                 hazeState = nowPlayingHazeState,
                                 onPlayQueueIndex = onPlayQueueIndex,
                                 onMoveQueueItem = onMoveQueueItem,
@@ -808,11 +458,7 @@ fun NowPlayingSheet(
             }
 
             // BỘ ĐIỀU KHIỂN PHÁT NHẠC & DOCK ĐÁY (ẨN KHI CUỘN XUỐNG DUYỆT BÀI / ĐỌC LỜI, HIỆN KHI VUỐT LÊN TRÊN HOẶC ĐẦU TRANG)
-            val isControlsDeckVisible = when (centerView) {
-                NowPlayingCenterView.LYRICS -> isLyricsDeckVisible || isAtLyricsTop
-                NowPlayingCenterView.QUEUE -> isQueueDeckVisible || isAtQueueTop
-                NowPlayingCenterView.ARTWORK -> true
-            }
+            val isControlsDeckVisible = deckVisibility.isVisible(centerView)
             AnimatedVisibility(
                 visible = isControlsDeckVisible,
                 enter = expandVertically(

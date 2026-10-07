@@ -357,9 +357,18 @@ Chỉ cắt/dán, **không** đổi một dòng logic nào:
 - `MasterPlaybackControls.kt` (89 dòng): `MasterPlaybackControls(isPlaying, onPrevious, onPlayPause, onNext)`. Biến chống bấm liên tục (`lastButtonSkipTimeMs`) **vẫn ở sheet**, nằm trong lambda `onPrevious`/`onNext` – nếu chuyển vào hàm con sẽ bị reset mỗi lần cụm điều khiển ẩn/hiện.
 - Khung `AnimatedVisibility` + `onSizeChanged` (đo chiều cao cụm) và `NowPlayingActionDock` vẫn ở sheet vì gắn chặt với `centerView`, `controlsDeckHeightPx` – sẽ xem lại ở bước 2.6. Báo cáo tự động: mọi dòng khác bản gốc đều là phép đổi tên (`displayedTrack` → `track`, mở dialog → callback…).
 
-### 2.6 Bước 6 – Tách state holder (PR 6, ⭐⭐⭐⭐)
+### 2.6 Bước 6 – Tách state holder (PR 6, ⭐⭐⭐⭐) ✅ Đã xong về code (07/10/2026) – ⚠️ còn chờ smoke test cử chỉ trên máy
 
 `NowPlayingSheetState`, `ArtworkPagerSync`, `ControlsDeckVisibility` theo mẫu 3.3. Làm **cuối cùng**, test kỹ cử chỉ (mục 10.1). Nhờ người đã làm `NOW_PLAYING_FIX_PLAN.md` review.
+
+**Kết quả thực tế:** `NowPlayingSheet.kt` 1.004 → 650 dòng. Thêm 3 file trong `state/`:
+- `NowPlayingSheetState.kt` (279 dòng): class `NowPlayingSheetState` giữ `offsetY`, `isDismissing`, ngưỡng đóng + rung khi vượt ngưỡng, `collapse()`, `nestedScrollConnection` (chế độ ảnh bìa) và `dragToDismissModifier(enabled, isPagerScrolling)`; `rememberNowPlayingSheetState(onCollapse, isArtworkMode)` tạo state và chạy hoạt ảnh trượt lên lúc mở (`LaunchedEffect(Unit)` cũ). Trong sheet vẫn giữ hàm cục bộ `Modifier.sheetDragToDismiss(enabled)` (gọi sang state) nên 2 chỗ dùng không đổi.
+- `ArtworkPagerSync.kt` (114 dòng): `rememberArtworkPagerState(queue, currentIndex, centerView, onPlayQueueIndex): PagerState` – tạo pager, đồng bộ bài đang phát → pager, vuốt pager → phát bài, chống kẹt giữa 2 trang, nạp trước ảnh bìa bài kế/trước. `displayedTrack` vẫn tính ở sheet.
+- `ControlsDeckVisibility.kt` (125 dòng): class giữ `isLyricsDeckVisible`/`isQueueDeckVisible`, 2 `derivedStateOf` "đang ở đầu danh sách", 2 nested scroll connection và `isVisible(centerView)`; `rememberControlsDeckVisibility(...)` chạy 4 `LaunchedEffect` cũ (thứ tự giữ nguyên).
+- Các `LaunchedEffect` tự cuộn lời/hàng đợi, `previousCenterView`, chống bấm liên tục và khung `AnimatedVisibility` + `onSizeChanged` **vẫn ở sheet** (xem 3.4).
+- Gộp 2 đoạn code giống hệt nhau thành hàm riêng trong `NowPlayingSheetState`: rung khi vượt ngưỡng (`updateThresholdHaptic`, trước lặp 2 lần) và bật về vị trí mở (`settleOpen`, trước lặp 3 lần).
+- **Khác biệt nhỏ có chủ đích:** trước đây `NestedScrollConnection` nằm trong `remember {}` nên chụp `onCollapse` của lần vẽ đầu tiên; giờ luôn gọi bản mới nhất qua `rememberUpdatedState` (giống `BackHandler`). `screenHeightPx` chụp một lần lúc tạo state – như bản gốc ở nhánh nested scroll; Activity không khai báo `configChanges` nên xoay màn hình vẫn tạo lại sheet.
+- Kiểm tra: `git diff --color-moved` – mọi dòng không phải "di chuyển nguyên vẹn" đều là đổi tên (`sheetOffsetY` → `offsetY`, `collapseSheet` → `collapse`, `centerView == ARTWORK` → `isArtworkMode.value()`…). 3 file trong `state/` đã biên dịch thử được với Compose Desktop 1.7.3 + Kotlin 2.1.0 (stub phần Android). **Chưa build/cài được bản Android** trong môi trường cloud (không tải được Android SDK) → cần chạy `./gradlew :app:compileDebugKotlin` và smoke test 10.1 (kéo đóng, hất đóng, vuốt ngang ảnh bìa, cuộn lời/hàng đợi ẩn-hiện cụm điều khiển, nút Back) trước khi merge.
 
 ---
 
