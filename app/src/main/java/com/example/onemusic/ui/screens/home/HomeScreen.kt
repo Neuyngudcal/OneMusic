@@ -182,13 +182,6 @@ enum class ArtistGroupMode(val title: String, val subtitle: String) {
     SEPARATE("Tách riêng theo thẻ gốc", "Hiển thị nguyên bản theo từng chuỗi nghệ sĩ trong tệp")
 }
 
-private fun formatDuration(durationMs: Long): String {
-    val totalSec = durationMs / 1000
-    val min = totalSec / 60
-    val sec = totalSec % 60
-    return String.format(java.util.Locale.US, "%d:%02d", min, sec)
-}
-
 fun extractArtistNames(rawArtist: String): List<String> = LibraryGrouping.artistNames(rawArtist)
 
 enum class AlbumViewMode {

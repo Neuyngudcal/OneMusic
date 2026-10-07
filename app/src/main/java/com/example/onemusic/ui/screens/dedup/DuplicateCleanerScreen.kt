@@ -83,6 +83,7 @@ import dev.chrisbanes.haze.hazeSource
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.components.ApexConfirmDialog
 import com.example.onemusic.ui.utils.apexBounceClick
+import com.example.onemusic.ui.utils.formatDuration
 import kotlinx.coroutines.launch
 import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.ApexRose
@@ -582,7 +583,7 @@ private fun DuplicateGroupCard(
 
                     val primarySize = DuplicateAudioDetector.getTrackFileSize(context, primary)
                     Text(
-                        text = "${formatDuration(primary.durationMs)} • ${Formatter.formatFileSize(context, primarySize)}",
+                        text = "${formatDuration(primary.durationMs, padMinutes = true)} • ${Formatter.formatFileSize(context, primarySize)}",
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = TextSecondary,
                             fontSize = 11.5.sp
@@ -687,7 +688,7 @@ private fun DuplicateGroupCard(
                         Spacer(modifier = Modifier.height(2.dp))
 
                         Text(
-                            text = "${formatDuration(dupTrack.durationMs)} • ${Formatter.formatFileSize(context, dupSize)}",
+                            text = "${formatDuration(dupTrack.durationMs, padMinutes = true)} • ${Formatter.formatFileSize(context, dupSize)}",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 color = TextSecondary,
                                 fontSize = 11.sp
@@ -718,12 +719,5 @@ private fun DuplicateGroupCard(
             }
         }
     }
-}
-
-private fun formatDuration(durationMs: Long): String {
-    val totalSeconds = durationMs / 1000
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return String.format("%02d:%02d", minutes, seconds)
 }
 

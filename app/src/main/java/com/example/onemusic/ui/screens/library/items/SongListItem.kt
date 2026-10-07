@@ -46,8 +46,8 @@ import com.example.onemusic.theme.SurfaceDivider
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.components.ApexHiResBadge
-import com.example.onemusic.ui.screens.library.LibraryViewModel
 import com.example.onemusic.ui.utils.apexBounceClick
+import com.example.onemusic.ui.utils.formatDuration
 
 @Composable
 fun SongListItem(
@@ -153,7 +153,7 @@ fun SongListItem(
                             Spacer(modifier = Modifier.width(6.dp))
                         }
                         Text(
-                            text = "${track.artist} • ${LibraryViewModel.formatDuration(track.durationMs)}",
+                            text = "${track.artist} • ${formatDuration(track.durationMs, padMinutes = true)}",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 color = TextSecondary,
                                 fontSize = 12.sp

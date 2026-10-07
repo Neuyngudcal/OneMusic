@@ -1,8 +1,11 @@
-package com.example.onemusic.ui.screens.player
+package com.example.onemusic.ui.screens.player.backdrop
 
-import android.content.Context
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -10,7 +13,9 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -23,35 +28,96 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.onemusic.data.local.AppSettings
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.ObsidianBlack
+import com.example.onemusic.ui.screens.player.artwork.HeroArtworkPager
+import com.example.onemusic.ui.utils.rememberArtworkColors
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 
 /**
- * Layer 0: Living Ambient Mesh Canvas (Làm mờ ảnh bìa và dải chuyển sắc sống động)
+ * Nền của Now Playing, nằm dưới lớp điều khiển (LAYER 2). Phát ra 2 lớp con của Box cha:
+ * - Box được làm mờ khi rời chế độ ảnh bìa ([isArtworkMode] = false), gồm
+ *   LAYER 0 (ảnh bìa phóng to + dải màu lấy từ ảnh bìa, là nguồn của [hazeState]) và
+ *   LAYER 1A ([HeroArtworkPager]);
+ * - LAYER 1B: lớp voan tối hiện dần khi mở Lời bài hát / Hàng đợi.
  */
 @Composable
-fun NowPlayingBackdrop(
-    context: Context,
+internal fun NowPlayingBackdrop(
+    isArtworkMode: Boolean,
     displayedTrack: Track?,
+    track: Track?,
+    queue: List<Track>,
+    pagerState: PagerState,
+    isDynamicMeshBackgroundEnabled: Boolean,
+    motionVideoPath: String?,
+    motionPlayer: androidx.media3.exoplayer.ExoPlayer?,
     hazeState: HazeState,
-    appSettings: AppSettings?,
-    animatedTopColor: Color,
-    animatedSecondaryColor: Color,
-    animatedAccentColor: Color,
-    animatedBottomColor: Color,
-    blurRadiusAnimated: Dp,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit = {}
+    isSheetFullyVisible: Boolean,
+    controlsDeckHeight: Dp,
+    onArtworkLongClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    // Dynamic Artwork Colors with Swatch Fallback & HSL (Synchronized with displayedTrack)
+    val dynamicArtworkColors = rememberArtworkColors(imageUrl = displayedTrack?.artworkUrl)
+
+    val targetTopColor = remember(dynamicArtworkColors) {
+        dynamicArtworkColors.topColor.copy(alpha = 1f)
+    }
+    val targetSecondaryColor = remember(dynamicArtworkColors) {
+        dynamicArtworkColors.secondaryColor.copy(alpha = 1f)
+    }
+    val targetAccentColor = remember(dynamicArtworkColors) {
+        dynamicArtworkColors.accentColor.copy(alpha = 1f)
+    }
+    val targetBottomColor = remember(dynamicArtworkColors) {
+        dynamicArtworkColors.bottomColor.copy(alpha = 1f)
+    }
+
+    val auroraColorEasing = remember { CubicBezierEasing(0.25f, 0.10f, 0.25f, 1.00f) }
+
+    val animatedTopColor by animateColorAsState(
+        targetValue = targetTopColor,
+        animationSpec = tween(durationMillis = 600, easing = auroraColorEasing),
+        label = "bg_top_color"
+    )
+    val animatedSecondaryColor by animateColorAsState(
+        targetValue = targetSecondaryColor,
+        animationSpec = tween(durationMillis = 600, easing = auroraColorEasing),
+        label = "bg_secondary_color"
+    )
+    val animatedAccentColor by animateColorAsState(
+        targetValue = targetAccentColor,
+        animationSpec = tween(durationMillis = 600, easing = auroraColorEasing),
+        label = "bg_accent_color"
+    )
+    val animatedBottomColor by animateColorAsState(
+        targetValue = targetBottomColor,
+        animationSpec = tween(durationMillis = 600, easing = auroraColorEasing),
+        label = "bg_bottom_color"
+    )
+
+    // Quản lý chuyển cảnh Kính Mờ Quang Học Trên Toàn Bộ Giao Diện Now Playing (120fps)
+    val blurRadiusAnimated by animateDpAsState(
+        targetValue = if (isArtworkMode) 0.dp else 26.dp,
+        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
+        label = "nowplaying_bg_blur"
+    )
+    val frostedGlassAlpha by animateFloatAsState(
+        targetValue = if (!isArtworkMode) 1.0f else 0.0f,
+        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
+        label = "frosted_glass_alpha"
+    )
+
+    // LAYER 0 & 1A: TRUE NOW PLAYING LIVING BACKDROP (AMBIENT MESH + HERO ALBUM ARTWORK)
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .then(
                 if (blurRadiusAnimated > 0.5.dp) {
@@ -59,13 +125,14 @@ fun NowPlayingBackdrop(
                 } else Modifier
             )
     ) {
+        // LAYER 0: Haze Source Background Canvas (Album Art Blur + Vibrant Mesh Gradient)
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .hazeSource(state = hazeState)
                 .background(animatedBottomColor)
         ) {
-            if (appSettings?.isDynamicMeshBackgroundEnabled != false) {
+            if (isDynamicMeshBackgroundEnabled) {
                 // 1. Phóng to ảnh album + làm mờ (Blur 50dp) với hiệu ứng chuyển đổi mờ dần 600ms siêu mượt
                 AnimatedContent(
                     targetState = displayedTrack?.artworkUrl,
@@ -164,21 +231,25 @@ fun NowPlayingBackdrop(
             }
         }
 
-        content()
+        // LAYER 1A: HERO ALBUM ARTWORK CAROUSEL (FULL BLEED TRÀN VIỀN TỪ ĐỈNH MÁY, ĐỒNG BỘ 100% VỚI CỤM PHÍM ĐÁY)
+        HeroArtworkPager(
+            queue = queue,
+            track = track,
+            pagerState = pagerState,
+            motionVideoPath = motionVideoPath,
+            motionPlayer = motionPlayer,
+            hazeState = hazeState,
+            isSheetFullyVisible = isSheetFullyVisible,
+            scrimColor = if (isDynamicMeshBackgroundEnabled) animatedSecondaryColor else ObsidianBlack,
+            controlsDeckHeight = controlsDeckHeight,
+            onArtworkLongClick = onArtworkLongClick
+        )
     }
-}
 
-/**
- * LAYER 1B: AUTHENTIC OBSIDIAN FROSTED GLASS VEIL (Phủ voan than chì mờ thấu quang khi vào Lời bài hát / Hàng đợi)
- */
-@Composable
-fun NowPlayingVeil(
-    frostedGlassAlpha: Float,
-    modifier: Modifier = Modifier
-) {
+    // LAYER 1B: AUTHENTIC OBSIDIAN FROSTED GLASS VEIL (Phủ voan than chì mờ thấu quang khi vào Lời bài hát / Hàng đợi)
     if (frostedGlassAlpha > 0.01f) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer { alpha = frostedGlassAlpha }
                 .background(

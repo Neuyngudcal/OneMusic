@@ -241,12 +241,5 @@ class LibraryViewModel : ViewModel() {
                 .map { if (it.isLetter()) it else '#' }
                 .toSet()
         }
-
-        fun formatDuration(durationMs: Long): String {
-            val totalSeconds = (durationMs / 1000).coerceAtLeast(0)
-            val minutes = totalSeconds / 60
-            val seconds = totalSeconds % 60
-            return String.format("%02d:%02d", minutes, seconds)
-        }
     }
 }

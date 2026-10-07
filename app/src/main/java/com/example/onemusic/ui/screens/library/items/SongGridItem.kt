@@ -49,8 +49,8 @@ import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.components.ApexHiResBadge
-import com.example.onemusic.ui.screens.library.LibraryViewModel
 import com.example.onemusic.ui.utils.apexBounceClick
+import com.example.onemusic.ui.utils.formatDuration
 
 /**
  * Standard 2-column Grid Card for a song in Library.
@@ -174,7 +174,7 @@ fun SongGridItem(
                         Spacer(modifier = Modifier.width(4.dp))
                     }
                     Text(
-                        text = LibraryViewModel.formatDuration(track.durationMs),
+                        text = formatDuration(track.durationMs, padMinutes = true),
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = IvoryFaint,
                             fontSize = 11.sp

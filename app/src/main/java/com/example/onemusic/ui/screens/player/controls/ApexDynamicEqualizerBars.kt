@@ -1,4 +1,4 @@
-package com.example.onemusic.ui.screens.player
+package com.example.onemusic.ui.screens.player.controls
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,7 +21,9 @@ import androidx.compose.ui.util.lerp
 import com.example.onemusic.theme.TextPrimary
 
 /**
- * Hiệu ứng cột sóng nhạc chuyển động mượt mà (Equalizer Bars)
+ * Biểu tượng 4 cột sóng nhạc động phong cách YouTube Music & One UI.
+ * - Nhảy nhấp nhô nhịp nhàng sống động khi isPlaying = true
+ * - Tự động hạ thấp xuống mức tối thiểu và đóng băng (idle) khi isPlaying = false
  * - Vẽ trực tiếp bằng Canvas RenderNode GPU 120fps siêu nhẹ, tiết kiệm pin tối đa.
  */
 @Composable
@@ -86,7 +87,7 @@ fun ApexDynamicEqualizerBars(
     val barSpacingPx = with(density) { barSpacing.toPx() }
     val cornerRadius = CornerRadius(barWidthPx / 2f, barWidthPx / 2f)
 
-    Canvas(
+    androidx.compose.foundation.Canvas(
         modifier = modifier.size(
             width = barWidth * barCount + barSpacing * (barCount - 1),
             height = maxHeight
@@ -110,3 +111,7 @@ fun ApexDynamicEqualizerBars(
         }
     }
 }
+
+// ============================================================================
+// APPLE MUSIC 1:1 QUEUE COMPONENTS (MINI HEADER, MODE PILLS, FLAT TRACK ROW)
+// ============================================================================
