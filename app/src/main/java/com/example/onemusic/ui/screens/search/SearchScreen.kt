@@ -117,7 +117,6 @@ import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.screens.detail.DetailScreen
 import com.example.onemusic.ui.utils.apexBounceClick
 import dev.chrisbanes.haze.HazeState
-import com.example.onemusic.theme.avatarColorFor
 import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.ApexRose
 import com.example.onemusic.theme.Brand
@@ -148,10 +147,6 @@ enum class SearchFilterTab(val title: String) {
     SONGS("Bài hát"),
     ARTISTS("Nghệ sĩ"),
     ALBUMS("Album")
-}
-
-private fun getAvatarColorForArtist(name: String): Color {
-    return avatarColorFor(name)
 }
 
 /**

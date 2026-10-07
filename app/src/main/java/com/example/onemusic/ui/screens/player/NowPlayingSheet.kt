@@ -168,6 +168,8 @@ import com.example.onemusic.ui.components.ApplePauseIcon
 import com.example.onemusic.ui.components.ApplePlayIcon
 import com.example.onemusic.ui.components.TrackDetailsDialog
 import com.example.onemusic.ui.utils.apexBounceClick
+import com.example.onemusic.ui.utils.formatDuration
+import com.example.onemusic.ui.utils.formatRemaining
 import com.example.onemusic.ui.utils.rememberArtworkColors
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -197,23 +199,6 @@ import com.example.onemusic.theme.SurfaceDivider
 import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.theme.TextDisabled
 import com.example.onemusic.theme.apexFrostedGlass
-
-fun formatDuration(ms: Long): String {
-    if (ms <= 0) return "0:00"
-    val totalSeconds = ms / 1000
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return String.format("%d:%02d", minutes, seconds)
-}
-
-fun formatRemaining(currentMs: Long, totalMs: Long): String {
-    if (totalMs <= 0) return "--:--"
-    val remainingMs = (totalMs - currentMs).coerceAtLeast(0)
-    val totalSeconds = (remainingMs / 1000)
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return String.format("-%d:%02d", minutes, seconds)
-}
 
 /**
  * Capsule Slider with 120Hz Spring Dynamic Expansion on Touch/Drag
@@ -2458,9 +2443,7 @@ fun NowPlayingSheet(
 
                     if (playbackState.sleepTimerRemainingSeconds != null) {
                         val rem = playbackState.sleepTimerRemainingSeconds
-                        val mins = rem / 60
-                        val secs = rem % 60
-                        val display = if (rem < 0) "Sau khi kết thúc bài hát" else String.format("%02d:%02d", mins, secs)
+                        val display = if (rem < 0) "Sau khi kết thúc bài hát" else formatDuration(rem * 1000, padMinutes = true)
 
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(

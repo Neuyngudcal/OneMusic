@@ -77,6 +77,7 @@ import com.example.onemusic.ui.components.ApexDialogContainer
 import com.example.onemusic.ui.components.ApexHiResBadge
 import com.example.onemusic.ui.components.TrackDetailsDialog
 import com.example.onemusic.ui.utils.apexBounceClick
+import com.example.onemusic.ui.utils.formatTotalDuration
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import com.example.onemusic.theme.ApexRose
@@ -98,18 +99,6 @@ import com.example.onemusic.theme.TextPrimary
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.theme.apexGroupedCardItem
-
-private fun formatTotalDuration(tracks: List<Track>): String {
-    val totalMs = tracks.sumOf { it.durationMs }
-    val totalMinutes = totalMs / 60000
-    return if (totalMinutes >= 60) {
-        val hours = totalMinutes / 60
-        val mins = totalMinutes % 60
-        "$hours giờ $mins phút"
-    } else {
-        "$totalMinutes phút"
-    }
-}
 
 /**
  * Clean & Immersive Hero Detail Screen for Album, Artist, and Playlist.

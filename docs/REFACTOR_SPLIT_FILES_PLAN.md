@@ -234,39 +234,30 @@ App đã làm đúng với `positionState` (chỉ `NowPlayingProgressSection` đ
 
 ---
 
-## Giai đoạn 1 – Gom hàm tiện ích bị lặp
+## Giai đoạn 1 – Gom hàm tiện ích bị lặp ✅ Đã xong (07/10/2026)
 
-**Hiện trạng:** có 4 bản `formatDuration` với **định dạng khác nhau**:
+**Hiện trạng trước khi làm:** có 4 bản `formatDuration` với **định dạng khác nhau**, cộng một bản viết tay trong dialog hẹn giờ tắt:
 
 | File | Kết quả cho 65 giây | Ghi chú |
 |---|---|---|
 | `ui/screens/player/NowPlayingSheet.kt:201` (public) | `1:05` | `ms <= 0` → `0:00`, không có `Locale` |
-| `ui/screens/home/HomeScreen.kt:185` (private) | `1:05` | `Locale.US` |
+| `ui/screens/player/NowPlayingSheet.kt:2463` (viết tay) | `01:05` | Đồng hồ đếm ngược hẹn giờ tắt |
+| `ui/screens/home/HomeScreen.kt:185` (private) | `1:05` | **Không được gọi ở đâu** (code chết) |
 | `ui/screens/library/LibraryScreen.kt:1908` (private) | `01:05` | |
 | `ui/screens/dedup/DuplicateCleanerScreen.kt:723` (private) | `01:05` | |
 
-Ngoài ra `getAvatarColorForArtist()` trong `SearchScreen.kt:153` chỉ gọi lại `avatarColorFor()` của `theme/Color.kt`.
+Ngoài ra `getAvatarColorForArtist()` trong `SearchScreen.kt:153` **cũng không được gọi ở đâu**.
 
-**Việc cần làm:**
+**Đã làm:**
 
-1. Tạo `ui/utils/DurationFormat.kt`:
-   ```kotlin
-   package com.example.onemusic.ui.utils
+1. Tạo `ui/utils/DurationFormat.kt` gồm `formatDuration(ms, padMinutes = false)`, `formatRemaining(currentMs, totalMs)` và `formatTotalDuration(tracks)` (chuyển từ `DetailScreen.kt`).
+2. Now Playing gọi `formatDuration(ms)`; Library, Dedup và đồng hồ hẹn giờ tắt gọi `formatDuration(ms, padMinutes = true)` → **giữ nguyên hiển thị** từng màn. (Thống nhất một kiểu cho cả app là quyết định thiết kế, làm ở PR khác nếu muốn.)
+3. Xóa 2 hàm chết: `formatDuration` của Home và `getAvatarColorForArtist` của Search.
+4. Thêm `app/src/test/.../ui/utils/DurationFormatTest.kt` (6 test).
 
-   /** 65_000 → "1:05" (padMinutes = false) hoặc "01:05" (padMinutes = true). */
-   fun formatDuration(ms: Long, padMinutes: Boolean = false): String {
-       val totalSeconds = (ms / 1000).coerceAtLeast(0)
-       val pattern = if (padMinutes) "%02d:%02d" else "%d:%02d"
-       return String.format(java.util.Locale.US, pattern, totalSeconds / 60, totalSeconds % 60)
-   }
+**Khác biệt duy nhất có chủ đích:** hàm mới luôn dùng `Locale.US`. Bản cũ dùng ngôn ngữ của máy nên trên máy đặt ngôn ngữ dùng chữ số khác (ví dụ tiếng Ả Rập) sẽ hiện `١:٠٥` thay vì `1:05`. Với tiếng Việt/tiếng Anh kết quả giống hệt (đã so sánh tự động ~257.000 giá trị đầu vào giữa hàm mới và các bản cũ: 0 khác biệt).
 
-   fun formatRemaining(currentMs: Long, totalMs: Long): String { /* chuyển từ NowPlayingSheet.kt:209 */ }
-   ```
-2. Thay 4 bản cũ: Now Playing & Home gọi `formatDuration(ms)`, Library & Dedup gọi `formatDuration(ms, padMinutes = true)` → **giữ nguyên hiển thị** từng màn. (Thống nhất một kiểu cho cả app là quyết định thiết kế, làm ở PR khác nếu muốn.)
-3. `formatTotalDuration` của `DetailScreen.kt:102` cũng chuyển vào file này.
-4. Xóa `getAvatarColorForArtist`, gọi thẳng `avatarColorFor`.
-
-**Kiểm tra:** thời lượng bài ở Now Playing, Home, Library, Dedup, trang chi tiết hiển thị y như trước.
+**Kiểm tra trên máy:** thời lượng bài ở Now Playing (thanh tua, thời gian còn lại, hàng đợi), Thư viện (danh sách + lưới), Dọn trùng lặp, trang chi tiết album/nghệ sĩ/playlist ("x bài hát • y phút") và đồng hồ hẹn giờ tắt hiển thị y như trước.
 
 ---
 

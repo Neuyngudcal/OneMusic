@@ -131,6 +131,7 @@ import com.example.onemusic.ui.components.ApexDropdownMenuItem
 import com.example.onemusic.ui.components.ApexDropdownDivider
 import com.example.onemusic.ui.components.TrackDetailsDialog
 import com.example.onemusic.ui.utils.apexBounceClick
+import com.example.onemusic.ui.utils.formatDuration
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
@@ -1023,7 +1024,7 @@ fun LibraryScreen(
                                                     Spacer(modifier = Modifier.width(6.dp))
                                                 }
                                                 Text(
-                                                    text = "${track.artist} • ${formatDuration(track.durationMs)}",
+                                                    text = "${track.artist} • ${formatDuration(track.durationMs, padMinutes = true)}",
                                                     style = MaterialTheme.typography.bodyMedium.copy(
                                                         color = TextSecondary,
                                                         fontSize = 12.sp
@@ -1905,13 +1906,6 @@ fun LibraryScreen(
     }
 }
 
-private fun formatDuration(durationMs: Long): String {
-    val totalSeconds = (durationMs / 1000).coerceAtLeast(0)
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return String.format("%02d:%02d", minutes, seconds)
-}
-
 @Composable
 private fun LibraryTrackGridCard(
     track: Track,
@@ -2031,7 +2025,7 @@ private fun LibraryTrackGridCard(
                         Spacer(modifier = Modifier.width(4.dp))
                     }
                     Text(
-                        text = formatDuration(track.durationMs),
+                        text = formatDuration(track.durationMs, padMinutes = true),
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = IvoryFaint,
                             fontSize = 11.sp
