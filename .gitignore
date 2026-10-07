@@ -1,0 +1,46 @@
+# Android build artifacts
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Build output directories
+app/build/
+build/
+
+# APK files (dùng GitHub Releases để phân phối APK)
+*.apk
+*.aab
+/OneMusic-APK/
+
+# Large binary / video files
+*.mp4
+*.avi
+*.mov
+
+# Python temp scripts
+fix_color.py
+fix_colors.py
+fix_frosted.py
+fix_haze.py
+fix_main.py
+
+# Gradle caches
+.gradle/
+
+# Backup folder
+/backup/
+
+# Kotlin incremental compilation
+.kotlin/

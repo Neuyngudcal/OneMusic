@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:name=".OneMusicApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:windowSoftInputMode="adjustResize"
+        android:theme="@style/Theme.OneMusic.Starting">
+
+        <service
+            android:name=".playback.service.OneMusicPlaybackService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Theme.OneMusic.Starting"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- External Audio Files Intent Filter -->
+            <intent-filter android:label="OneMusic">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="application/x-ogg" />
+                <data android:mimeType="application/flac" />
+                <data android:mimeType="audio/flac" />
+                <data android:mimeType="audio/mp3" />
+                <data android:mimeType="audio/mpeg" />
+                <data android:mimeType="audio/x-matroska" />
+                <data android:mimeType="audio/wav" />
+                <data android:mimeType="audio/aac" />
+            </intent-filter>
+        </activity>
+
+
+        <!-- Homescreen Widget 4x1 -->
+        <receiver
+            android:name=".widget.OneMusicWidget4x1"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.onemusic.WIDGET_PLAY_PAUSE" />
+                <action android:name="com.example.onemusic.WIDGET_NEXT" />
+                <action android:name="com.example.onemusic.WIDGET_PREV" />
+                <action android:name="com.example.onemusic.WIDGET_FAVORITE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_4x1" />
+        </receiver>
+
+        <!-- Homescreen Widget 4x2 -->
+        <receiver
+            android:name=".widget.OneMusicWidget4x2"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.onemusic.WIDGET_PLAY_PAUSE" />
+                <action android:name="com.example.onemusic.WIDGET_NEXT" />
+                <action android:name="com.example.onemusic.WIDGET_PREV" />
+                <action android:name="com.example.onemusic.WIDGET_FAVORITE" />
+                <action android:name="com.example.onemusic.WIDGET_SHUFFLE" />
+                <action android:name="com.example.onemusic.WIDGET_REPEAT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_4x2" />
+        </receiver>
+    </application>
+
+</manifest>

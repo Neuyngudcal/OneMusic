@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    OneMusic Warm Ivory Palette (bản XML cho widget, splash, drawable).
+    Nguồn chuẩn: java/com/example/onemusic/theme/Color.kt — sửa ở đó thì sửa cả ở đây.
+-->
+<resources>
+    <!-- Surfaces -->
+    <color name="obsidian_black">#FF000000</color>
+    <color name="surface_base">#FF0E0D0C</color>
+    <color name="surface_elevated">#FF24221F</color>
+    <color name="surface_card">#FF2A2825</color>
+    <color name="surface_divider">#FF2C2A26</color>
+
+    <!-- Text / Ivory -->
+    <color name="text_primary">#FFF4F1EA</color>
+    <color name="text_secondary">#FFDDD9D0</color>
+    <color name="text_tertiary">#FF9C9890</color>
+    <color name="ivory_subtle">#1AF4F1EA</color>
+
+    <!-- Accents -->
+    <color name="brand">#FF228B22</color>
+    <color name="apex_cyan">#FF00D8F6</color>
+    <color name="apex_rose">#FFFA2D48</color>
+</resources>

@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">OneMusic</string>
+    <string name="playback_notification_channel_name">Phát nhạc OneMusic</string>
+    <string name="widget_4x1_desc">Thanh điều khiển OneMusic nhỏ gọn</string>
+    <string name="widget_4x2_desc">Trình phát nhạc OneMusic với đĩa than</string>
+</resources>

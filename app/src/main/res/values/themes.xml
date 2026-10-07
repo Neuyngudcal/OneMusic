@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Android 12+ / Android 16 Core SplashScreen Theme for Zero-Delay Startup -->
+    <style name="Theme.OneMusic.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/obsidian_black</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.OneMusic</item>
+    </style>
+
+    <!-- Main Application Theme (Pure AMOLED Pitch Black) -->
+    <style name="Theme.OneMusic" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/obsidian_black</item>
+        <item name="android:colorBackground">@color/obsidian_black</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+    </style>
+
+</resources>
