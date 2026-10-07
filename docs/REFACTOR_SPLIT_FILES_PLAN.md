@@ -278,10 +278,11 @@ ui/screens/player/
 │   ├── ArtworkPagerSync.kt            (~100)  Đồng bộ pager ↔ bài đang phát         ← dòng 690–778
 │   └── ControlsDeckVisibility.kt      (~90)   Ẩn/hiện cụm điều khiển khi cuộn       ← dòng 604–687
 ├── backdrop/
-│   └── NowPlayingBackdrop.kt          (~290)  LAYER 0, 1A, 1B + màu từ ảnh bìa     ← dòng 779–817, 1107–1382
+│   └── NowPlayingBackdrop.kt          (~270)  LAYER 0, 1B + màu từ ảnh bìa; LAYER 1A ở artwork/HeroArtworkPager.kt ← dòng 779–817, 1107–1382
 ├── artwork/
 │   ├── StaticAlbumArtwork.kt          (~95)                                         ← dòng 2981–3073
-│   └── MotionArtworkPlayer.kt         (~300)                                        ← dòng 3074–3372
+│   ├── MotionArtworkPlayer.kt         (~300)                                        ← dòng 3074–3372
+│   └── HeroArtworkPager.kt            (~150)  Pager ảnh bìa (LAYER 1A)               ← dòng 1260–1363
 ├── lyrics/
 │   ├── NowPlayingLyricsPane.kt        (~250)  Nhánh LYRICS + tự cuộn tới câu đang hát ← dòng 920–1000, 1447–1610
 │   └── LyricLineItems.kt              (~300)  isInstrumentalLine, InstrumentalDotsLyricItem,
@@ -323,9 +324,16 @@ Chỉ cắt/dán, **không** đổi một dòng logic nào:
 
 **Kết quả thực tế:** `NowPlayingSheet.kt` 2.357 → 2.102 dòng; 3 file mới trong `dialogs/`. Mỗi dialog nhận giá trị + lambda thay vì đọc biến của sheet: `isSpeedMenuOpen = false` / `showSleepTimerDialog = false` → `onDismiss()`, `playbackState.xxx` → tham số, `nowPlayingHazeState` → `hazeState`. `FavoriteToastBanner` nhận `Modifier.align(Alignment.BottomCenter)` từ Box cha qua tham số `modifier` (thứ tự modifier giữ nguyên). Đã kiểm tra ngược tự động: hoàn tác các phép đổi tên thì thân 3 hàm khớp tuyệt đối với khối gốc, và thân `NowPlayingSheet.kt` chỉ khác đúng 3 chỗ gọi.
 
-### 2.3 Bước 3 – Tách nền (backdrop) (PR 3, ⭐⭐)
+### 2.3 Bước 3 – Tách nền (backdrop) (PR 3, ⭐⭐) ✅ Đã xong (07/10/2026)
 
 `NowPlayingBackdrop(displayedTrack, pagerState, colors, blurRadius, frostedGlassAlpha, motionPlayer, ...)`. Lưu ý: pager ảnh bìa (LAYER 1A) nhận cử chỉ vuốt ngang → truyền `pagerState` từ cha xuống, **không** tạo `rememberPagerState` mới bên trong.
+
+**Kết quả thực tế:** `NowPlayingSheet.kt` 2.102 → 1.805 dòng.
+- `backdrop/NowPlayingBackdrop.kt` (266 dòng): màu động từ ảnh bìa, độ mờ nền, lớp voan (LAYER 1B) và LAYER 0. Các giá trị này **chỉ dùng trong phần nền** nên chuyển hẳn vào đây; khi màu đổi (600 ms) giờ chỉ phần nền vẽ lại thay vì cả sheet.
+- `artwork/HeroArtworkPager.kt` (151 dòng): LAYER 1A tách riêng để mỗi hàm dưới 200 dòng. `pagerState` vẫn tạo ở `NowPlayingSheet()` và truyền xuống. Màu viền mờ (`scrimColor`) tính một lần ở `NowPlayingBackdrop` thay vì trong từng trang (cùng giá trị).
+- Tham số: `isArtworkMode`, `displayedTrack`, `track`, `queue`, `pagerState`, `isDynamicMeshBackgroundEnabled`, `motionVideoPath`, `motionPlayer`, `hazeState`, `isSheetFullyVisible` (= `!isDismissing`), `controlsDeckHeight`, `onArtworkLongClick` (= mở "Thông tin bài hát").
+- Khối LAYER 0 vốn thụt lề lệch trong bản gốc, đã chỉnh lại (chỉ đổi khoảng trắng). Kiểm tra ngược tự động: khớp nội dung với bản gốc; `NowPlayingSheet.kt` chỉ đổi đúng 3 chỗ.
+- Dọn import thừa trong cả thư mục `player/` (vd `key`, `alpha`, `size` thực chất là tên tham số hoặc thuộc tính của DrawScope/View, không phải hàm được import).
 
 ### 2.4 Bước 4 – Tách khung Lời bài hát và Hàng đợi (PR 4, ⭐⭐⭐)
 

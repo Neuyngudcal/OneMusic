@@ -6,12 +6,8 @@ import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -49,7 +45,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,7 +55,6 @@ import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Lyrics
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Reorder
@@ -75,7 +69,6 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -88,12 +81,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -109,7 +98,6 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -121,8 +109,6 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.onemusic.data.local.AppSettings
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.playback.AudioEffectManager
@@ -136,8 +122,7 @@ import com.example.onemusic.ui.components.AppleLosslessIcon
 import com.example.onemusic.ui.components.ApplePauseIcon
 import com.example.onemusic.ui.components.ApplePlayIcon
 import com.example.onemusic.ui.components.TrackDetailsDialog
-import com.example.onemusic.ui.screens.player.artwork.MotionArtworkPlayer
-import com.example.onemusic.ui.screens.player.artwork.StaticAlbumArtwork
+import com.example.onemusic.ui.screens.player.backdrop.NowPlayingBackdrop
 import com.example.onemusic.ui.screens.player.controls.NowPlayingActionDock
 import com.example.onemusic.ui.screens.player.controls.NowPlayingProgressSection
 import com.example.onemusic.ui.screens.player.lyrics.WordByWordLyricItem
@@ -149,9 +134,7 @@ import com.example.onemusic.ui.screens.player.dialogs.FavoriteToastBanner
 import com.example.onemusic.ui.screens.player.dialogs.PlaybackSpeedDialog
 import com.example.onemusic.ui.screens.player.dialogs.SleepTimerDialog
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.ui.utils.rememberArtworkColors
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
@@ -169,8 +152,6 @@ import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.ScrimColor
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextDisabled
 
 /**
  * Modern Fullscreen Music Player (Now Playing Sheet) - ONE PAGE ARCHITECTURE
@@ -452,45 +433,6 @@ fun NowPlayingSheet(
     } else {
         track ?: (if (queue.isNotEmpty()) queue.firstOrNull() else null)
     }
-
-    // Dynamic Artwork Colors with Swatch Fallback & HSL (Synchronized with displayedTrack)
-    val dynamicArtworkColors = rememberArtworkColors(imageUrl = displayedTrack?.artworkUrl)
-
-    val targetTopColor = remember(dynamicArtworkColors) {
-        dynamicArtworkColors.topColor.copy(alpha = 1f)
-    }
-    val targetSecondaryColor = remember(dynamicArtworkColors) {
-        dynamicArtworkColors.secondaryColor.copy(alpha = 1f)
-    }
-    val targetAccentColor = remember(dynamicArtworkColors) {
-        dynamicArtworkColors.accentColor.copy(alpha = 1f)
-    }
-    val targetBottomColor = remember(dynamicArtworkColors) {
-        dynamicArtworkColors.bottomColor.copy(alpha = 1f)
-    }
-
-    val auroraColorEasing = remember { CubicBezierEasing(0.25f, 0.10f, 0.25f, 1.00f) }
-
-    val animatedTopColor by animateColorAsState(
-        targetValue = targetTopColor,
-        animationSpec = tween(durationMillis = 600, easing = auroraColorEasing),
-        label = "bg_top_color"
-    )
-    val animatedSecondaryColor by animateColorAsState(
-        targetValue = targetSecondaryColor,
-        animationSpec = tween(durationMillis = 600, easing = auroraColorEasing),
-        label = "bg_secondary_color"
-    )
-    val animatedAccentColor by animateColorAsState(
-        targetValue = targetAccentColor,
-        animationSpec = tween(durationMillis = 600, easing = auroraColorEasing),
-        label = "bg_accent_color"
-    )
-    val animatedBottomColor by animateColorAsState(
-        targetValue = targetBottomColor,
-        animationSpec = tween(durationMillis = 600, easing = auroraColorEasing),
-        label = "bg_bottom_color"
-    )
 
     // Smooth Entrance from Bottom
     LaunchedEffect(Unit) {
@@ -780,22 +722,6 @@ fun NowPlayingSheet(
         bottomEnd = bottomCornerRadius
     )
 
-
-    // Quản lý chuyển cảnh Kính Mờ Quang Học Trên Toàn Bộ Giao Diện Now Playing (120fps)
-    val isArtworkMode = centerView == NowPlayingCenterView.ARTWORK
-
-    val artworkScale = 1.0f
-    val blurRadiusAnimated by animateDpAsState(
-        targetValue = if (isArtworkMode) 0.dp else 26.dp,
-        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
-        label = "nowplaying_bg_blur"
-    )
-    val frostedGlassAlpha by animateFloatAsState(
-        targetValue = if (!isArtworkMode) 1.0f else 0.0f,
-        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
-        label = "frosted_glass_alpha"
-    )
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -818,244 +744,21 @@ fun NowPlayingSheet(
             .clip(dynamicSheetShape)
             .background(ObsidianBlack)
     ) {
-        // LAYER 0 & 1A: TRUE NOW PLAYING LIVING BACKDROP (AMBIENT MESH + HERO ALBUM ARTWORK)
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .then(
-                    if (blurRadiusAnimated > 0.5.dp) {
-                        Modifier.blur(blurRadiusAnimated)
-                    } else Modifier
-                )
-        ) {
-            // LAYER 0: Haze Source Background Canvas (Album Art Blur + Vibrant Mesh Gradient)
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .hazeSource(state = nowPlayingHazeState)
-                    .background(animatedBottomColor)
-            ) {
-            if (appSettings?.isDynamicMeshBackgroundEnabled != false) {
-                // 1. Phóng to ảnh album + làm mờ (Blur 50dp) với hiệu ứng chuyển đổi mờ dần 600ms siêu mượt
-                AnimatedContent(
-                    targetState = displayedTrack?.artworkUrl,
-                    transitionSpec = {
-                        fadeIn(animationSpec = tween(600, easing = FastOutSlowInEasing)) togetherWith fadeOut(animationSpec = tween(600, easing = FastOutSlowInEasing))
-                    },
-                    label = "bg_art_blur_crossfade",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .blur(radius = 50.dp)
-                ) { artUrl ->
-                    if (!artUrl.isNullOrBlank()) {
-                        val bgImageRequest = remember(artUrl) {
-                            ImageRequest.Builder(context)
-                                .data(artUrl)
-                                .crossfade(false)
-                                .memoryCachePolicy(coil.request.CachePolicy.ENABLED)
-                                .diskCachePolicy(coil.request.CachePolicy.ENABLED)
-                                .build()
-                        }
-                        AsyncImage(
-                            model = bgImageRequest,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .graphicsLayer {
-                                    alpha = 0.45f
-                                    scaleX = 1.25f
-                                    scaleY = 1.25f
-                                    compositingStrategy = CompositingStrategy.Offscreen
-                                }
-                                .drawWithContent {
-                                    drawContent()
-                                    drawRect(
-                                        brush = Brush.verticalGradient(
-                                            0.00f to Color.Black,
-                                            0.30f to Color.Black,
-                                            0.50f to Color.Black.copy(alpha = 0.85f),
-                                            0.70f to Color.Black.copy(alpha = 0.55f),
-                                            0.85f to Color.Black.copy(alpha = 0.25f),
-                                            0.96f to Color.Black.copy(alpha = 0.05f),
-                                            1.00f to Color.Transparent
-                                        ),
-                                        blendMode = BlendMode.DstIn
-                                    )
-                                }
-                        )
-                    }
-                }
-
-                // 2. Dynamic Ambient Gradient Mesh (Linear, Radial & Warm Organic Atmosphere)
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .drawBehind {
-                            // A. Linear Gradient trải dài toàn màn hình từ trên xuống theo dải màu hữu cơ
-                            drawRect(
-                                brush = Brush.verticalGradient(
-                                    0.00f to animatedTopColor.copy(alpha = 0.85f),
-                                    0.35f to animatedTopColor.copy(alpha = 0.75f),
-                                    0.65f to animatedSecondaryColor.copy(alpha = 0.78f),
-                                    1.00f to animatedBottomColor.copy(alpha = 0.92f)
-                                )
-                            )
-
-                            // B. Radial Gradient rực rỡ tỏa rộng quanh khu vực đĩa nhạc với màu Accent sống động
-                            drawRect(
-                                brush = Brush.radialGradient(
-                                    colors = listOf(
-                                        animatedAccentColor.copy(alpha = 0.45f),
-                                        animatedTopColor.copy(alpha = 0.30f),
-                                        Color.Transparent
-                                    ),
-                                    center = Offset(size.width * 0.5f, size.height * 0.25f),
-                                    radius = size.height * 0.65f
-                                )
-                            )
-
-                            // C. Lớp làm dịu nhẹ nhàng ở chân máy để giữ độ tương phản cho phím bấm trắng
-                            drawRect(
-                                brush = Brush.verticalGradient(
-                                    0.00f to Color.Transparent,
-                                    0.70f to Color.Transparent,
-                                    1.00f to Color.Black.copy(alpha = 0.32f)
-                                )
-                            )
-                        }
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(ObsidianBlack)
-                )
-            }
-        }
-
-            // LAYER 1A: HERO ALBUM ARTWORK CAROUSEL (FULL BLEED TRÀN VIỀN TỪ ĐỈNH MÁY, ĐỒNG BỘ 100% VỚI CỤM PHÍM ĐÁY)
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .navigationBarsPadding()
-                    .padding(bottom = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // SÂN KHẤU TRUNG TÂM (Tràn từ đỉnh máy y = 0 đến ngay trên cụm phím điều khiển)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier.fillMaxSize(),
-                        pageSpacing = 16.dp,
-                        beyondViewportPageCount = 1,
-                        key = { page -> if (queue.isNotEmpty() && page in queue.indices) "${queue[page].id}_$page" else "single_art" }
-                    ) { page ->
-                        val currentTrack = if (queue.isNotEmpty() && page in queue.indices) queue[page] else track
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .graphicsLayer {
-                                    val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
-                                    this.alpha = lerp(0.35f, 1f, 1f - pageOffset.coerceIn(0f, 1f))
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            val isCurrentOrTargetPage = page == pagerState.currentPage || page == pagerState.targetPage
-                            val targetVideoPath = if (isCurrentOrTargetPage && currentTrack?.id == track?.id) motionVideoPath else null
-
-                            // FULL BLEED HERO ARTWORK CONTAINER
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .graphicsLayer {
-                                        scaleX = artworkScale
-                                        scaleY = artworkScale
-                                    }
-                                    .apexBounceClick(
-                                        scaleDown = 0.98f,
-                                        enableHaptic = true,
-                                        onLongClick = {
-                                            if (currentTrack != null) {
-                                                showTrackDetailsDialog = true
-                                            }
-                                        }
-                                    )
-                            ) {
-                                val activeScrimColor = if (appSettings?.isDynamicMeshBackgroundEnabled != false) {
-                                    animatedSecondaryColor
-                                } else {
-                                    ObsidianBlack
-                                }
-
-                                if (targetVideoPath != null) {
-                                    MotionArtworkPlayer(
-                                        motionVideoPath = targetVideoPath,
-                                        motionPlayer = motionPlayer,
-                                        track = currentTrack,
-                                        hazeState = nowPlayingHazeState,
-                                        isSheetFullyVisible = !isDismissing,
-                                        scrimColor = activeScrimColor
-                                    )
-                                } else if (currentTrack != null && currentTrack.artworkUrl.isNotBlank()) {
-                                    StaticAlbumArtwork(
-                                        context = context,
-                                        track = currentTrack,
-                                        applyMask = true,
-                                        scrimColor = activeScrimColor
-                                    )
-                                } else {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .background(SurfaceElevated),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.MusicNote,
-                                            contentDescription = null,
-                                            tint = TextDisabled,
-                                            modifier = Modifier.size(100.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Khoảng đệm bảo lưu kích thước cụm phím điều khiển (Đồng bộ không gian chân trang với Layer 2)
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(controlsDeckHeightDp)
-                )
-            }
-        }
-
-        // LAYER 1B: AUTHENTIC OBSIDIAN FROSTED GLASS VEIL (Phủ voan than chì mờ thấu quang khi vào Lời bài hát / Hàng đợi)
-        if (frostedGlassAlpha > 0.01f) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer { alpha = frostedGlassAlpha }
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                Color.Black.copy(alpha = 0.40f),
-                                Color.Black.copy(alpha = 0.60f),
-                                Color.Black.copy(alpha = 0.78f)
-                            )
-                        )
-                    )
-            )
-        }
+        // LAYER 0, 1A, 1B: nền ảnh bìa + màu động, pager ảnh bìa, lớp voan kính mờ (xem backdrop/NowPlayingBackdrop.kt)
+        NowPlayingBackdrop(
+            isArtworkMode = centerView == NowPlayingCenterView.ARTWORK,
+            displayedTrack = displayedTrack,
+            track = track,
+            queue = queue,
+            pagerState = pagerState,
+            isDynamicMeshBackgroundEnabled = appSettings?.isDynamicMeshBackgroundEnabled != false,
+            motionVideoPath = motionVideoPath,
+            motionPlayer = motionPlayer,
+            hazeState = nowPlayingHazeState,
+            isSheetFullyVisible = !isDismissing,
+            controlsDeckHeight = controlsDeckHeightDp,
+            onArtworkLongClick = { showTrackDetailsDialog = true }
+        )
 
         // LAYER 2: ONE PAGE FLOATING INTERACTIVE LAYER (Pull handle, In-place Lyrics/Queue, and Collapsible Master Controls)
         Column(
