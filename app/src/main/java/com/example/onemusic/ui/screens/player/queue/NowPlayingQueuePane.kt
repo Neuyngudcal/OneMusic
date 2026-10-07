@@ -1,11 +1,6 @@
 package com.example.onemusic.ui.screens.player.queue
 
-import android.view.HapticFeedbackConstants
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,26 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Reorder
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,20 +35,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.playback.PlaybackState
-import com.example.onemusic.theme.ApexRose
 import com.example.onemusic.theme.IvoryDisabled
 import com.example.onemusic.theme.IvoryFaint
 import com.example.onemusic.theme.IvorySubtle
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.TextPrimary
 import com.example.onemusic.ui.utils.apexBounceClick
 import dev.chrisbanes.haze.HazeState
@@ -326,132 +304,15 @@ internal fun NowPlayingQueuePane(
                         key = { index, _ -> upNextKeys[index] }
                     ) { localIndex, nTrack ->
                         val actualIndex = if (currentIndex in queueItems.indices) currentIndex + 1 + localIndex else localIndex
-                        val currentOnRemove = rememberUpdatedState(onRemoveQueueItem)
-                        val canDismiss = onRemoveQueueItem != null
-                        // FIX: Đọc các giá trị có thể đổi theo vị trí (actualIndex) qua rememberUpdatedState
-                        // để confirmValueChange (bị remember theo key hàng) và gesture kéo luôn dùng vị trí mới nhất.
-                        val latestActualIndex = rememberUpdatedState(actualIndex)
-
-                        val dismissState = rememberSwipeToDismissBoxState(
-                            positionalThreshold = { distance -> distance * 0.50f },
-                            confirmValueChange = { dismissValue ->
-                                if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
-                                    currentOnRemove.value?.invoke(latestActualIndex.value)
-                                    true
-                                } else {
-                                    false
-                                }
-                            }
+                        QueueReorderableRow(
+                            track = nTrack,
+                            actualIndex = actualIndex,
+                            queueLastIndex = queueItems.lastIndex,
+                            minReorderIndex = (playbackState.currentIndex + 1).coerceAtLeast(0),
+                            onPlayQueueIndex = onPlayQueueIndex,
+                            onMoveQueueItem = onMoveQueueItem,
+                            onRemoveQueueItem = onRemoveQueueItem
                         )
-
-                        SwipeToDismissBox(
-                            state = dismissState,
-                            enableDismissFromStartToEnd = false,
-                            enableDismissFromEndToStart = canDismiss,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .animateItem(
-                                    fadeInSpec = tween(200, easing = FastOutSlowInEasing),
-                                    fadeOutSpec = tween(200, easing = FastOutSlowInEasing),
-                                    placementSpec = spring(dampingRatio = 0.82f, stiffness = 400f)
-                                ),
-                            backgroundContent = {
-                                val isSwiping = dismissState.targetValue == SwipeToDismissBoxValue.EndToStart &&
-                                        dismissState.currentValue == SwipeToDismissBoxValue.Settled
-                                val progress = dismissState.progress
-
-                                if (isSwiping) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .background(ApexRose.copy(alpha = (progress * 1.5f).coerceIn(0f, 1f)))
-                                            .padding(horizontal = 20.dp),
-                                        contentAlignment = Alignment.CenterEnd
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Delete,
-                                            contentDescription = "Xóa khỏi hàng đợi",
-                                            tint = PrimaryIvory,
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        ) {
-                            val view = LocalView.current
-                            val density = LocalDensity.current
-                            // Bước kéo = chiều cao thật của hàng + khoảng cách 2dp giữa các hàng, để hàng bám đúng ngón tay
-                            var rowHeightPx by remember { mutableIntStateOf(0) }
-                            val spacingPx = with(density) { 2.dp.toPx() }
-                            val itemStepPx = if (rowHeightPx > 0) rowHeightPx + spacingPx else with(density) { 56.dp.toPx() }
-                            // pointerInput(nTrack.id) không khởi động lại → đọc bước kéo mới nhất qua rememberUpdatedState
-                            val latestItemStepPx = rememberUpdatedState(itemStepPx)
-                            var accumulatedDragY by remember { mutableFloatStateOf(0f) }
-
-                            // FIX: Đọc các giá trị có thể đổi theo vị trí (danh giới hàng đợi)
-                            // qua rememberUpdatedState để luôn lấy giá trị mới nhất mà KHÔNG cần khởi động lại
-                            // gesture pointerInput giữa chừng khi người dùng đang kéo liên tục nhiều bậc.
-                            val latestQueueLastIndex = rememberUpdatedState(queueItems.lastIndex)
-                            val latestMinReorderIndex = rememberUpdatedState((playbackState.currentIndex + 1).coerceAtLeast(0))
-
-                            QueueFlatTrackRow(
-                                track = nTrack,
-                                showReorder = true,
-                                onClick = {
-                                    onPlayQueueIndex(actualIndex)
-                                },
-                                modifier = Modifier.onSizeChanged { rowHeightPx = it.height },
-                                reorderContent = {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(36.dp)
-                                            .clip(CircleShape)
-                                            // FIX: key theo track.id (ổn định) thay vì actualIndex (đổi liên tục khi kéo),
-                                            // để gesture kéo-sắp-xếp không bị hủy giữa chừng sau mỗi bậc di chuyển.
-                                            .pointerInput(nTrack.id) {
-                                                detectVerticalDragGestures(
-                                                    onDragStart = {
-                                                        accumulatedDragY = 0f
-                                                        view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
-                                                    },
-                                                    onDragEnd = {
-                                                        accumulatedDragY = 0f
-                                                    },
-                                                    onDragCancel = {
-                                                        accumulatedDragY = 0f
-                                                    },
-                                                    onVerticalDrag = { change, dragAmount ->
-                                                        change.consume()
-                                                        accumulatedDragY += dragAmount
-
-                                                        val currentActualIndex = latestActualIndex.value
-                                                        val minReorderIndex = latestMinReorderIndex.value
-                                                        val stepPx = latestItemStepPx.value
-                                                        if (accumulatedDragY < -stepPx && currentActualIndex > minReorderIndex) {
-                                                            onMoveQueueItem?.invoke(currentActualIndex, currentActualIndex - 1)
-                                                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                                            accumulatedDragY = 0f
-                                                        } else if (accumulatedDragY > stepPx && currentActualIndex < latestQueueLastIndex.value) {
-                                                            onMoveQueueItem?.invoke(currentActualIndex, currentActualIndex + 1)
-                                                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-                                                            accumulatedDragY = 0f
-                                                        }
-                                                    }
-                                                )
-                                            },
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Reorder,
-                                            contentDescription = "Kéo để dời thứ tự",
-                                            tint = IvoryFaint,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                }
-                            )
-                        }
                     }
                 }
             }
