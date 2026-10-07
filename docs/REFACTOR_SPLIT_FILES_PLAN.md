@@ -372,7 +372,7 @@ Chỉ cắt/dán, **không** đổi một dòng logic nào:
 
 ---
 
-## Giai đoạn 3 – `HomeScreen.kt` (2.236 dòng → ~12 file)
+## Giai đoạn 3 – `HomeScreen.kt` (2.236 dòng → ~12 file) ✅ Đã xong (07/10/2026)
 
 ### 3.0 Cấu trúc đích
 
@@ -402,6 +402,13 @@ ui/screens/home/
 1. **PR 1:** `HomeModels.kt` + `NewPlaylistDialog.kt` (chỉ cắt/dán).
 2. **PR 2:** Tách 4 màn con `PLAYLISTS`, `ARTISTS`, `ALBUMS`, các nhánh `*_DETAIL`. Mỗi màn con là một `@Composable` nhận `tracks`, callback, và `onBack`/`onOpenDetail`. Các biến `albumViewMode`, `artistGroupMode` đang dùng `rememberSaveable` ở `HomeScreen()` → **giữ ở cha** để không mất khi chuyển màn con.
 3. **PR 3:** Tách màn chính thành các `LazyListScope.homeXxxSection(...)` (mục 3.2).
+
+**Kết quả thực tế (07/10/2026) ✅ Đã xong về code – ⚠️ còn chờ build Android + smoke test 10.2:** `HomeScreen.kt` 2.229 → 436 dòng; 12 file mới, để **ngang hàng trong `home/`** (cùng package, không cần thêm import ở nơi gọi):
+- `HomeModels.kt` (42), `NewPlaylistDialog.kt` (116) – tên đang gõ (`newPlaylistName`) vẫn giữ ở `HomeScreen()` nên đóng/mở lại hộp thoại không mất chữ, như cũ.
+- Màn chính: `HomeMainContent.kt` (180: `LazyColumn`, lời chào, thẻ thư viện trống) gọi 5 hàm `LazyListScope`: `homeHeroBannerSection` (`HomeHeroBanner.kt`, 160), `homeRecentSection` (`HomeRecentSection.kt`, 266), `homePlaylistsCarouselSection` (`HomePlaylistsCarousel.kt`, 187), `homeTopArtistsSection` (`HomeTopArtistsSection.kt`, 160), `homeExploreSection` (`HomeExploreSection.kt`, 128). Thứ tự và `key` của các item giữ nguyên.
+- Màn con: `HomePlaylistsContent.kt` (278), `HomeArtistsContent.kt` (284), `HomeAlbumsContent.kt` (504), `HomeDetailRoutes.kt` (164: `HomeArtistDetailRoute`, `HomeAlbumDetailRoute`, `HomePlaylistDetailRoute`).
+- Toàn bộ state điều hướng (`currentSubView`, `detailBackTarget`, `selected*`, `isSelectedFavorites`), chế độ xem (`albumViewMode`, `artistGroupMode`) và trạng thái menu đang mở **vẫn ở `HomeScreen()`** vì `BackHandler` dùng đến; màn con nhận giá trị + callback. Các callback mở chi tiết giữ đúng thân lệnh cũ của từng nơi (vd mở Yêu thích từ Trang chủ thì xóa cả `selectedAlbum`/`selectedArtist`, từ màn Playlist thì không – y như bản gốc).
+- Kiểm tra: `git diff --color-moved` – mọi dòng không phải "di chuyển nguyên vẹn" đều là thay phép gán state bằng callback. Cả thư mục `home/` đã biên dịch thử được với Compose Desktop 1.7.3 + Kotlin 2.1.0 (stub phần Android/app theo chữ ký thật). Cần chạy `./gradlew :app:compileDebugKotlin` và smoke test Trang chủ trước khi phát hành.
 
 **Lưu ý:** `HomeAlbumsContent` (~430 dòng) và tab Album của `LibraryScreen` có thể đang vẽ thẻ album giống nhau. Sau khi tách xong cả hai, so sánh – nếu trùng thì gộp thành `ui/components/AlbumGridCard.kt` (PR riêng, có đổi hành vi nhỏ → cần smoke test cả hai màn).
 
