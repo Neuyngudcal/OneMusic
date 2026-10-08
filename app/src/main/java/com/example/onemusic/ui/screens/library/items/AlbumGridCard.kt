@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Album
 import androidx.compose.material.icons.rounded.MusicNote
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +45,6 @@ import com.example.onemusic.theme.TextPrimary
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.theme.apexGroupedCardItem
-import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
 
 /**
@@ -230,7 +228,6 @@ fun AlbumListItem(
     index: Int,
     total: Int,
     onClick: () -> Unit,
-    onPlayClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -309,15 +306,6 @@ fun AlbumListItem(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-
-                ApexCircularGlassButton(
-                    icon = Icons.Rounded.PlayArrow,
-                    contentDescription = "Phát album",
-                    onClick = onPlayClick,
-                    size = 38.dp,
-                    iconSize = 20.dp,
-                    iconTint = PrimaryIvory
-                )
             }
 
             if (index < total - 1) {

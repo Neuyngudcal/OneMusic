@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.data.model.Track
 import com.example.onemusic.data.search.AlbumGroup
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
@@ -30,8 +29,7 @@ import com.example.onemusic.ui.screens.library.items.AlbumListItem
 fun LazyListScope.albumsTabContent(
     albums: List<AlbumGroup>,
     libraryViewMode: LibraryViewMode,
-    onAlbumClick: (String) -> Unit,
-    onPlayAlbum: (List<Track>) -> Unit
+    onAlbumClick: (String) -> Unit
 ) {
     // 1. Section Label
     item(key = "albums_section_label") {
@@ -147,12 +145,7 @@ fun LazyListScope.albumsTabContent(
                         trackCount = album.tracks.size,
                         index = index,
                         total = albums.size,
-                        onClick = { onAlbumClick(album.key) },
-                        onPlayClick = {
-                            if (album.tracks.isNotEmpty()) {
-                                onPlayAlbum(album.tracks)
-                            }
-                        }
+                        onClick = { onAlbumClick(album.key) }
                     )
                 }
             }

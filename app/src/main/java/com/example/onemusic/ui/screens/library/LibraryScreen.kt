@@ -294,8 +294,7 @@ fun LibraryScreen(
                     albumsTabContent(
                         albums = albums,
                         libraryViewMode = uiState.viewMode,
-                        onAlbumClick = { albumKey -> viewModel.openAlbum(albumKey) },
-                        onPlayAlbum = { albumTracks -> playList(albumTracks) }
+                        onAlbumClick = { albumKey -> viewModel.openAlbum(albumKey) }
                     )
                 }
 
@@ -304,8 +303,7 @@ fun LibraryScreen(
                         artists = artists,
                         artistImages = artistImages,
                         getCachedArtistImageUrl = { name -> artistImageRepository.getCachedImageUrl(name) },
-                        onArtistClick = { artistName -> viewModel.openArtist(artistName) },
-                        onPlayArtistTracks = { artistTracks -> playList(artistTracks) }
+                        onArtistClick = { artistName -> viewModel.openArtist(artistName) }
                     )
                 }
 
@@ -315,7 +313,6 @@ fun LibraryScreen(
                         tracks = tracks,
                         onOpenFavoritePlaylist = { viewModel.openPlaylist("FAVORITES") },
                         onOpenPlaylistDetail = { pl -> viewModel.openPlaylist(pl.id) },
-                        onPlayTracks = playList,
                         onOpenNewPlaylistDialog = { viewModel.setShowNewPlaylistDialog(true) },
                         onImportPlaylistM3u = onImportPlaylistM3u,
                         onExportPlaylistM3u = onExportPlaylistM3u,

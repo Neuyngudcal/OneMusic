@@ -16,8 +16,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,14 +32,12 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.SurfaceDivider
 import com.example.onemusic.theme.TextPrimary
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.theme.avatarColorFor
-import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
 
 /**
@@ -51,8 +47,7 @@ fun LazyListScope.artistsTabContent(
     artists: List<Pair<String, List<Track>>>,
     artistImages: Map<String, String>,
     getCachedArtistImageUrl: (String) -> String?,
-    onArtistClick: (String) -> Unit,
-    onPlayArtistTracks: (List<Track>) -> Unit
+    onArtistClick: (String) -> Unit
 ) {
     // 1. Section Label
     item(key = "artists_section_label") {
@@ -173,19 +168,6 @@ fun LazyListScope.artistsTabContent(
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
-
-                        ApexCircularGlassButton(
-                            icon = Icons.Rounded.PlayArrow,
-                            contentDescription = "Phát tất cả của nghệ sĩ",
-                            onClick = {
-                                if (artistTracks.isNotEmpty()) {
-                                    onPlayArtistTracks(artistTracks)
-                                }
-                            },
-                            size = 38.dp,
-                            iconSize = 20.dp,
-                            iconTint = PrimaryIvory
-                        )
                     }
 
                     if (index < total - 1) {

@@ -21,7 +21,6 @@ import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.UploadFile
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -70,7 +69,6 @@ fun LazyListScope.playlistsTabContent(
     tracks: List<Track>,
     onOpenFavoritePlaylist: () -> Unit,
     onOpenPlaylistDetail: (CustomPlaylist) -> Unit,
-    onPlayTracks: (List<Track>) -> Unit,
     onOpenNewPlaylistDialog: () -> Unit,
     onImportPlaylistM3u: (() -> Unit)?,
     onExportPlaylistM3u: ((CustomPlaylist) -> Unit)?,
@@ -216,19 +214,6 @@ fun LazyListScope.playlistsTabContent(
                             overflow = TextOverflow.Ellipsis
                         )
                     }
-
-                    ApexCircularGlassButton(
-                        icon = Icons.Rounded.PlayArrow,
-                        contentDescription = "Phát bài yêu thích",
-                        onClick = {
-                            if (favoriteTracks.isNotEmpty()) {
-                                onPlayTracks(favoriteTracks)
-                            }
-                        },
-                        size = 38.dp,
-                        iconSize = 20.dp,
-                        iconTint = PrimaryIvory
-                    )
                 }
 
                 if (totalPlaylists > 1) {
@@ -248,7 +233,6 @@ fun LazyListScope.playlistsTabContent(
         key = { index, pl -> "custom_pl_${pl.id}_$index" }
     ) { idx, pl ->
         val currentIndex = idx + 1
-        val plTracks = tracks.filter { it.id in pl.trackIds }
 
         Box(
             modifier = Modifier
@@ -329,21 +313,7 @@ fun LazyListScope.playlistsTabContent(
                             iconSize = 18.dp,
                             iconTint = ApexRose
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
                     }
-
-                    ApexCircularGlassButton(
-                        icon = Icons.Rounded.PlayArrow,
-                        contentDescription = "Phát playlist",
-                        onClick = {
-                            if (plTracks.isNotEmpty()) {
-                                onPlayTracks(plTracks)
-                            }
-                        },
-                        size = 38.dp,
-                        iconSize = 20.dp,
-                        iconTint = PrimaryIvory
-                    )
                 }
 
                 if (currentIndex < totalPlaylists - 1) {
