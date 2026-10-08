@@ -231,3 +231,8 @@ Mỗi bước là một commit, build được và xem được trước khi san
   - Viết lại chú thích đầu `Color.kt` (các hằng số ngà ấm chỉ còn là nguồn của `LegacyDarkAppColors`) và cập nhật `GEMINI.md`.
   - **Giữ lại có chủ ý:** `PaletteHelper.kt` và nền động của Now Playing, `ApexCyan` (dùng ở Material `tertiary`), `HiResGoldGradient`, các hằng số cũ trong `Color.kt` (nguồn của `LegacyDarkAppColors`).
   - **Không đụng:** `.agents/rules/oneui_design_guidelines.md` mô tả bảng màu Samsung Blue/Galaxy Violet từ trước, đã lỗi thời so với app; cần chủ dự án quyết định sửa hay xoá.
+- **Bước 9 (xong, quét tĩnh; chưa build/chạy được trong môi trường viết code):** quét kiểm cuối.
+  - Không còn `Color(0x…)`, `Color.White` ngoài `theme/`. `Color.Black` còn lại chỉ ở mặt nạ gradient `DstIn` của Now Playing, lớp phủ tối trên ảnh của banner (`OnImageScope`) và rãnh đĩa vinyl.
+  - Mọi `AppTheme.colors.<tên>` đều trỏ tới trường có thật trong `AppColors`; không có import trùng hoặc import trỏ tới token đã xoá; mọi chỗ dùng `AppTheme.colors` đều nằm trong ngữ cảnh composable (3 chỗ bộ kiểm tra đánh dấu là `composed {}`, `SnackbarHost` và `Box` có header quá dài, đã tự xác minh là composable).
+  - `colors.xml` sáng/tối khớp với `LightAppColors`/`DarkAppColors` ở 10 màu so sánh được.
+  - Việc còn lại phải làm trên máy có Android SDK: build `assembleDebug`, chạy `checkSizeLimits`, chụp từng màn ở hai theme và đối chiếu bảng tương phản mục 2.2.
