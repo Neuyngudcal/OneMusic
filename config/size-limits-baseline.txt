@@ -7,7 +7,6 @@
 
 # File > 600 dòng
 file app/src/main/java/com/example/onemusic/playback/MusicPlayerController.kt 893
-file app/src/main/java/com/example/onemusic/ui/screens/player/NowPlayingSheet.kt 650
 
 # Hàm > 250 dòng
 fun app/src/main/java/com/example/onemusic/ui/components/ApexEqualizerDialog.kt#ApexEqualizerDialog 314
@@ -18,7 +17,6 @@ fun app/src/main/java/com/example/onemusic/ui/screens/home/HomeAlbumsContent.kt#
 fun app/src/main/java/com/example/onemusic/ui/screens/home/HomeScreen.kt#HomeScreen 385
 fun app/src/main/java/com/example/onemusic/ui/screens/library/LibraryScreen.kt#LibraryScreen 365
 fun app/src/main/java/com/example/onemusic/ui/screens/library/tabs/PlaylistsTabContent.kt#playlistsTabContent 292
-fun app/src/main/java/com/example/onemusic/ui/screens/player/NowPlayingSheet.kt#NowPlayingSheet 556
 fun app/src/main/java/com/example/onemusic/ui/screens/player/artwork/MotionArtworkPlayer.kt#MotionArtworkPlayer 291
 fun app/src/main/java/com/example/onemusic/ui/screens/player/queue/NowPlayingQueuePane.kt#NowPlayingQueuePane 263
 fun app/src/main/java/com/example/onemusic/ui/screens/search/SearchBlankState.kt#searchBlankState 263

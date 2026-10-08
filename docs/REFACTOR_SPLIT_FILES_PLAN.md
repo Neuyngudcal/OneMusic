@@ -705,9 +705,22 @@ data/scanner/replaygain/
 
 ---
 
+### Sau Giai đoạn 8 – `NowPlayingSheet` (08/10/2026) – ⚠️ còn chờ build Android + smoke test 10.1/10.3
+
+Hàm `NowPlayingSheet` 556 → 241 dòng, file `NowPlayingSheet.kt` 650 → 301 dòng; đã xóa 2 dòng tương ứng khỏi `config/size-limits-baseline.txt` (`checkSizeLimits` → OK, còn 14 ngoại lệ). 5 commit:
+1. `state/CenterViewAutoScroll.kt` (133): 6 `LaunchedEffect` tự cuộn Lời/Hàng đợi + `activeLyricIndex` (chép nguyên văn, giữ đúng thứ tự). Trả về `CenterViewAutoScroll` (`activeLyricIndex`, `resetLyricsUserScroll()`); câu đang hát vẫn chỉ đọc trong lambda nên sheet không vẽ lại mỗi câu.
+2. `NowPlayingCenterStage.kt` (140): `AnimatedContent` Lời/Hàng đợi + hiệu ứng chuyển cảnh. Cha truyền `Modifier.fillMaxWidth().weight(1f)` (giữ thứ tự modifier).
+3. `controls/NowPlayingControlsDeck.kt` (143): `ColumnScope.NowPlayingControlsDeck` (giữ đúng overload `ColumnScope.AnimatedVisibility`). Chống bấm Trước/Sau liên tiếp giữ ở cha (state trong `AnimatedVisibility` sẽ bị reset khi cụm điều khiển ẩn/hiện).
+4. `dialogs/NowPlayingDialogLayers.kt` (129): 5 lớp hộp thoại; 5 cờ mở hộp thoại gom vào `NowPlayingDialogsState` (vẫn `remember` ở cha) – trong cha chỉ đổi `showX` → `dialogs.showX`.
+5. Helper nhỏ trong `state/`: `KeepScreenOnEffect`, `FavoriteToastState`, `SkipButtonThrottle`, `Modifier.sheetDismissTransform`, `displayedTrackFor` (thêm vào `ArtworkPagerSync.kt`).
+
+**Kiểm tra:** test giao diện so sánh bản trước khi tách (49593e8) với bản mới, dùng code `state/` thật và stub cho các composable con (hiện tham số, có nút gọi callback): 3 cấu hình × 73 mục (ảnh chụp + cây semantics + nhật ký callback/haptic/cờ màn hình) qua kịch bản: thông báo ưa thích (bấm lại giữa chừng), chống bấm Trước/Sau (349 / 350 ms), huy hiệu chất lượng, nhấn giữ ảnh bìa, vuốt pager, mở Lời ở câu 15, tự cuộn khi sang câu, người dùng tự cuộn, bấm câu để tua, ẩn/hiện cụm điều khiển khi cuộn, Hàng đợi (mọi nút, bảng thao tác: xóa/ưa thích/hẹn giờ…), Back đóng hẹn giờ, EQ, đổi bài khi đang ở Lời, đổi cài đặt giữ màn hình, Back về ảnh bìa, kéo-để-đóng dở dang, Back đóng sheet → **bản cuối và các commit 2–4 giống hệt**.
+- Môi trường thử (Compose Desktop 1.5) có 3 lỗi riêng, đã né giống nhau cho cả 2 bản: `scrollToItem` ngay frame `LazyColumn` vào `AnimatedContent` gây NPE (stub tạo danh sách chậm 700 ms); lò xo co cụm điều khiển cho vùng cắt âm (thêm `clip = false`); `NestedScrollSource.UserInput` chưa có (đổi `Drag`).
+- Hai điểm không ổn định ngay cả khi so bản gốc với chính nó (A/A) đã loại/khóa: ảnh *giữa* lúc vuốt pager (bỏ), mốc "đang đọc lời" 3,5 s tính bằng giờ thật (chờ thật 3,6 s). Còn ảnh bước `lyricsAgain` ở cấu hình "không hi-res" thỉnh thoảng lệch – lệch y hệt (cùng 2 giá trị) khi so bản gốc với chính nó, nên không do tách code (commit 1 dính đúng lỗi này, bản cuối và các commit khác đạt).
+
 ## 9. Tiêu chí hoàn thành (Definition of Done)
 
-- [ ] Không còn file nào trong `app/src/main` vượt **600 dòng** (script ở Giai đoạn 8 trả `OK`). – *08/10/2026: `checkSizeLimits` đã có; còn 2 file và 14 hàm > 250 dòng trong baseline.*
+- [ ] Không còn file nào trong `app/src/main` vượt **600 dòng** (script ở Giai đoạn 8 trả `OK`). – *08/10/2026: `checkSizeLimits` đã có; còn 1 file (`MusicPlayerController.kt`) và 13 hàm > 250 dòng trong baseline.*
 - [ ] Không còn hàm `@Composable` nào dài quá **~250 dòng**.
 - [ ] `./gradlew :app:testDebugUnitTest` xanh; `PlaybackQueueTest` gọi code thật (`QueueOperations`).
 - [ ] Smoke test mục 10 đạt trên ít nhất 1 máy thật.
