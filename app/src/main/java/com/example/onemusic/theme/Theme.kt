@@ -6,17 +6,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.example.onemusic.data.local.ThemeMode
 
 // Scheme duy nhất của app: AMOLED đen + bề mặt ngà ấm + chữ trắng ngà, màu nhấn Forest Green.
 // Mọi component Material (TextField, Switch, ripple, Snackbar…) lấy màu từ đây.
-private val DarkColorScheme = darkColorScheme(
+internal val DarkMaterialColorScheme = darkColorScheme(
     primary = Brand,
     onPrimary = PrimaryIvory,
     primaryContainer = BrandDark,
@@ -51,18 +54,28 @@ private val DarkColorScheme = darkColorScheme(
     scrim = ScrimColor
 )
 
+// TODO(bước 4): thay bằng lightColorScheme thật. Tạm thời giống tối.
+private val LightMaterialColorScheme = DarkMaterialColorScheme
+
 @Composable
 fun OneMusicTheme(
-    darkTheme: Boolean = true, // Default to Obsidian Space for true high-contrast audio experience
+    themeMode: ThemeMode = ThemeMode.LIGHT,
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (themeMode) {
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+    }
+    val appColors = if (darkTheme) DarkAppColors else LightAppColors
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-        else -> DarkColorScheme
+        darkTheme -> DarkMaterialColorScheme
+        else -> LightMaterialColorScheme
     }
 
     val view = LocalView.current
@@ -72,15 +85,17 @@ fun OneMusicTheme(
             if (window != null) {
                 window.statusBarColor = colorScheme.background.toArgb()
                 window.navigationBarColor = colorScheme.background.toArgb()
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-                WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = false
+                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !appColors.isDark
+                WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !appColors.isDark
             }
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalAppColors provides appColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

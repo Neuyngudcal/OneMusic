@@ -1,6 +1,7 @@
 package com.example.onemusic.ui.main
 
 import androidx.compose.animation.AnimatedVisibility
+import com.example.onemusic.theme.NowPlayingThemeScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -91,38 +92,40 @@ internal fun AppOverlays(
         playerController.setMotionPlaybackAllowed(isPlayerExpanded)
     }
     if (isPlayerExpanded) {
-        NowPlayingSheet(
-            playbackState = playbackState,
-            // Truyền cả object State (không đọc .value ở đây) để màn gốc không vẽ lại mỗi 40ms
-            positionState = playerController.positionMs.collectAsState(),
-            onCollapse = onCollapsePlayer,
-            onPlayPause = { playerController.togglePlayPause() },
-            onNext = { playerController.skipToNext() },
-            onPrevious = { playerController.skipToPrevious() },
-            onSeek = { pos -> playerController.seekTo(pos) },
-            onToggleShuffle = { playerController.toggleShuffle() },
-            onCycleRepeat = { playerController.cycleRepeatMode() },
-            onToggleAutoplay = { playerController.toggleAutoplay() },
-            onClearPlaybackHistory = { playerController.clearPlaybackHistory() },
-            onToggleFavorite = { trackId ->
-                val isFav = musicRepository.toggleFavorite(trackId)
-                playerController.updateTrackFavorite(trackId, isFav)
-            },
-            onPlayQueueIndex = { index -> playerController.playQueueIndex(index) },
-            onMoveQueueItem = { from, to -> playerController.moveQueueItem(from, to) },
-            onRemoveQueueItem = { index -> playerController.removeQueueItem(index) },
-            onSetPlaybackSpeed = { speed -> playerController.setPlaybackSpeed(speed) },
-            onSetSleepTimer = { minutes -> playerController.setSleepTimer(minutes) },
-            onSetSleepTimerEndOfTrack = { playerController.setSleepTimerEndOfTrack() },
-            onCancelSleepTimer = { playerController.cancelSleepTimer() },
-            onAddToPlaylist = onOpenAddToPlaylist,
-            audioEffectManager = playerController.audioEffectManager,
-            audioOutputManager = playerController.audioOutputManager,
-            appSettings = appSettings,
-            motionVideoPath = motionVideoPath,
-            motionPlayer = playerController.motionExoPlayer,
-            onRemoveMotionArtwork = { playerController.removeMotionArtworkForCurrentTrack() }
-        )
+        NowPlayingThemeScope {
+            NowPlayingSheet(
+                playbackState = playbackState,
+                // Truyền cả object State (không đọc .value ở đây) để màn gốc không vẽ lại mỗi 40ms
+                positionState = playerController.positionMs.collectAsState(),
+                onCollapse = onCollapsePlayer,
+                onPlayPause = { playerController.togglePlayPause() },
+                onNext = { playerController.skipToNext() },
+                onPrevious = { playerController.skipToPrevious() },
+                onSeek = { pos -> playerController.seekTo(pos) },
+                onToggleShuffle = { playerController.toggleShuffle() },
+                onCycleRepeat = { playerController.cycleRepeatMode() },
+                onToggleAutoplay = { playerController.toggleAutoplay() },
+                onClearPlaybackHistory = { playerController.clearPlaybackHistory() },
+                onToggleFavorite = { trackId ->
+                    val isFav = musicRepository.toggleFavorite(trackId)
+                    playerController.updateTrackFavorite(trackId, isFav)
+                },
+                onPlayQueueIndex = { index -> playerController.playQueueIndex(index) },
+                onMoveQueueItem = { from, to -> playerController.moveQueueItem(from, to) },
+                onRemoveQueueItem = { index -> playerController.removeQueueItem(index) },
+                onSetPlaybackSpeed = { speed -> playerController.setPlaybackSpeed(speed) },
+                onSetSleepTimer = { minutes -> playerController.setSleepTimer(minutes) },
+                onSetSleepTimerEndOfTrack = { playerController.setSleepTimerEndOfTrack() },
+                onCancelSleepTimer = { playerController.cancelSleepTimer() },
+                onAddToPlaylist = onOpenAddToPlaylist,
+                audioEffectManager = playerController.audioEffectManager,
+                audioOutputManager = playerController.audioOutputManager,
+                appSettings = appSettings,
+                motionVideoPath = motionVideoPath,
+                motionPlayer = playerController.motionExoPlayer,
+                onRemoveMotionArtwork = { playerController.removeMotionArtworkForCurrentTrack() }
+            )
+        }
     }
 
     // Add to Playlist Dialog
