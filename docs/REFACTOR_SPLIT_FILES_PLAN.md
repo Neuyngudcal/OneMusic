@@ -641,7 +641,7 @@ data/scanner/replaygain/
 - Chỉ cắt file: ghép thân 5 file mới (bỏ dòng package/import) **giống hệt từng byte** dòng 8–572 của bản gốc. Không đổi phạm vi truy cập nào (các `private` đều nằm trong object của chính nó). Bỏ import thừa `kotlin.math.min` (không dùng).
 - Kiểm tra (JVM thuần): `MusicSearchEngineTest` 8/8 không sửa; **test so sánh** bản gốc (package `orig`) với bản mới trên 400 thư viện ngẫu nhiên × 10 truy vấn (tiếng Việt có dấu, feat./&/x, Remix/Live, gõ sai chính tả) – index, kết quả `search` (cả 2 overload), `extractIndividualArtists`, `tokenize`, `mergeCanonicalArtists` giống hệt (2.791/4.000 truy vấn có kết quả bài hát). Test bắt được lỗi khi cố tình đổi ngưỡng fuzzy hoặc đổi `đ`→`D`.
 
-### 7.5 Các file 500–780 dòng còn lại
+### 7.5 Các file 500–780 dòng còn lại ✅ Đã xong (08/10/2026)
 
 | File | Cách tách |
 |---|---|
@@ -671,6 +671,13 @@ data/scanner/replaygain/
 - `FolderActionButtons.kt` (116): "Thêm thư mục mới" → `onAddFolderClick` (cha gọi `folderPickerLauncher.launch(null)`), "Quét lại toàn bộ" → `onRescanClick` (cha giữ điều kiện `if (!isScanning)`), hiện khi `hasFolders`.
 - Giữ ở cha: `key` các item, `BackHandler`, launcher chọn thư mục, state `folderPendingRemove`, hộp thoại xác nhận. Biến `hazeState` và import `items`/`hazeSource` không dùng có sẵn từ bản gốc – giữ nguyên.
 - **Kiểm tra:** test giao diện so sánh gốc/mới (stub launcher/`DocumentFile`/`Uri`/`MusicRepository`): 3 cấu hình (0, 1, 3 thư mục) × 8 ảnh chụp (ban đầu, banner quét đang hiện dần / đã hiện / đã tắt, hộp xác nhận, sau khi xóa, sau khi thêm, cuối) + cây semantics + nhật ký (quét lại 2 lần khi đang quét chỉ gọi 1 lần, xóa, chọn thư mục có/không tên, hủy chọn) → giống hệt. Bắt được cả 5 lỗi cố tình cài.
+
+**Kết quả thực tế – `AddToPlaylistDialog.kt` (08/10/2026) – ⚠️ còn chờ build Android + thử thêm bài vào playlist (1 bài từ menu bài, nhiều bài từ Thư viện):** 526 → 255 dòng, 2 commit:
+1. `AddToPlaylistMultipleDialog` chuyển nguyên văn sang `AddToPlaylistMultipleDialog.kt` (vẫn public, cùng package → `LibraryScreen` không đổi import).
+2. Gom 3 khối **giống hệt từng ký tự** ở cả 2 hộp thoại vào `AddToPlaylistDialogParts.kt` (87 dòng, `internal`): `AddToPlaylistTitle()`, `NewPlaylistNameField(value, onValueChange)`, `AddToPlaylistCloseButton(onDismiss)`. Các phần chỉ *gần* giống (nút Hủy/Tạo & Thêm, dòng "Tạo danh sách phát mới", dòng playlist – khác khoảng cách, cỡ chữ, contentDescription, logic thêm) **giữ riêng** để không đổi giao diện. `AddToPlaylistMultipleDialog.kt` còn 248 dòng.
+- **Kiểm tra:** test giao diện so sánh với bản gốc chưa tách, sau **mỗi** commit: 2 hộp thoại × 3 cấu hình (0 / 3 / 9 playlist – 9 thì danh sách phải cuộn) × 5 ảnh chụp (ban đầu, đang tạo, sau Hủy, mở lại, cuối) + cây semantics + nhật ký (tạo tên trắng / có khoảng trắng / tạo thất bại, bấm playlist đã có bài, `onAddToPlaylist` trả `false`, `onAdded`, `onDismiss`, Toast) → giống hệt. Bắt được 4 lỗi cố tình cài vào phần dùng chung.
+
+**Ghi chú cho các lần kiểm tra giao diện sau:** dùng Compose Desktop **1.5.12 + Kotlin 1.9.22** (plugin `org.jetbrains.compose` 1.5.12, `compose.desktop.uiTestJUnit4`) – bản 1.6+ phụ thuộc `androidx.collection`/`androidx.annotation` chỉ có trên dl.google.com (bị chặn). Material3 1.1 thiếu `HorizontalDivider` (stub gọi `Divider`, đặt tên file khác `Divider.kt` để không đè lớp `DividerKt` thật) và `Icons.AutoMirrored` (đổi sang `Icons.Rounded` giống nhau cho cả 2 bản). So sánh cây semantics phải bỏ số `Node #n` và hash `CollectionInfo@…`. Thao tác nhấn giữ: gọi `performSemanticsAction(OnLongClick)` thay vì `performTouchInput { longClick() }`.
 
 ---
 

@@ -24,8 +24,6 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -75,14 +73,7 @@ fun AddToPlaylistMultipleDialog(
                 .fillMaxWidth()
                 .padding(24.dp)
         ) {
-                Text(
-                    text = "Thêm vào danh sách phát",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
-                        fontSize = 20.sp
-                    )
-                )
+                AddToPlaylistTitle()
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Đang chọn ${tracks.size} bài hát",
@@ -95,18 +86,9 @@ fun AddToPlaylistMultipleDialog(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 if (isCreatingNew) {
-                    OutlinedTextField(
+                    NewPlaylistNameField(
                         value = newPlaylistName,
-                        onValueChange = { newPlaylistName = it },
-                        placeholder = { Text("Tên danh sách phát...", color = TextSecondary) },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Brand,
-                            unfocusedBorderColor = SurfaceDivider,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary
-                        ),
-                        singleLine = true
+                        onValueChange = { newPlaylistName = it }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
@@ -260,25 +242,7 @@ fun AddToPlaylistMultipleDialog(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(PillShape)
-                        .background(SurfaceControl)
-                        .border(1.5.dp, SurfaceBorderStrong, PillShape)
-                        .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) {
-                            onDismiss()
-                        }
-                        .padding(vertical = 12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Đóng",
-                        color = PrimaryIvory,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
-                    )
-                }
+                AddToPlaylistCloseButton(onDismiss = onDismiss)
             }
         }
 }
