@@ -664,6 +664,14 @@ data/scanner/replaygain/
 - Giữ nguyên import thừa `lazy.items` có sẵn từ bản gốc.
 - **Kiểm tra:** test giao diện so sánh gốc/mới (cùng cách như `DetailScreen`, stub `MusicRepository`/`MusicPlayerController`/Toast/Formatter ghi nhật ký): 3 cấu hình (2 nhóm, 1 nhóm, không trùng) × 9 ảnh chụp (đang phân tích, đã tải, bỏ chọn, nghe thử bản giữ lại / bản trùng, hộp thoại xóa, sau khi ẩn, sau khi xóa, cuối) + cây semantics + nhật ký gọi repository/player/Toast → giống hệt. Bắt được cả 4 lỗi cố tình cài (dock lệch 2dp, dock mất `align` đáy, nút xóa không mở hộp thoại, màu dòng được chọn).
 
+**Kết quả thực tế – `FolderManagerScreen.kt` (08/10/2026) – ⚠️ còn chờ build Android + thử màn Thư mục nhạc:** 565 → 137 dòng. Tách theo từng item của LazyColumn (khác dự kiến "danh sách + dialog": hộp thoại xác nhận chỉ là lời gọi `ApexConfirmDialog` 13 dòng nên để lại ở cha), 4 file mới trong `folder/`, đều `internal`:
+- `FolderManagerHeader.kt` (126): `FolderManagerTopBar(onBack)` và `FolderScanningBanner(isScanning)`.
+- `FolderListCard.kt` (182): thẻ "THƯ MỤC ĐANG QUẢN LÝ" (trống / danh sách). Nút xóa → `onRemoveClick(uriString, displayName)`; cha đặt `folderPendingRemove`.
+- `FolderInfoCard.kt` (127): thẻ thông tin bộ nhớ & định dạng, nhận `totalTrackCount` (= `allTracks.size`).
+- `FolderActionButtons.kt` (116): "Thêm thư mục mới" → `onAddFolderClick` (cha gọi `folderPickerLauncher.launch(null)`), "Quét lại toàn bộ" → `onRescanClick` (cha giữ điều kiện `if (!isScanning)`), hiện khi `hasFolders`.
+- Giữ ở cha: `key` các item, `BackHandler`, launcher chọn thư mục, state `folderPendingRemove`, hộp thoại xác nhận. Biến `hazeState` và import `items`/`hazeSource` không dùng có sẵn từ bản gốc – giữ nguyên.
+- **Kiểm tra:** test giao diện so sánh gốc/mới (stub launcher/`DocumentFile`/`Uri`/`MusicRepository`): 3 cấu hình (0, 1, 3 thư mục) × 8 ảnh chụp (ban đầu, banner quét đang hiện dần / đã hiện / đã tắt, hộp xác nhận, sau khi xóa, sau khi thêm, cuối) + cây semantics + nhật ký (quét lại 2 lần khi đang quét chỉ gọi 1 lần, xóa, chọn thư mục có/không tên, hủy chọn) → giống hệt. Bắt được cả 5 lỗi cố tình cài.
+
 ---
 
 ## Giai đoạn 8 – Rào chắn để file không phình lại
