@@ -1,13 +1,7 @@
 package com.example.onemusic.ui.screens.library.components
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,217 +9,200 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ViewList
 import androidx.compose.material.icons.rounded.ArrowDownward
 import androidx.compose.material.icons.rounded.ArrowUpward
 import androidx.compose.material.icons.rounded.GridView
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.ViewModule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.R
+import com.example.onemusic.theme.Brand
 import com.example.onemusic.theme.CharcoalBlack
-import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceBorderStrong
 import com.example.onemusic.theme.SurfaceControl
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.components.ApexCircularGlassButton
+import com.example.onemusic.ui.components.ApexDropdownMenu
+import com.example.onemusic.ui.components.ApexDropdownMenuItem
 import com.example.onemusic.ui.screens.library.LibraryViewMode
 import com.example.onemusic.ui.screens.library.SongSortOption
 import com.example.onemusic.ui.utils.apexBounceClick
+import dev.chrisbanes.haze.HazeState
+
+private val ToolbarButtonSize = 40.dp
 
 /**
- * Filter and Sort Chips + Quick Action Row (Play All & Shuffle) + View Mode toggle.
+ * Single-row library toolbar: sort dropdown on the left, view mode / shuffle / play on the right.
+ * Sort and play controls are optional so tabs without them (Albums) only show the view mode button.
  */
 @Composable
 fun LibraryFilterBar(
-    currentSortOption: SongSortOption,
-    sortAscending: Boolean,
     viewMode: LibraryViewMode,
-    onSortOptionChange: (SongSortOption) -> Unit,
     onViewModeChange: (LibraryViewMode) -> Unit,
-    onPlayAll: () -> Unit,
-    onShuffleAll: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
+    currentSortOption: SongSortOption? = null,
+    sortAscending: Boolean = true,
+    onSortOptionChange: (SongSortOption) -> Unit = {},
+    onPlayAll: (() -> Unit)? = null,
+    onShuffleAll: (() -> Unit)? = null
 ) {
-    val scrollState = rememberScrollState()
-
-    Column(modifier = modifier.fillMaxWidth()) {
-        // 1. Sort Chips Row with View Mode Switch Button
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(scrollState)
-                .padding(horizontal = 20.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            SongSortOption.entries.forEach { option ->
-                val isSelected = currentSortOption == option
-
-                val bgColor by animateColorAsState(
-                    targetValue = if (isSelected) PrimaryIvory else SurfaceControl,
-                    animationSpec = spring(stiffness = 500f),
-                    label = "filter_bg_anim"
-                )
-                val textColor by animateColorAsState(
-                    targetValue = if (isSelected) CharcoalBlack else TextSecondary,
-                    animationSpec = spring(stiffness = 500f),
-                    label = "filter_text_anim"
-                )
-
-                Box(
-                    modifier = Modifier
-                        .height(38.dp)
-                        .clip(PillShape)
-                        .background(bgColor)
-                        .border(
-                            width = 1.5.dp,
-                            color = if (isSelected) Color.Transparent else SurfaceBorderStrong,
-                            shape = PillShape
-                        )
-                        .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
-                            onSortOptionChange(option)
-                        }
-                        .padding(horizontal = 16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = option.title,
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
-                                color = textColor,
-                                fontSize = 13.sp
-                            )
-                        )
-                        if (isSelected && option != SongSortOption.ALL) {
-                            Icon(
-                                imageVector = if (sortAscending) Icons.Rounded.ArrowUpward else Icons.Rounded.ArrowDownward,
-                                contentDescription = "Thứ tự sắp xếp",
-                                tint = CharcoalBlack,
-                                modifier = Modifier.size(14.dp)
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Quick View Mode Cycle Button (List -> Grid 2 -> Grid 3 -> List)
-            val nextViewMode = when (viewMode) {
-                LibraryViewMode.LIST -> LibraryViewMode.GRID_2
-                LibraryViewMode.GRID_2 -> LibraryViewMode.GRID_3
-                LibraryViewMode.GRID_3 -> LibraryViewMode.LIST
-            }
-            val viewModeIcon = when (viewMode) {
-                LibraryViewMode.LIST -> Icons.AutoMirrored.Rounded.ViewList
-                LibraryViewMode.GRID_2 -> Icons.Rounded.GridView
-                LibraryViewMode.GRID_3 -> Icons.Rounded.ViewModule
-            }
-
-            Box(
-                modifier = Modifier
-                    .height(38.dp)
-                    .clip(PillShape)
-                    .background(SurfaceControl)
-                    .border(width = 1.5.dp, color = SurfaceBorderStrong, shape = PillShape)
-                    .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
-                        onViewModeChange(nextViewMode)
-                    }
-                    .padding(horizontal = 12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        imageVector = viewModeIcon,
-                        contentDescription = "Đổi chế độ xem",
-                        tint = PrimaryIvory,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = viewMode.title,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = PrimaryIvory,
-                            fontSize = 12.sp
-                        )
-                    )
-                }
-            }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, end = 20.dp, top = 4.dp, bottom = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (currentSortOption != null) {
+            SortDropdownButton(
+                currentSortOption = currentSortOption,
+                sortAscending = sortAscending,
+                hazeState = hazeState,
+                onSortOptionChange = onSortOptionChange
+            )
         }
 
-        // 2. Quick Action Row: Play All & Shuffle All Pills
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Play All Button (Primary Ivory Pill)
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(46.dp)
-                    .clip(PillShape)
-                    .background(PrimaryIvory)
-                    .apexBounceClick(scaleDown = 0.95f, enableHaptic = true) {
-                        onPlayAll()
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.PlayArrow,
-                        contentDescription = "Phát tất cả",
-                        tint = CharcoalBlack,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Text(
-                        text = "Phát tất cả",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = CharcoalBlack,
-                            fontSize = 14.sp
-                        )
-                    )
-                }
-            }
+        Spacer(modifier = Modifier.weight(1f))
 
-            // Shuffle All Button
+        // View mode toggle: List <-> Grid 2
+        val nextViewMode = when (viewMode) {
+            LibraryViewMode.LIST -> LibraryViewMode.GRID_2
+            LibraryViewMode.GRID_2 -> LibraryViewMode.LIST
+        }
+        val viewModeIcon = when (viewMode) {
+            LibraryViewMode.LIST -> Icons.AutoMirrored.Rounded.ViewList
+            LibraryViewMode.GRID_2 -> Icons.Rounded.GridView
+        }
+        ApexCircularGlassButton(
+            icon = viewModeIcon,
+            contentDescription = "Chế độ xem: ${viewMode.title}. Chạm để đổi",
+            onClick = { onViewModeChange(nextViewMode) },
+            size = ToolbarButtonSize,
+            iconSize = 20.dp,
+            backgroundColor = SurfaceControl,
+            iconTint = PrimaryIvory,
+            elevation = 0.dp
+        )
+
+        if (onShuffleAll != null) {
             ApexCircularGlassButton(
                 icon = ImageVector.vectorResource(id = R.drawable.ic_widget_shuffle),
                 contentDescription = "Trộn bài",
                 onClick = onShuffleAll,
-                size = 46.dp,
-                iconSize = 22.dp,
-                backgroundColor = PrimaryIvory,
-                iconTint = CharcoalBlack
+                size = ToolbarButtonSize,
+                iconSize = 20.dp,
+                backgroundColor = SurfaceControl,
+                iconTint = PrimaryIvory,
+                elevation = 0.dp
             )
+        }
+
+        if (onPlayAll != null) {
+            ApexCircularGlassButton(
+                icon = Icons.Rounded.PlayArrow,
+                contentDescription = "Phát tất cả",
+                onClick = onPlayAll,
+                size = ToolbarButtonSize,
+                iconSize = 24.dp,
+                backgroundColor = PrimaryIvory,
+                iconTint = CharcoalBlack,
+                elevation = 0.dp
+            )
+        }
+    }
+}
+
+/**
+ * Text button showing the current sort ("Tên A-Z ↑ ▾"). Picking the active option again flips the direction.
+ */
+@Composable
+private fun SortDropdownButton(
+    currentSortOption: SongSortOption,
+    sortAscending: Boolean,
+    hazeState: HazeState?,
+    onSortOptionChange: (SongSortOption) -> Unit
+) {
+    var isMenuOpen by remember { mutableStateOf(false) }
+
+    Box {
+        Row(
+            modifier = Modifier
+                .height(ToolbarButtonSize)
+                .clip(RoundedCornerShape(12.dp))
+                .apexBounceClick(scaleDown = 0.95f, enableHaptic = true) { isMenuOpen = true }
+                .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = currentSortOption.title,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = PrimaryIvory,
+                    fontSize = 14.sp
+                )
+            )
+            if (currentSortOption != SongSortOption.ALL) {
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = if (sortAscending) Icons.Rounded.ArrowUpward else Icons.Rounded.ArrowDownward,
+                    contentDescription = if (sortAscending) "Tăng dần" else "Giảm dần",
+                    tint = PrimaryIvory,
+                    modifier = Modifier.size(14.dp)
+                )
+            }
+            Icon(
+                imageVector = Icons.Rounded.KeyboardArrowDown,
+                contentDescription = "Chọn cách sắp xếp",
+                tint = TextSecondary,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+
+        ApexDropdownMenu(
+            expanded = isMenuOpen,
+            onDismissRequest = { isMenuOpen = false },
+            hazeState = hazeState,
+            width = 220.dp,
+            transformOrigin = TransformOrigin(0.1f, 0.05f)
+        ) {
+            SongSortOption.entries.forEach { option ->
+                val isSelected = option == currentSortOption
+                ApexDropdownMenuItem(
+                    text = option.title,
+                    textColor = if (isSelected) PrimaryIvory else TextSecondary,
+                    trailingText = when {
+                        !isSelected -> null
+                        option == SongSortOption.ALL -> "✓"
+                        sortAscending -> "↑"
+                        else -> "↓"
+                    },
+                    trailingColor = Brand,
+                    onClick = {
+                        isMenuOpen = false
+                        onSortOptionChange(option)
+                    }
+                )
+            }
         }
     }
 }

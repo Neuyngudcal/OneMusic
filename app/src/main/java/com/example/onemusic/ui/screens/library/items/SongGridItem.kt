@@ -47,7 +47,6 @@ import com.example.onemusic.theme.ScrimColor
 import com.example.onemusic.theme.SurfaceActiveIndicator
 import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.theme.TextSecondary
-import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.components.ApexHiResBadge
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.ui.utils.formatDuration
@@ -201,113 +200,5 @@ fun SongGridItem(
                 }
             }
         }
-    }
-}
-
-/**
- * Compact 3-column Grid Card for a song in Library.
- */
-@Composable
-fun SongCompactGridItem(
-    track: Track,
-    isCurrent: Boolean,
-    isMultiSelectMode: Boolean,
-    isSelectedInBatch: Boolean,
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .apexGlassCard(shape = RoundedCornerShape(18.dp))
-            .apexBounceClick(
-                scaleDown = 0.96f,
-                enableHaptic = true,
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-            .padding(8.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(14.dp))
-                .background(SurfaceActiveIndicator)
-        ) {
-            if (track.artworkUrl.isNotBlank()) {
-                AsyncImage(
-                    model = track.artworkUrl,
-                    contentDescription = track.title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(SurfaceElevated),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.MusicNote,
-                        contentDescription = null,
-                        tint = IvoryDisabled,
-                        modifier = Modifier.size(36.dp)
-                    )
-                }
-            }
-
-            if (isMultiSelectMode) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(6.dp)
-                        .size(22.dp)
-                        .clip(CircleShape)
-                        .background(if (isSelectedInBatch) PrimaryIvory else ScrimColor)
-                        .border(
-                            width = 1.2.dp,
-                            color = if (isSelectedInBatch) PrimaryIvory else IvoryMedium,
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isSelectedInBatch) {
-                        Icon(
-                            imageVector = Icons.Rounded.Check,
-                            contentDescription = null,
-                            tint = CharcoalBlack,
-                            modifier = Modifier.size(14.dp)
-                        )
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Text(
-            text = track.title,
-            style = MaterialTheme.typography.bodySmall.copy(
-                fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
-                color = if (isCurrent) Brand else PrimaryIvory,
-                fontSize = 13.sp
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        Spacer(modifier = Modifier.height(2.dp))
-
-        Text(
-            text = track.artist,
-            style = MaterialTheme.typography.labelSmall.copy(
-                color = TextSecondary,
-                fontSize = 11.sp
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }

@@ -13,13 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.search.AlbumGroup
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.screens.library.LibraryViewMode
+import com.example.onemusic.ui.screens.library.components.LibraryFilterBar
 import com.example.onemusic.ui.screens.library.items.AlbumGridCard
 import com.example.onemusic.ui.screens.library.items.AlbumListItem
 
@@ -29,27 +28,12 @@ import com.example.onemusic.ui.screens.library.items.AlbumListItem
 fun LazyListScope.albumsTabContent(
     albums: List<AlbumGroup>,
     libraryViewMode: LibraryViewMode,
+    onViewModeChange: (LibraryViewMode) -> Unit,
     onAlbumClick: (String) -> Unit
 ) {
-    // 1. Section Label
-    item(key = "albums_section_label") {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "DANH SÁCH ALBUM (${albums.size})",
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = TextSecondary,
-                    letterSpacing = 1.sp,
-                    fontSize = 12.sp
-                )
-            )
-        }
+    // 1. Toolbar: view mode only (albums have no sort / play all)
+    item(key = "albums_toolbar") {
+        LibraryFilterBar(viewMode = libraryViewMode, onViewModeChange = onViewModeChange)
     }
 
     // 2. Empty State or Albums List / Grid
@@ -95,37 +79,6 @@ fun LazyListScope.albumsTabContent(
                             )
                         }
                         if (pair.size == 1) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
-                    }
-                }
-            }
-
-            LibraryViewMode.GRID_3 -> {
-                val triplets = albums.chunked(3)
-                itemsIndexed(
-                    items = triplets,
-                    key = { idx, triplet -> "lib_album_g3_${idx}_" + triplet.joinToString("_") { it.key } }
-                ) { _, triplet ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        for (album in triplet) {
-                            val artworkUrl = album.tracks.firstOrNull { it.artworkUrl.isNotBlank() }?.artworkUrl
-                            AlbumGridCard(
-                                albumName = album.name,
-                                artistName = album.artist,
-                                artworkUrl = artworkUrl,
-                                trackCount = album.tracks.size,
-                                onClick = { onAlbumClick(album.key) },
-                                isCompact = true,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                        repeat(3 - triplet.size) {
                             Spacer(modifier = Modifier.weight(1f))
                         }
                     }

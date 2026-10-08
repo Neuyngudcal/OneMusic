@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,9 +44,12 @@ import com.example.onemusic.theme.SurfaceDivider
 import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.theme.TextPrimary
 import com.example.onemusic.theme.TextSecondary
-import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.utils.apexBounceClick
+
+// Mid-gray disc so the vinyl reads as a soft accent instead of a black blob on the dark background
+private val VinylGray = Color(0xFF6B6B6B)
+private val VinylGroove = Color.Black
 
 /**
  * Vinyl Disc visual effect peeked behind or overlaid on album art.
@@ -57,7 +61,7 @@ fun VinylDiscEffect(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(CharcoalBlack)
+            .background(VinylGray)
             .border(1.dp, IvoryStroke.copy(alpha = 0.4f), CircleShape),
         contentAlignment = Alignment.Center
     ) {
@@ -66,14 +70,14 @@ fun VinylDiscEffect(
             modifier = Modifier
                 .fillMaxSize(0.82f)
                 .clip(CircleShape)
-                .border(0.7.dp, PrimaryIvory.copy(alpha = 0.12f), CircleShape)
+                .border(0.7.dp, VinylGroove.copy(alpha = 0.22f), CircleShape)
         )
         // Mid groove ring
         Box(
             modifier = Modifier
                 .fillMaxSize(0.64f)
                 .clip(CircleShape)
-                .border(0.7.dp, PrimaryIvory.copy(alpha = 0.14f), CircleShape)
+                .border(0.7.dp, VinylGroove.copy(alpha = 0.22f), CircleShape)
         )
         // Center label hole
         Box(
@@ -104,17 +108,12 @@ fun AlbumGridCard(
     artworkUrl: String?,
     trackCount: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    isCompact: Boolean = false
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
-            .then(
-                if (isCompact) Modifier.apexGlassCard(shape = RoundedCornerShape(18.dp)).padding(8.dp)
-                else Modifier
-            )
             .apexBounceClick(
-                scaleDown = if (isCompact) 0.96f else 0.95f,
+                scaleDown = 0.95f,
                 enableHaptic = true,
                 onClick = onClick
             )
@@ -137,9 +136,9 @@ fun AlbumGridCard(
                 modifier = Modifier
                     .fillMaxSize(0.96f)
                     .align(Alignment.BottomStart)
-                    .clip(if (isCompact) RoundedCornerShape(14.dp) else SquircleLarge)
+                    .clip(SquircleLarge)
                     .background(SurfaceActiveIndicator)
-                    .border(0.7.dp, IvoryStroke.copy(alpha = 0.5f), if (isCompact) RoundedCornerShape(14.dp) else SquircleLarge)
+                    .border(0.7.dp, IvoryStroke.copy(alpha = 0.5f), SquircleLarge)
             ) {
                 if (!artworkUrl.isNullOrBlank()) {
                     AsyncImage(
@@ -159,13 +158,13 @@ fun AlbumGridCard(
                             imageVector = Icons.Rounded.Album,
                             contentDescription = null,
                             tint = IvoryDisabled,
-                            modifier = Modifier.size(if (isCompact) 36.dp else 52.dp)
+                            modifier = Modifier.size(52.dp)
                         )
                     }
                 }
 
                 // Track Count badge in bottom corner
-                if (trackCount > 0 && !isCompact) {
+                if (trackCount > 0) {
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
@@ -187,7 +186,7 @@ fun AlbumGridCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(if (isCompact) 6.dp else 8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Album Name
         Text(
@@ -195,20 +194,20 @@ fun AlbumGridCard(
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
-                fontSize = if (isCompact) 12.sp else 15.sp
+                fontSize = 15.sp
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
 
-        Spacer(modifier = Modifier.height(if (isCompact) 1.dp else 2.dp))
+        Spacer(modifier = Modifier.height(2.dp))
 
         // Artist Name
         Text(
             text = artistName,
             style = MaterialTheme.typography.bodySmall.copy(
                 color = TextSecondary,
-                fontSize = if (isCompact) 10.5.sp else 13.sp
+                fontSize = 13.sp
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

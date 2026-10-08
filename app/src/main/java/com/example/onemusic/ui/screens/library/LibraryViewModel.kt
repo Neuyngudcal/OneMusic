@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
  * Main management filter tabs in LibraryScreen.
  */
 enum class LibraryTab(val title: String) {
-    SONGS("Tất cả bài hát"),
+    SONGS("Bài hát"),
     ALBUMS("Album"),
     ARTISTS("Nghệ sĩ"),
     PLAYLISTS("Playlist")
@@ -33,8 +33,7 @@ enum class SongSortOption(val title: String) {
  */
 enum class LibraryViewMode(val title: String) {
     LIST("Danh sách"),
-    GRID_2("Lưới 2 cột"),
-    GRID_3("Lưới 3 cột")
+    GRID_2("Lưới 2 cột")
 }
 
 data class LibraryUiState(
@@ -84,7 +83,8 @@ class LibraryViewModel : ViewModel() {
     }
 
     fun initViewMode(savedModeString: String) {
-        val mode = try {
+        // "GRID_3" was removed; users who had it keep a grid layout
+        val mode = if (savedModeString == "GRID_3") LibraryViewMode.GRID_2 else try {
             LibraryViewMode.valueOf(savedModeString)
         } catch (_: Exception) {
             LibraryViewMode.LIST

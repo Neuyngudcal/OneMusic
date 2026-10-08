@@ -20,7 +20,7 @@ fun FastAlphabetScroller(
     availableLetters: Set<Char>,
     sortedTracks: List<Track>,
     listState: LazyListState,
-    headerOffsetCount: Int = 4,
+    headerOffsetCount: Int,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()

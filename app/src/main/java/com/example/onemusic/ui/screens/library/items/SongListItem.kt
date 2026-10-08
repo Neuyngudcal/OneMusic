@@ -79,7 +79,7 @@ fun SongListItem(
                         onLongClick = onLongClick,
                         onClick = onClick
                     )
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Multi-Select Checkbox Circle
@@ -111,8 +111,8 @@ fun SongListItem(
                 // Artwork or fallback music note icon
                 Box(
                     modifier = Modifier
-                        .size(70.dp)
-                        .clip(RoundedCornerShape(16.dp))
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(14.dp))
                         .background(SurfaceActiveIndicator),
                     contentAlignment = Alignment.Center
                 ) {
@@ -128,7 +128,7 @@ fun SongListItem(
                             imageVector = Icons.Rounded.MusicNote,
                             contentDescription = null,
                             tint = TextSecondary,
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(26.dp)
                         )
                     }
                 }
@@ -187,7 +187,7 @@ fun SongListItem(
 
             if (index < total - 1) {
                 HorizontalDivider(
-                    modifier = Modifier.padding(start = 102.dp, end = 16.dp),
+                    modifier = Modifier.padding(start = 86.dp, end = 16.dp),
                     thickness = 0.6.dp,
                     color = SurfaceDivider
                 )

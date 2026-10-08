@@ -53,7 +53,7 @@ data class AppSettings(
     val lastPlayedTrackId: String? = null,
     val lastPlayedPositionMs: Long = 0L,
 
-    // 7. Chế độ xem Thư viện (Library View Mode: LIST, GRID_2, GRID_3)
+    // 7. Chế độ xem Thư viện (Library View Mode: LIST, GRID_2; GRID_3 cũ được đổi thành GRID_2)
     val libraryViewMode: String = "LIST",
 
     // 8. Danh sách bài hát nghe gần đây (Recently Played)

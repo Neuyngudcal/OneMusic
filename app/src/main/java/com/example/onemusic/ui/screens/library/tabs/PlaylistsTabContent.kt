@@ -17,7 +17,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Favorite
@@ -70,98 +70,25 @@ fun LazyListScope.playlistsTabContent(
     onOpenFavoritePlaylist: () -> Unit,
     onOpenPlaylistDetail: (CustomPlaylist) -> Unit,
     onOpenNewPlaylistDialog: () -> Unit,
-    onImportPlaylistM3u: (() -> Unit)?,
     onExportPlaylistM3u: ((CustomPlaylist) -> Unit)?,
     onDeletePlaylist: ((CustomPlaylist) -> Unit)?
 ) {
-    val totalPlaylists = 1 + customPlaylists.size
+    // Rows in the grouped card: "Create" + Favorites + custom playlists
+    val totalRows = 2 + customPlaylists.size
 
-    // 1. Quick Actions Row: Create Playlist & Import M3U
-    item(key = "playlists_quick_actions") {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Create Playlist Pill Button
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(46.dp)
-                    .clip(PillShape)
-                    .background(PrimaryIvory)
-                    .apexBounceClick(scaleDown = 0.95f, enableHaptic = true) {
-                        onOpenNewPlaylistDialog()
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.PlaylistAdd,
-                        contentDescription = "Tạo playlist",
-                        tint = CharcoalBlack,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Text(
-                        text = "Tạo playlist mới",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = CharcoalBlack,
-                            fontSize = 14.sp
-                        )
-                    )
-                }
-            }
-
-            // Import M3U Button (if available)
-            if (onImportPlaylistM3u != null) {
-                ApexCircularGlassButton(
-                    icon = Icons.Rounded.UploadFile,
-                    contentDescription = "Nhập playlist .m3u8",
-                    onClick = onImportPlaylistM3u,
-                    size = 46.dp,
-                    iconSize = 22.dp,
-                    backgroundColor = SurfaceControl,
-                    iconTint = PrimaryIvory
-                )
-            }
-        }
+    // 1. Create Playlist row (first row of the grouped card)
+    item(key = "playlists_create_row") {
+        CreatePlaylistRow(total = totalRows, onClick = onOpenNewPlaylistDialog)
     }
 
-    // 2. Section Label
-    item(key = "playlists_section_label") {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "DANH SÁCH PHÁT ($totalPlaylists)",
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = TextSecondary,
-                    letterSpacing = 1.sp,
-                    fontSize = 12.sp
-                )
-            )
-        }
-    }
-
-    // 3. Fixed Favorite Playlist item
+    // 2. Fixed Favorite Playlist item
     item(key = "favorite_playlist_item") {
         val favoriteTracks = tracks.filter { it.isFavorite }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
-                .apexGroupedCardItem(index = 0, total = totalPlaylists, cornerRadius = 26.dp)
+                .apexGroupedCardItem(index = 1, total = totalRows, cornerRadius = 26.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
@@ -216,7 +143,7 @@ fun LazyListScope.playlistsTabContent(
                     }
                 }
 
-                if (totalPlaylists > 1) {
+                if (totalRows > 2) {
                     HorizontalDivider(
                         modifier = Modifier.padding(start = 84.dp, end = 16.dp),
                         thickness = 0.6.dp,
@@ -227,18 +154,18 @@ fun LazyListScope.playlistsTabContent(
         }
     }
 
-    // 4. Custom Playlists
+    // 3. Custom Playlists
     itemsIndexed(
         items = customPlaylists,
         key = { index, pl -> "custom_pl_${pl.id}_$index" }
     ) { idx, pl ->
-        val currentIndex = idx + 1
+        val currentIndex = idx + 2
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
-                .apexGroupedCardItem(index = currentIndex, total = totalPlaylists, cornerRadius = 26.dp)
+                .apexGroupedCardItem(index = currentIndex, total = totalRows, cornerRadius = 26.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
@@ -316,7 +243,7 @@ fun LazyListScope.playlistsTabContent(
                     }
                 }
 
-                if (currentIndex < totalPlaylists - 1) {
+                if (currentIndex < totalRows - 1) {
                     HorizontalDivider(
                         modifier = Modifier.padding(start = 84.dp, end = 16.dp),
                         thickness = 0.6.dp,
@@ -331,6 +258,63 @@ fun LazyListScope.playlistsTabContent(
 /**
  * Dialog for creating a new playlist.
  */
+/**
+ * "Tạo playlist mới" styled like a playlist row, so the tab has no separate button bar.
+ */
+@Composable
+private fun CreatePlaylistRow(total: Int, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .apexGroupedCardItem(index = 0, total = total, cornerRadius = 26.dp)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .apexBounceClick(scaleDown = 0.98f, enableHaptic = true, onClick = onClick)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(54.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(SurfaceActiveIndicator),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = null,
+                        tint = PrimaryIvory,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                Text(
+                    text = "Tạo playlist mới",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryIvory,
+                        fontSize = 15.sp
+                    ),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            // Favorites row always follows, so the divider is unconditional
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 84.dp, end = 16.dp),
+                thickness = 0.6.dp,
+                color = SurfaceDivider
+            )
+        }
+    }
+}
+
 @Composable
 fun LibraryNewPlaylistDialog(
     hazeState: HazeState,

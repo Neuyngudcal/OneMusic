@@ -3,7 +3,6 @@ package com.example.onemusic.ui.screens.library.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,14 +25,14 @@ import androidx.compose.ui.unit.sp
 import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.screens.library.LibraryTab
 import com.example.onemusic.ui.utils.apexBounceClick
 
 /**
- * One UI 8.5 Pill-shaped Tab Row for Library (Songs, Albums, Artists, Playlists).
+ * One UI 8.5 Tab Row for Library (Songs, Albums, Artists, Playlists).
+ * Only the selected tab gets a pill; the others are plain text. Horizontal scroll is kept
+ * only as a fallback for large font scales — at normal size all 4 tabs fit on screen.
  */
 @Composable
 fun LibraryTabRow(
@@ -47,13 +46,13 @@ fun LibraryTabRow(
             .fillMaxWidth()
             .horizontalScroll(scrollState)
             .padding(horizontal = 20.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         LibraryTab.entries.forEach { tab ->
             val isSelected = currentTab == tab
 
             val bgColor by animateColorAsState(
-                targetValue = if (isSelected) PrimaryIvory else SurfaceControl,
+                targetValue = if (isSelected) PrimaryIvory else Color.Transparent,
                 animationSpec = spring(stiffness = 500f),
                 label = "tab_bg_anim"
             )
@@ -65,18 +64,13 @@ fun LibraryTabRow(
 
             Box(
                 modifier = Modifier
-                    .height(38.dp)
+                    .height(36.dp)
                     .clip(PillShape)
                     .background(bgColor)
-                    .border(
-                        width = 1.5.dp,
-                        color = if (isSelected) Color.Transparent else SurfaceBorderStrong,
-                        shape = PillShape
-                    )
                     .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
                         onTabSelected(tab)
                     }
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 12.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

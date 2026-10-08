@@ -2,7 +2,6 @@ package com.example.onemusic.ui.screens.library.tabs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,28 +48,7 @@ fun LazyListScope.artistsTabContent(
     getCachedArtistImageUrl: (String) -> String?,
     onArtistClick: (String) -> Unit
 ) {
-    // 1. Section Label
-    item(key = "artists_section_label") {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "DANH SÁCH NGHỆ SĨ (${artists.size})",
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = TextSecondary,
-                    letterSpacing = 1.sp,
-                    fontSize = 12.sp
-                )
-            )
-        }
-    }
-
-    // 2. Empty State or Artists List
+    // 1. Empty State or Artists List
     if (artists.isEmpty()) {
         item(key = "empty_artists") {
             Box(

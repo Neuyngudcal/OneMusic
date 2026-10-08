@@ -36,10 +36,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.haptics.rememberApexHaptics
-import com.example.onemusic.theme.Brand
 import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.PrimaryIvory
@@ -48,7 +46,6 @@ import com.example.onemusic.theme.TextPrimary
 import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.screens.library.LibraryViewMode
-import com.example.onemusic.ui.screens.library.items.SongCompactGridItem
 import com.example.onemusic.ui.screens.library.items.SongGridItem
 import com.example.onemusic.ui.screens.library.items.SongListItem
 import com.example.onemusic.ui.utils.apexBounceClick
@@ -71,32 +68,7 @@ fun LazyListScope.songsTabContent(
     onTrackCheckedChange: (String) -> Unit,
     onRescan: () -> Unit
 ) {
-    // 1. Section Label
-    item(key = "songs_section_label") {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = if (isMultiSelectMode) {
-                    "CHỌN BÀI HÁT (${selectedTrackIds.size}/${sortedTracks.size})"
-                } else {
-                    "TẤT CẢ BÀI HÁT (${sortedTracks.size})"
-                },
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = if (isMultiSelectMode) Brand else TextSecondary,
-                    letterSpacing = 1.sp,
-                    fontSize = 12.sp
-                )
-            )
-        }
-    }
-
-    // 2. Empty state or Tracks List/Grid
+    // 1. Empty state or Tracks List/Grid
     if (sortedTracks.isEmpty()) {
         item(key = "empty_library_card") {
             Box(
@@ -252,45 +224,7 @@ fun LazyListScope.songsTabContent(
                 }
             }
 
-            LibraryViewMode.GRID_3 -> {
-                val triplets = sortedTracks.chunked(3)
-                itemsIndexed(
-                    items = triplets,
-                    key = { idx, triplet -> "lib_g3_${idx}_" + triplet.joinToString("_") { it.id } },
-                    contentType = { _, _ -> "grid3_row" }
-                ) { _, triplet ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        for (track in triplet) {
-                            val isCurrent = track.id == currentTrackId
-                            val isSelectedInBatch = selectedTrackIds.contains(track.id)
 
-                            SongCompactGridItem(
-                                track = track,
-                                isCurrent = isCurrent,
-                                isMultiSelectMode = isMultiSelectMode,
-                                isSelectedInBatch = isSelectedInBatch,
-                                onClick = {
-                                    if (isMultiSelectMode) {
-                                        onTrackCheckedChange(track.id)
-                                    } else {
-                                        onTrackSelect(track)
-                                    }
-                                },
-                                onLongClick = { onTrackLongClick(track) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                        repeat(3 - triplet.size) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
-                    }
-                }
-            }
         }
     }
 }

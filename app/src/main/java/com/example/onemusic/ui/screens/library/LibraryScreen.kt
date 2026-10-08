@@ -43,6 +43,13 @@ import com.example.onemusic.ui.utils.rememberScanWithPermission
 import dev.chrisbanes.haze.HazeState
 
 /**
+ * Number of LazyColumn items above the first song on the Songs tab:
+ * "library_header", "library_main_filter_tabs", "filter_tabs_row".
+ * Update when adding/removing items there, or the alphabet scroller jumps to the wrong song.
+ */
+private const val SONGS_HEADER_ITEM_COUNT = 3
+
+/**
  * Main Library Screen: Clean, modular architecture conforming to Samsung One UI 8.5 aesthetics.
  * - Modular components: Collapsible Header, Pill Tab Row, Filter Bar, Batch Dock, Fast Scroller.
  * - Modular tabs: Songs, Albums (Squircle Vinyl), Artists (Soft Avatar), Playlists (Custom & M3U).
@@ -231,10 +238,8 @@ fun LibraryScreen(
                 LibraryCollapsibleHeader(
                     title = "Thư viện",
                     subtitle = currentHeaderSubtitle,
-                    viewMode = uiState.viewMode,
                     isMultiSelectMode = uiState.isMultiSelectMode,
                     hazeState = hazeState,
-                    onViewModeChange = { mode -> viewModel.setViewMode(mode, settingsPreferences) },
                     onToggleMultiSelect = { viewModel.toggleMultiSelect() },
                     onRescan = triggerScanWithPermission,
                     onImportPlaylistM3u = onImportPlaylistM3u,
@@ -253,14 +258,15 @@ fun LibraryScreen(
             // 3. Tab Contents
             when (uiState.currentTab) {
                 LibraryTab.SONGS -> {
-                    // Filter bar + Quick actions
+                    // Toolbar: sort, view mode, shuffle, play all
                     item(key = "filter_tabs_row") {
                         LibraryFilterBar(
+                            viewMode = uiState.viewMode,
+                            onViewModeChange = { mode -> viewModel.setViewMode(mode, settingsPreferences) },
+                            hazeState = hazeState,
                             currentSortOption = uiState.sortOption,
                             sortAscending = uiState.sortAscending,
-                            viewMode = uiState.viewMode,
                             onSortOptionChange = { opt -> viewModel.setSortOption(opt) },
-                            onViewModeChange = { mode -> viewModel.setViewMode(mode, settingsPreferences) },
                             onPlayAll = {
                                 if (sortedTracks.isNotEmpty()) {
                                     onTrackSelect(sortedTracks.first(), sortedTracks)
@@ -294,6 +300,7 @@ fun LibraryScreen(
                     albumsTabContent(
                         albums = albums,
                         libraryViewMode = uiState.viewMode,
+                        onViewModeChange = { mode -> viewModel.setViewMode(mode, settingsPreferences) },
                         onAlbumClick = { albumKey -> viewModel.openAlbum(albumKey) }
                     )
                 }
@@ -314,7 +321,6 @@ fun LibraryScreen(
                         onOpenFavoritePlaylist = { viewModel.openPlaylist("FAVORITES") },
                         onOpenPlaylistDetail = { pl -> viewModel.openPlaylist(pl.id) },
                         onOpenNewPlaylistDialog = { viewModel.setShowNewPlaylistDialog(true) },
-                        onImportPlaylistM3u = onImportPlaylistM3u,
                         onExportPlaylistM3u = onExportPlaylistM3u,
                         onDeletePlaylist = onDeletePlaylist
                     )
@@ -346,7 +352,7 @@ fun LibraryScreen(
                 availableLetters = availableLetters,
                 sortedTracks = sortedTracks,
                 listState = listState,
-                headerOffsetCount = 4,
+                headerOffsetCount = SONGS_HEADER_ITEM_COUNT,
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
