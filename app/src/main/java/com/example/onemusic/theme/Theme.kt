@@ -108,6 +108,8 @@ fun OneMusicTheme(
     }
     val appColors = if (darkTheme) DarkAppColors else LightAppColors
     val typography = remember(appColors) { typographyFor(appColors) }
+    // Now Playing mở: giữ biểu tượng thanh hệ thống dạng sáng (nền tối), bất kể theme
+    val lightSystemBarIcons = !appColors.isDark && ThemeOverrides.nowPlayingOpenCount == 0
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -124,8 +126,8 @@ fun OneMusicTheme(
             if (window != null) {
                 window.statusBarColor = colorScheme.background.toArgb()
                 window.navigationBarColor = colorScheme.background.toArgb()
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !appColors.isDark
-                WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !appColors.isDark
+                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = lightSystemBarIcons
+                WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = lightSystemBarIcons
             }
         }
     }

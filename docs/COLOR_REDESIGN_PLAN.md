@@ -211,3 +211,8 @@ Mỗi bước là một commit, build được và xem được trước khi san
   - `OnImageScope`: vùng nằm trên ảnh/gradient tối luôn dùng chữ trắng (banner nổi bật ở Trang chủ, ô chọn nhiều bài trên ảnh bìa lưới). Thanh trên màn Chi tiết dùng màu icon cố định theo độ sáng ảnh khi nằm trên ảnh. Huy hiệu Hi-Res giữ chữ tối trên nền vàng.
   - Đổi `ApexCyan`→`accent` ở thanh chữ cái. Hero màn Chi tiết mờ dần vào `background` của theme.
   - **Còn lại:** XML (`colors.xml`, `values-night`, `themes.xml`, widget, splash) thuộc bước 7; `DynamicMeshBackground` (mã chết) và `PaletteHelper` giữ nguyên.
+- **Bước 5 (xong, chưa build được trong môi trường viết code):** cô lập Now Playing khỏi theme.
+  - Phần lớn đã làm ở bước 1 và 3 (`NowPlayingThemeScope` bọc sheet với `LegacyDarkAppColors`, Material scheme và Typography bản cũ). Bước này bổ sung:
+  - `ThemeOverrides.nowPlayingOpenCount`: `NowPlayingThemeScope` tăng/giảm bộ đếm; `OneMusicTheme` đọc nó trong composition và đặt `isAppearanceLightStatusBars/NavigationBars = false` khi > 0. Cách này giữ icon thanh hệ thống sáng cả khi theme hệ thống đổi lúc sheet đang mở (cách cũ chỉ đặt một lần lúc mở).
+  - Hộp thoại "Thêm vào playlist" nằm ngoài sheet (trong `AppOverlays`): khi mở lúc `isPlayerExpanded` thì bọc `NowPlayingThemeScope` để giữ giao diện tối của Now Playing, không hiện hộp thoại trắng trên nền tối.
+  - Đã rà `ui/screens/player/**`: không file nào thuộc nhóm đã chuyển sang `AppTheme.colors` ngoài phạm vi scope; mọi hằng số cũ ở đó giữ nguyên giá trị.

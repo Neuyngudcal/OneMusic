@@ -128,16 +128,23 @@ internal fun AppOverlays(
         }
     }
 
-    // Add to Playlist Dialog
+    // Add to Playlist Dialog (mở từ trong Now Playing thì giữ giao diện tối của Now Playing)
     trackToAddToPlaylist?.let { track ->
-        AddToPlaylistDialog(
-            track = track,
-            playlists = customPlaylists,
-            onCreatePlaylist = { name -> musicRepository.createPlaylist(name) },
-            onAddToPlaylist = { playlistId, trackId ->
-                musicRepository.addTrackToPlaylist(playlistId, trackId)
-            },
-            onDismiss = onDismissAddToPlaylist
-        )
+        val addToPlaylistDialog: @Composable () -> Unit = {
+            AddToPlaylistDialog(
+                track = track,
+                playlists = customPlaylists,
+                onCreatePlaylist = { name -> musicRepository.createPlaylist(name) },
+                onAddToPlaylist = { playlistId, trackId ->
+                    musicRepository.addTrackToPlaylist(playlistId, trackId)
+                },
+                onDismiss = onDismissAddToPlaylist
+            )
+        }
+        if (isPlayerExpanded) {
+            NowPlayingThemeScope(addToPlaylistDialog)
+        } else {
+            addToPlaylistDialog()
+        }
     }
 }

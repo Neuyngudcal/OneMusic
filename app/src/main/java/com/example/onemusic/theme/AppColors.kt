@@ -4,17 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 
 /**
- * Màu theo theme (Sáng / Tối). Bước 1 của docs/COLOR_REDESIGN_PLAN.md: chỉ dựng hạ tầng,
- * [LightAppColors] tạm thời GIỐNG [DarkAppColors] (bảng tối mới, bước 3).
- * Các hằng số cũ trong Color.kt (TextPrimary, SurfaceElevated…) vẫn là nguồn giá trị;
- * những chỗ dùng sẽ chuyển sang [AppTheme.colors] ở bước 2.
+ * Màu theo theme (Sáng / Tối), xem docs/COLOR_REDESIGN_PLAN.md. Dùng qua [AppTheme.colors] trong composable;
+ * các hằng số cũ trong Color.kt (TextPrimary, SurfaceElevated…) chỉ còn là nguồn giá trị của [LegacyDarkAppColors]
+ * (bảng riêng của Now Playing) và của vài chỗ ngoài ngữ cảnh composable.
  */
 data class AppColors(
     val isDark: Boolean,
@@ -156,29 +156,23 @@ object AppTheme {
 }
 
 /**
- * Bọc Now Playing: luôn dùng bảng màu tối CŨ ([LegacyDarkAppColors]) ở mọi theme (màn này có nền động theo ảnh bìa),
- * và giữ biểu tượng thanh trạng thái/điều hướng ở dạng sáng trong lúc sheet mở.
+ * Số vùng Now Playing đang mở (sheet, hộp thoại mở từ trong sheet). Khi > 0, [OneMusicTheme] giữ biểu tượng
+ * thanh trạng thái/điều hướng ở dạng sáng (đọc được trên nền tối) dù theme của app là sáng.
+ * Đọc trong composition nên [OneMusicTheme] tự áp lại khi giá trị đổi hoặc khi theme hệ thống đổi.
+ */
+internal object ThemeOverrides {
+    var nowPlayingOpenCount by mutableIntStateOf(0)
+}
+
+/**
+ * Bọc Now Playing: luôn dùng bảng màu tối CŨ ([LegacyDarkAppColors]) ở mọi theme (màn này có nền động theo
+ * ảnh bìa và được giữ nguyên), và báo cho [OneMusicTheme] giữ biểu tượng thanh hệ thống ở dạng sáng.
  */
 @Composable
 fun NowPlayingThemeScope(content: @Composable () -> Unit) {
-    val outer = LocalAppColors.current
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        DisposableEffect(outer) {
-            val window = (view.context as? android.app.Activity)?.window
-            if (window != null) {
-                val controller = WindowCompat.getInsetsController(window, view)
-                controller.isAppearanceLightStatusBars = false
-                controller.isAppearanceLightNavigationBars = false
-            }
-            onDispose {
-                if (window != null) {
-                    val controller = WindowCompat.getInsetsController(window, view)
-                    controller.isAppearanceLightStatusBars = !outer.isDark
-                    controller.isAppearanceLightNavigationBars = !outer.isDark
-                }
-            }
-        }
+    DisposableEffect(Unit) {
+        ThemeOverrides.nowPlayingOpenCount++
+        onDispose { ThemeOverrides.nowPlayingOpenCount-- }
     }
     CompositionLocalProvider(LocalAppColors provides LegacyDarkAppColors) {
         MaterialTheme(
