@@ -56,7 +56,8 @@ import com.example.onemusic.theme.TextPrimary
 fun TrackDetailsDialog(
     track: Track,
     onDismiss: () -> Unit,
-    onPlayNext: ((Track) -> Unit)? = null
+    onPlayNext: ((Track) -> Unit)? = null,
+    hazeState: dev.chrisbanes.haze.HazeState? = null
 ) {
     val context = LocalContext.current
     val details = remember(track) {
@@ -87,7 +88,8 @@ fun TrackDetailsDialog(
     }
 
     ApexDialogContainer(
-        onDismissRequest = onDismiss
+        onDismissRequest = onDismiss,
+        hazeState = hazeState
     ) {
         Column(
             modifier = Modifier

@@ -43,8 +43,8 @@ import dev.chrisbanes.haze.hazeSource
 /**
  * Nền của Now Playing, nằm dưới lớp điều khiển (LAYER 2). Phát ra 2 lớp con của Box cha:
  * - Box được làm mờ khi rời chế độ ảnh bìa ([isArtworkMode] = false), gồm
- *   LAYER 0 (ảnh bìa phóng to + dải màu lấy từ ảnh bìa, là nguồn của [hazeState]) và
- *   LAYER 1A ([HeroArtworkPager]);
+ *   LAYER 0 (ảnh bìa phóng to + dải màu lấy từ ảnh bìa) và LAYER 1A ([HeroArtworkPager]),
+ *   cả hai nằm trong nguồn [hazeState] để kính lấy mẫu đúng thứ hiển thị phía sau;
  * - LAYER 1B: lớp voan tối hiện dần khi mở Lời bài hát / Hàng đợi.
  */
 @Composable
@@ -229,21 +229,21 @@ internal fun NowPlayingBackdrop(
                         .background(ObsidianBlack)
                 )
             }
-        }
 
-        // LAYER 1A: HERO ALBUM ARTWORK CAROUSEL (FULL BLEED TRÀN VIỀN TỪ ĐỈNH MÁY, ĐỒNG BỘ 100% VỚI CỤM PHÍM ĐÁY)
-        HeroArtworkPager(
-            queue = queue,
-            track = track,
-            pagerState = pagerState,
-            motionVideoPath = motionVideoPath,
-            motionPlayer = motionPlayer,
-            hazeState = hazeState,
-            isSheetFullyVisible = isSheetFullyVisible,
-            scrimColor = if (isDynamicMeshBackgroundEnabled) animatedSecondaryColor else ObsidianBlack,
-            controlsDeckHeight = controlsDeckHeight,
-            onArtworkLongClick = onArtworkLongClick
-        )
+            // LAYER 1A (nằm trong nguồn Haze để kính lấy mẫu cả ảnh bìa): HERO ALBUM ARTWORK CAROUSEL (FULL BLEED TRÀN VIỀN TỪ ĐỈNH MÁY, ĐỒNG BỘ 100% VỚI CỤM PHÍM ĐÁY)
+            HeroArtworkPager(
+                queue = queue,
+                track = track,
+                pagerState = pagerState,
+                motionVideoPath = motionVideoPath,
+                motionPlayer = motionPlayer,
+                hazeState = hazeState,
+                isSheetFullyVisible = isSheetFullyVisible,
+                scrimColor = if (isDynamicMeshBackgroundEnabled) animatedSecondaryColor else ObsidianBlack,
+                controlsDeckHeight = controlsDeckHeight,
+                onArtworkLongClick = onArtworkLongClick
+            )
+        }
     }
 
     // LAYER 1B: AUTHENTIC OBSIDIAN FROSTED GLASS VEIL (Phủ voan than chì mờ thấu quang khi vào Lời bài hát / Hàng đợi)

@@ -63,7 +63,8 @@ private val FREQUENCY_LABELS = listOf(
 @Composable
 fun ApexEqualizerDialog(
     audioEffectManager: AudioEffectManager,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    hazeState: dev.chrisbanes.haze.HazeState? = null
 ) {
     val settings by audioEffectManager.settings.collectAsState()
     val hapticEngine = rememberApexHaptics()
@@ -71,7 +72,8 @@ fun ApexEqualizerDialog(
     val scrollState = rememberScrollState()
 
     ApexDialogContainer(
-        onDismissRequest = onDismiss
+        onDismissRequest = onDismiss,
+        hazeState = hazeState
     ) {
         Column(
             modifier = Modifier

@@ -39,7 +39,7 @@ import com.example.onemusic.theme.ShadowColor
  *
  * Mandatory Specs (GEMINI.md 3.5):
  * - Real-time GPU Frosted Glass (Haze) with blurRadius = 28.dp, noiseFactor = 0f.
- * - Obsidian Space Glass base: SurfaceElevated.copy(alpha = 0.88f).
+ * - Obsidian Space Glass base: SurfaceElevated.copy(alpha = 0.50f) (đủ trong để thấy blur, tint của apexFrostedGlass tự suy ra từ alpha này).
  * - AMOLED deep shadow: elevation = 16.dp with Color.Black.copy(alpha = 0.55f).
  * - 2.5D Top-lit Specular Reflection Border: ApexReflectiveBorderBrush with width = 0.85.dp.
  * - Corner Geometry: RoundedCornerShape(28.dp).
@@ -52,7 +52,7 @@ fun ApexDialogContainer(
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     shape: Shape = RoundedCornerShape(28.dp),
-    backgroundColor: Color = SurfaceElevated.copy(alpha = 0.88f),
+    backgroundColor: Color = SurfaceElevated.copy(alpha = 0.50f),
     hazeState: HazeState? = null,
     horizontalMargin: Dp = 20.dp,
     elevation: Dp = 16.dp,
