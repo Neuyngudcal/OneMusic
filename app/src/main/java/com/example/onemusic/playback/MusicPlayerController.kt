@@ -29,39 +29,11 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.Immutable
 import kotlinx.coroutines.withContext
-
-enum class RepeatMode {
-    OFF, ALL, ONE
-}
-
-@Immutable
-data class PlaybackState(
-    val currentTrack: Track? = null,
-    val isPlaying: Boolean = false,
-    val currentPositionMs: Long = 0L,
-    val durationMs: Long = 0L,
-    val playbackSpeed: Float = 1.0f,
-    val isShuffle: Boolean = false,
-    val repeatMode: RepeatMode = RepeatMode.OFF,
-    val isAutoplay: Boolean = true,
-    val queue: List<Track> = emptyList(),
-    val currentIndex: Int = -1,
-    val visualizerAmplitudes: List<Float> = List(16) { 0.2f },
-    val activeGainDb: Float = 0.0f,
-    val hasReplayGain: Boolean = false,
-    val replayGainOrigin: String? = null,
-    val sleepTimerMinutes: Int? = null,
-    val sleepTimerRemainingSeconds: Long? = null,
-    val transitionDirection: Int = 0 // 1 for Next (slide left), -1 for Prev (slide right), 0 for Direct
-)
 
 
 class MusicPlayerController(
@@ -103,8 +75,6 @@ class MusicPlayerController(
         android.util.Log.e("MusicPlayerController", "Uncaught coroutine exception: ${throwable.message}")
     }
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob() + coroutineExceptionHandler)
-    private var progressJob: Job? = null
-    private var fadeJob: Job? = null
     private var lyricsJob: Job? = null
     private var userVolume: Float = 1.0f
     private var consecutivePlaybackErrors: Int = 0
@@ -130,6 +100,28 @@ class MusicPlayerController(
     // PlaybackState.currentPositionMs chỉ còn được đặt ở các sự kiện rời rạc (đổi bài, tua...), KHÔNG cập nhật liên tục.
     private val _positionMs = MutableStateFlow(0L)
     val positionMs: StateFlow<Long> = _positionMs.asStateFlow()
+
+    private val volumeFader = VolumeFader(scope, player = { exoPlayer }, userVolume = { userVolume })
+    private val positionTracker = PositionTracker(
+        scope = scope,
+        player = { exoPlayer },
+        playbackState = _playbackState,
+        positionMs = _positionMs,
+        settingsPreferences = settingsPreferences,
+        isFading = { volumeFader.isFading },
+        userVolume = { userVolume }
+    )
+    private val sleepTimer = SleepTimer(scope, _playbackState) {
+        smoothFadeOut(durationMs = 2000L) {
+            exoPlayer?.pause()
+            exoPlayer?.volume = userVolume
+            _playbackState.value = _playbackState.value.copy(
+                sleepTimerMinutes = null,
+                sleepTimerRemainingSeconds = null,
+                isPlaying = false
+            )
+        }
+    }
 
     // Motion Artwork State: Local video path for animated album art on Now Playing
     private val _motionVideoPath = MutableStateFlow<String?>(null)
@@ -858,7 +850,7 @@ class MusicPlayerController(
         val player = exoPlayer ?: return
 
         trackSwitchJob?.cancel()
-        fadeJob?.cancel()
+        volumeFader.cancel()
 
         val track = state.queue[index]
         val wasPlaying = player.isPlaying || player.playWhenReady
@@ -1252,59 +1244,11 @@ class MusicPlayerController(
         }
     }
 
-    private var sleepTimerJob: Job? = null
+    fun setSleepTimer(minutes: Int) = sleepTimer.set(minutes)
 
-    fun setSleepTimer(minutes: Int) {
-        sleepTimerJob?.cancel()
-        if (minutes <= 0) {
-            cancelSleepTimer()
-            return
-        }
-        val totalSeconds = minutes * 60L
-        _playbackState.value = _playbackState.value.copy(
-            sleepTimerMinutes = minutes,
-            sleepTimerRemainingSeconds = totalSeconds
-        )
-        sleepTimerJob = scope.launch {
-            var remaining = totalSeconds
-            while (remaining > 0 && isActive) {
-                delay(1000L)
-                remaining--
-                _playbackState.value = _playbackState.value.copy(
-                    sleepTimerRemainingSeconds = remaining
-                )
-            }
-            if (isActive) {
-                smoothFadeOut(durationMs = 2000L) {
-                    exoPlayer?.pause()
-                    exoPlayer?.volume = userVolume
-                    _playbackState.value = _playbackState.value.copy(
-                        sleepTimerMinutes = null,
-                        sleepTimerRemainingSeconds = null,
-                        isPlaying = false
-                    )
-                }
-            }
-        }
-    }
+    fun setSleepTimerEndOfTrack() = sleepTimer.setEndOfTrack()
 
-    fun setSleepTimerEndOfTrack() {
-        sleepTimerJob?.cancel()
-        sleepTimerJob = null
-        _playbackState.value = _playbackState.value.copy(
-            sleepTimerMinutes = -1,
-            sleepTimerRemainingSeconds = null
-        )
-    }
-
-    fun cancelSleepTimer() {
-        sleepTimerJob?.cancel()
-        sleepTimerJob = null
-        _playbackState.value = _playbackState.value.copy(
-            sleepTimerMinutes = null,
-            sleepTimerRemainingSeconds = null
-        )
-    }
+    fun cancelSleepTimer() = sleepTimer.cancel()
 
     private fun handleTrackEnded() {
         val state = _playbackState.value
@@ -1337,105 +1281,19 @@ class MusicPlayerController(
     }
 
     // --- Smart Fade In / Fade Out (Smooth Transitions & Crossfade) ---
-    private fun smoothFadeIn(durationMs: Long = 150L) {
-        val player = exoPlayer ?: return
-        fadeJob?.cancel()
-        player.volume = 0f
-        player.play()
-        fadeJob = scope.launch {
-            val steps = 20
-            val stepDelay = (durationMs / steps).coerceAtLeast(8L)
-            for (i in 1..steps) {
-                if (!isActive) break
-                val factor = i.toFloat() / steps
-                player.volume = factor * userVolume
-                delay(stepDelay)
-            }
-            if (isActive) {
-                player.volume = userVolume
-            }
-        }
-    }
+    private fun smoothFadeIn(durationMs: Long = 150L) = volumeFader.fadeIn(durationMs)
 
-    private fun smoothFadeOut(durationMs: Long = 150L, onComplete: () -> Unit) {
-        val player = exoPlayer
-        if (player == null || !player.isPlaying) {
-            onComplete()
-            return
-        }
-        fadeJob?.cancel()
-        val startVolume = player.volume
-        fadeJob = scope.launch {
-            val steps = 20
-            val stepDelay = (durationMs / steps).coerceAtLeast(8L)
-            for (i in steps downTo 0) {
-                if (!isActive) break
-                val factor = i.toFloat() / steps
-                player.volume = factor * startVolume
-                delay(stepDelay)
-            }
-            onComplete()
-        }
-    }
+    private fun smoothFadeOut(durationMs: Long = 150L, onComplete: () -> Unit) = volumeFader.fadeOut(durationMs, onComplete)
 
-    private fun startProgressTracker() {
-        progressJob?.cancel()
-        progressJob = scope.launch {
-            var autoSaveTicks = 0
-            while (isActive) {
-                var isPlaying = false
-                exoPlayer?.let { player ->
-                    isPlaying = player.isPlaying
-                    val pos = player.currentPosition
-                    val duration = if (player.duration > 0) player.duration else _playbackState.value.currentTrack?.durationMs ?: 0L
-                    
-                    // Chỉ ghi vào luồng vị trí riêng; playbackState chỉ đổi khi độ dài bài thật sự đổi
-                    _positionMs.value = pos
-                    if (_playbackState.value.durationMs != duration) {
-                        _playbackState.value = _playbackState.value.copy(durationMs = duration)
-                    }
+    private fun startProgressTracker() = positionTracker.start()
 
-                    // Auto-save playback position every ~5 seconds when playing
-                    if (isPlaying) {
-                        autoSaveTicks++
-                        if (autoSaveTicks >= 125) { // 125 * 40ms = 5000ms
-                            autoSaveTicks = 0
-                            _playbackState.value.currentTrack?.let { current ->
-                                settingsPreferences.saveLastPlaybackState(current.id, pos)
-                            }
-                        }
-                    }
-
-                    // Auto-crossfade volume down near the very end of track
-                    val settings = settingsPreferences.getSettings()
-                    if (settings.isCrossfadeEnabled && duration > 10000L && isPlaying && fadeJob?.isActive != true) {
-                        val crossfadeMs = (settings.crossfadeDurationSeconds * 1000L).coerceIn(1000L, 8000L)
-                        val remainingMs = duration - pos
-                        if (remainingMs in 0L..crossfadeMs) {
-                            val factor = (remainingMs.toFloat() / crossfadeMs).coerceIn(0.05f, 1f)
-                            player.volume = factor * userVolume
-                        }
-                    }
-                }
-                if (isPlaying) {
-                    delay(40)
-                } else {
-                    delay(250)
-                }
-            }
-        }
-    }
-
-    private fun stopProgressTracker() {
-        progressJob?.cancel()
-        progressJob = null
-    }
+    private fun stopProgressTracker() = positionTracker.stop()
 
     fun release() {
         _playbackState.value.currentTrack?.let { track ->
             settingsPreferences.saveLastPlaybackState(track.id, _positionMs.value)
         }
-        fadeJob?.cancel()
+        volumeFader.cancel()
         lyricsJob?.cancel()
         motionJob?.cancel()
         preloadJob?.cancel()
