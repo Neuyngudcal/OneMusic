@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -30,11 +31,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 
 /**
  * OneMusic Apex Prism Ergonomic Pill Filter Chip with tactile spring response
@@ -55,15 +51,15 @@ fun ApexPill(
     )
 
     val bgColor by animateColorAsState(
-        targetValue = if (isSelected) Brand else SurfaceElevated,
+        targetValue = if (isSelected) AppTheme.colors.accent else AppTheme.colors.surface1,
         label = "pill_bg"
     )
     val textColor by animateColorAsState(
-        targetValue = if (isSelected) TextPrimary else TextSecondary,
+        targetValue = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textSecondary,
         label = "pill_text"
     )
     val borderColor by animateColorAsState(
-        targetValue = if (isSelected) Brand else SurfaceDivider,
+        targetValue = if (isSelected) AppTheme.colors.accent else AppTheme.colors.divider,
         label = "pill_border"
     )
 

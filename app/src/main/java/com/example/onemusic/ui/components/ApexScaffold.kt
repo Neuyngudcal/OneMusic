@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.TextSecondary
-import com.example.onemusic.theme.TextPrimary
 
 /**
  * Standard One UI Top Header for OneMusic
@@ -48,7 +47,7 @@ fun ApexScreenTitle(
                 text = title,
                 style = MaterialTheme.typography.displaySmall.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 32.sp
                 )
             )
@@ -57,7 +56,7 @@ fun ApexScreenTitle(
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 14.sp
                     )
                 )

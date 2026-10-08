@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -39,9 +40,6 @@ import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import com.example.onemusic.theme.ApexReflectiveBorderBrush
 import com.example.onemusic.theme.LocalHazeState
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.ui.utils.apexBounceClick
 import dev.chrisbanes.haze.HazeState
@@ -109,7 +107,7 @@ fun ApexDropdownMenu(
                     )
                     .clip(RoundedCornerShape(22.dp))
                     .apexFrostedGlass(
-                        backgroundColor = SurfaceElevated.copy(alpha = 0.82f),
+                        backgroundColor = AppTheme.colors.surface1.copy(alpha = 0.82f),
                         blurRadius = 26.dp,
                         hazeState = effectiveHazeState
                     )
@@ -177,7 +175,7 @@ fun ApexDropdownMenuItem(
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontSize = 12.5.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = trailingColor ?: TextSecondary
+                    color = trailingColor ?: AppTheme.colors.textSecondary
                 )
             )
         }
@@ -194,7 +192,7 @@ fun ApexDropdownDivider(
     HorizontalDivider(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp),
         thickness = 0.5.dp,
-        color = SurfaceActiveIndicator.copy(alpha = 0.65f)
+        color = AppTheme.colors.surfaceActiveIndicator.copy(alpha = 0.65f)
     )
 }
 

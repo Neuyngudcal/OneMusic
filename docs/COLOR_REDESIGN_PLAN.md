@@ -190,3 +190,11 @@ Mỗi bước là một commit, build được và xem được trước khi san
 - **Người dùng cũ**: theme mặc định đổi từ tối sang sáng, nên bản cập nhật sẽ làm giao diện thay đổi đột ngột với người đã quen. Cân nhắc giữ Tối cho người dùng đang có dữ liệu cài đặt cũ, chỉ áp Sáng cho cài mới (nếu bạn muốn).
 - **Haze trong `Dialog`** (cửa sổ riêng) có thể không lấy mẫu đúng; nếu hộp thoại trong ra ngoài ý muốn thì dùng nền `surface1` đặc làm phương án dự phòng.
 - **Ảnh bìa ở màn Chi tiết** (`DetailHero.kt` có logic đổi trắng/đen theo ảnh) cần kiểm tra lại với nền trắng của theme sáng.
+
+## 8. Tiến độ
+
+- **Bước 1 (xong):** hạ tầng theme, `ThemeMode`, `NowPlayingThemeScope`.
+- **Bước 2 (xong, chưa build được trong môi trường viết code):** đổi các token **nền, chữ, viền, nhấn** sang `AppTheme.colors.*` ở 61 file ngoài `theme/` và `ui/screens/player/**`, 503 chỗ, không đổi mã màu. Ánh xạ: `TextPrimary`/`PrimaryIvory`→`textPrimary`, `TextSecondary`/`IvoryBody`→`textSecondary`, `TextTertiary`/`MutedIvory`→`textTertiary`, `TextDisabled`→`textDisabled`, `CharcoalBlack`→`onInverse`, `SurfaceElevated`→`surface1`, `SurfaceCard`→`surface2`, `SurfaceBase`/`SurfaceControl`/`SurfaceActive`/`SurfaceActiveIndicator`/`ActivePillBg`→tên tương ứng, `SurfaceDivider`→`divider`, `SurfaceBorderStrong`→`borderStrong`, `Brand`/`BrandLight`/`BrandDark`→`accent`/`accentLight`/`accentDark`.
+  - Chỉ đổi những chỗ nằm trong thân hàm `@Composable` (hoặc lambda nội dung của Box/Column/Row/items…). Chỗ nằm trong `remember {}`, `drawBehind {}`, `Canvas {}`, giá trị mặc định tham số, hằng số cấp cao nhất… **giữ nguyên** vì `AppTheme.colors` chỉ gọi được trong ngữ cảnh composable.
+  - **Chưa đổi:** `ObsidianBlack`, `ScrimColor`, `ShadowColor` và các token `Ivory*` trong suốt (cần xét từng chỗ vì có khi là lớp đen/trắng phủ lên ảnh bìa, không phải màu theo theme).
+- **Việc cần xem lại ở bước 4 (cặp màu đảo):** `PrimaryIvory` đang đóng hai vai trò, vừa là **màu chữ** (→`textPrimary`) vừa là **nền pill đang chọn / nút ngà** đi với chữ `CharcoalBlack` (→`onInverse`). Ở theme sáng, `textPrimary` thành đen thì nền pill đen với chữ `onInverse` phải là trắng: `LightAppColors.onInverse` = trắng. Còn chữ trắng trên nền `accent` (nút xanh) hiện cũng đi qua `textPrimary`; cần tách thành token `onAccent` riêng khi làm bảng sáng.

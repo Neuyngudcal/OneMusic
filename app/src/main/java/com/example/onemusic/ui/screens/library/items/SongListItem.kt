@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.items
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -37,13 +38,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.IvoryDisabled
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.components.ApexHiResBadge
 import com.example.onemusic.ui.utils.apexBounceClick
@@ -89,10 +84,10 @@ fun SongListItem(
                             .padding(end = 12.dp)
                             .size(24.dp)
                             .clip(CircleShape)
-                            .background(if (isSelectedInBatch) PrimaryIvory else Color.Transparent)
+                            .background(if (isSelectedInBatch) AppTheme.colors.textPrimary else Color.Transparent)
                             .border(
                                 width = 1.5.dp,
-                                color = if (isSelectedInBatch) PrimaryIvory else IvoryDisabled,
+                                color = if (isSelectedInBatch) AppTheme.colors.textPrimary else IvoryDisabled,
                                 shape = CircleShape
                             ),
                         contentAlignment = Alignment.Center
@@ -101,7 +96,7 @@ fun SongListItem(
                             Icon(
                                 imageVector = Icons.Rounded.Check,
                                 contentDescription = "Đã chọn",
-                                tint = CharcoalBlack,
+                                tint = AppTheme.colors.onInverse,
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -113,7 +108,7 @@ fun SongListItem(
                     modifier = Modifier
                         .size(56.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(SurfaceActiveIndicator),
+                        .background(AppTheme.colors.surfaceActiveIndicator),
                     contentAlignment = Alignment.Center
                 ) {
                     if (track.artworkUrl.isNotBlank()) {
@@ -127,7 +122,7 @@ fun SongListItem(
                         Icon(
                             imageVector = Icons.Rounded.MusicNote,
                             contentDescription = null,
-                            tint = TextSecondary,
+                            tint = AppTheme.colors.textSecondary,
                             modifier = Modifier.size(26.dp)
                         )
                     }
@@ -140,7 +135,7 @@ fun SongListItem(
                         text = track.title,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isCurrent) Brand else PrimaryIvory,
+                            color = if (isCurrent) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                             fontSize = 15.sp
                         ),
                         maxLines = 1,
@@ -155,7 +150,7 @@ fun SongListItem(
                         Text(
                             text = "${track.artist} • ${formatDuration(track.durationMs, padMinutes = true)}",
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 12.sp
                             ),
                             maxLines = 1,
@@ -178,7 +173,7 @@ fun SongListItem(
                         Icon(
                             imageVector = if (track.isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                             contentDescription = if (track.isFavorite) "Bỏ yêu thích" else "Yêu thích",
-                            tint = if (track.isFavorite) ApexRose else PrimaryIvory.copy(alpha = 0.45f),
+                            tint = if (track.isFavorite) ApexRose else AppTheme.colors.textPrimary.copy(alpha = 0.45f),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -189,7 +184,7 @@ fun SongListItem(
                 HorizontalDivider(
                     modifier = Modifier.padding(start = 86.dp, end = 16.dp),
                     thickness = 0.6.dp,
-                    color = SurfaceDivider
+                    color = AppTheme.colors.divider
                 )
             }
         }

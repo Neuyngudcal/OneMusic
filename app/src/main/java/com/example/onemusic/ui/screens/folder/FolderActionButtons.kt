@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.folder
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -25,12 +26,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.ShadowColor
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
 import com.example.onemusic.ui.utils.apexBounceClick
 
 /** Item 5: nút "Thêm thư mục mới" và (khi đã có thư mục) "Quét lại toàn bộ thư mục". */
@@ -52,7 +49,7 @@ internal fun FolderActionButtons(
                 .fillMaxWidth()
                 .shadow(12.dp, PillShape, ambientColor = ShadowColor)
                 .clip(PillShape)
-                .background(PrimaryIvory)
+                .background(AppTheme.colors.textPrimary)
                 .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) {
                     onAddFolderClick()
                 }
@@ -63,14 +60,14 @@ internal fun FolderActionButtons(
                 Icon(
                     imageVector = Icons.Rounded.Add,
                     contentDescription = null,
-                    tint = CharcoalBlack,
+                    tint = AppTheme.colors.onInverse,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Thêm thư mục mới",
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        color = CharcoalBlack,
+                        color = AppTheme.colors.onInverse,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     )
@@ -85,8 +82,8 @@ internal fun FolderActionButtons(
                     .fillMaxWidth()
                     .shadow(12.dp, PillShape, ambientColor = ShadowColor)
                     .clip(PillShape)
-                    .background(SurfaceControl)
-                    .border(1.5.dp, SurfaceBorderStrong, PillShape)
+                    .background(AppTheme.colors.surfaceControl)
+                    .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)
                     .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) {
                         onRescanClick()
                     }
@@ -97,14 +94,14 @@ internal fun FolderActionButtons(
                     Icon(
                         imageVector = Icons.Rounded.Refresh,
                         contentDescription = null,
-                        tint = PrimaryIvory,
+                        tint = AppTheme.colors.textPrimary,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Quét lại toàn bộ thư mục",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = PrimaryIvory,
+                            color = AppTheme.colors.textPrimary,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.sp
                         )

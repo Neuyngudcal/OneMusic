@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.main
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
@@ -95,13 +96,13 @@ internal fun BoxScope.BottomControlsOverlay(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 4.dp)
                         .clip(PillShape)
-                        .background(SurfaceElevated.copy(alpha = 0.92f))
+                        .background(AppTheme.colors.surface1.copy(alpha = 0.92f))
                         .padding(horizontal = 16.dp, vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CircularProgressIndicator(color = Brand, strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
+                    CircularProgressIndicator(color = AppTheme.colors.accent, strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(10.dp))
-                    Text("Đang quét thư viện nhạc…", color = TextPrimary, fontSize = 13.sp)
+                    Text("Đang quét thư viện nhạc…", color = AppTheme.colors.textPrimary, fontSize = 13.sp)
                 }
             }
 

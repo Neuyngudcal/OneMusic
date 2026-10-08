@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.items
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -37,16 +38,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.IvoryDisabled
 import com.example.onemusic.theme.IvoryFaint
 import com.example.onemusic.theme.IvoryMedium
-import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.ScrimColor
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.components.ApexHiResBadge
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.ui.utils.formatDuration
@@ -81,7 +76,7 @@ fun SongGridItem(
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(12.dp))
-                .background(SurfaceActiveIndicator)
+                .background(AppTheme.colors.surfaceActiveIndicator)
         ) {
             if (track.artworkUrl.isNotBlank()) {
                 AsyncImage(
@@ -94,7 +89,7 @@ fun SongGridItem(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(SurfaceElevated),
+                        .background(AppTheme.colors.surface1),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -114,10 +109,10 @@ fun SongGridItem(
                         .padding(8.dp)
                         .size(26.dp)
                         .clip(CircleShape)
-                        .background(if (isSelectedInBatch) PrimaryIvory else ScrimColor)
+                        .background(if (isSelectedInBatch) AppTheme.colors.textPrimary else ScrimColor)
                         .border(
                             width = 1.5.dp,
-                            color = if (isSelectedInBatch) PrimaryIvory else IvoryMedium,
+                            color = if (isSelectedInBatch) AppTheme.colors.textPrimary else IvoryMedium,
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -126,7 +121,7 @@ fun SongGridItem(
                         Icon(
                             imageVector = Icons.Rounded.Check,
                             contentDescription = null,
-                            tint = CharcoalBlack,
+                            tint = AppTheme.colors.onInverse,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -141,7 +136,7 @@ fun SongGridItem(
             text = track.title,
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
-                color = if (isCurrent) Brand else PrimaryIvory,
+                color = if (isCurrent) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                 fontSize = 15.sp
             ),
             maxLines = 1,
@@ -160,7 +155,7 @@ fun SongGridItem(
                 Text(
                     text = track.artist,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 12.5.sp
                     ),
                     maxLines = 1,

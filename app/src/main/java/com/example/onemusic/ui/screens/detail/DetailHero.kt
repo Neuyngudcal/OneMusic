@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.detail
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,15 +42,10 @@ import coil.compose.AsyncImage
 import com.example.onemusic.R
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.IvoryHigh
 import com.example.onemusic.theme.IvoryMuted
 import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceCard
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.components.ApexHiResBadge
 import com.example.onemusic.ui.utils.ShowSnackbar
@@ -135,7 +131,7 @@ internal fun DetailHeroBackground(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(SurfaceCard),
+                    .background(AppTheme.colors.surface2),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -158,7 +154,7 @@ internal fun DetailHeroBackground(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(SurfaceCard),
+                    .background(AppTheme.colors.surface2),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -220,7 +216,7 @@ internal fun DetailHeroHeader(
             text = title,
             style = MaterialTheme.typography.headlineMedium.copy(
                 fontWeight = FontWeight.ExtraBold,
-                color = TextPrimary,
+                color = AppTheme.colors.textPrimary,
                 fontSize = 26.sp,
                 lineHeight = 32.sp
             ),
@@ -256,7 +252,7 @@ internal fun DetailHeroHeader(
         Text(
             text = if (tracks.isNotEmpty()) "${tracks.size} bài hát • ${formatTotalDuration(tracks)}" else subtitle,
             style = MaterialTheme.typography.bodyMedium.copy(
-                color = TextSecondary,
+                color = AppTheme.colors.textSecondary,
                 fontSize = 13.sp
             ),
             textAlign = TextAlign.Center
@@ -274,7 +270,7 @@ internal fun DetailHeroHeader(
                     .weight(1f)
                     .height(48.dp)
                     .clip(PillShape)
-                    .background(PrimaryIvory)
+                    .background(AppTheme.colors.textPrimary)
                     .apexBounceClick(scaleDown = 0.94f, enableHaptic = true) {
                         if (tracks.isNotEmpty()) {
                             onPlayAll(tracks)
@@ -288,13 +284,13 @@ internal fun DetailHeroHeader(
                 Icon(
                     imageVector = Icons.Rounded.PlayArrow,
                     contentDescription = null,
-                    tint = CharcoalBlack,
+                    tint = AppTheme.colors.onInverse,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Phát tất cả",
-                    color = CharcoalBlack,
+                    color = AppTheme.colors.onInverse,
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.5.sp
                 )
@@ -312,8 +308,8 @@ internal fun DetailHeroHeader(
                 },
                 size = 48.dp,
                 iconSize = 22.dp,
-                backgroundColor = PrimaryIvory,
-                iconTint = CharcoalBlack
+                backgroundColor = AppTheme.colors.textPrimary,
+                iconTint = AppTheme.colors.onInverse
             )
         }
         Spacer(modifier = Modifier.height(22.dp))

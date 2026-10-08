@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.dedup
 
+import com.example.onemusic.theme.AppTheme
 import android.text.format.Formatter
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -54,12 +55,8 @@ import com.example.onemusic.data.dedup.DuplicateAudioDetector
 import com.example.onemusic.data.dedup.DuplicateGroup
 import com.example.onemusic.data.repository.MusicRepository
 import com.example.onemusic.playback.MusicPlayerController
-import com.example.onemusic.theme.Brand
 import com.example.onemusic.theme.LocalApexHazeState
 import com.example.onemusic.theme.ObsidianBlack
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.components.ApexConfirmDialog
@@ -158,7 +155,7 @@ fun DuplicateCleanerScreen(
                             onClick = { refreshAnalysis() },
                             size = 44.dp,
                             iconSize = 22.dp,
-                            iconTint = TextPrimary
+                            iconTint = AppTheme.colors.textPrimary
                         )
                     }
 
@@ -168,7 +165,7 @@ fun DuplicateCleanerScreen(
                         text = "Lọc bài hát trùng lặp",
                         style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.ExtraBold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 30.sp
                         )
                     )
@@ -178,7 +175,7 @@ fun DuplicateCleanerScreen(
                     Text(
                         text = "Phân tích thông minh 4 tầng: Tự động giữ lại bản nhạc có chất lượng cao nhất (Hi-Res/FLAC 24-bit) và bảo vệ các bản Live, Remix, Acoustic.",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 13.5.sp,
                             lineHeight = 19.sp
                         )
@@ -197,7 +194,7 @@ fun DuplicateCleanerScreen(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator(
-                                color = Brand,
+                                color = AppTheme.colors.accent,
                                 strokeWidth = 3.dp,
                                 modifier = Modifier.size(36.dp)
                             )
@@ -205,7 +202,7 @@ fun DuplicateCleanerScreen(
                             Text(
                                 text = "Đang phân tích siêu dữ liệu & chất lượng âm thanh...",
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = TextSecondary,
+                                    color = AppTheme.colors.textSecondary,
                                     fontSize = 14.sp
                                 )
                             )
@@ -227,14 +224,14 @@ fun DuplicateCleanerScreen(
                                 modifier = Modifier
                                     .size(64.dp)
                                     .clip(CircleShape)
-                                    .background(SurfaceActiveIndicator),
+                                    .background(AppTheme.colors.surfaceActiveIndicator),
                                 contentAlignment = Alignment.Center
                             ) {
 
                                 Icon(
                                     imageVector = Icons.Rounded.CheckCircle,
                                     contentDescription = null,
-                                    tint = Brand,
+                                    tint = AppTheme.colors.accent,
                                     modifier = Modifier.size(36.dp)
                                 )
                             }
@@ -243,7 +240,7 @@ fun DuplicateCleanerScreen(
                                 text = "Không có bài hát trùng lặp",
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = TextPrimary,
+                                    color = AppTheme.colors.textPrimary,
                                     fontSize = 17.sp
                                 )
                             )
@@ -251,7 +248,7 @@ fun DuplicateCleanerScreen(
                             Text(
                                 text = "Thư viện nhạc của bạn hoàn toàn sạch sẽ, không có bài hát nào bị nhân bản hoặc trùng lặp chất lượng.",
                                 style = MaterialTheme.typography.bodySmall.copy(
-                                    color = TextSecondary,
+                                    color = AppTheme.colors.textSecondary,
                                     fontSize = 13.sp,
                                     lineHeight = 18.sp
                                 ),
@@ -278,7 +275,7 @@ fun DuplicateCleanerScreen(
                             Icon(
                                 imageVector = Icons.Rounded.Headphones,
                                 contentDescription = null,
-                                tint = Brand,
+                                tint = AppTheme.colors.accent,
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.width(16.dp))
@@ -287,7 +284,7 @@ fun DuplicateCleanerScreen(
                                     text = "Tìm thấy ${duplicateGroups.size} nhóm bài trùng lặp",
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold,
-                                        color = TextPrimary,
+                                        color = AppTheme.colors.textPrimary,
                                         fontSize = 15.5.sp
                                     )
                                 )
@@ -295,7 +292,7 @@ fun DuplicateCleanerScreen(
                                 Text(
                                     text = "Đã chọn $totalSelectedCount bài • Tiết kiệm ${Formatter.formatFileSize(context, totalReclaimableBytes)}",
                                     style = MaterialTheme.typography.bodySmall.copy(
-                                        color = TextSecondary,
+                                        color = AppTheme.colors.textSecondary,
                                         fontSize = 13.sp
                                     )
                                 )

@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import com.example.onemusic.ui.utils.LocalBottomOverlayPadding
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -43,12 +44,6 @@ import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGroupedCardItem
 
 /** HomeSubView.PLAYLISTS: danh sách playlist (Yêu thích + tự tạo), nhập/xuất .m3u8, tạo/xóa playlist. */
@@ -88,7 +83,7 @@ internal fun HomePlaylistsContent(
                     text = "Playlist",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = AppTheme.colors.textPrimary,
                         fontSize = 22.sp
                     ),
                     modifier = Modifier.weight(1f)
@@ -100,7 +95,7 @@ internal fun HomePlaylistsContent(
                         onClick = { onImportPlaylistM3u() },
                         size = 44.dp,
                         iconSize = 22.dp,
-                        iconTint = PrimaryIvory
+                        iconTint = AppTheme.colors.textPrimary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -110,7 +105,7 @@ internal fun HomePlaylistsContent(
                     onClick = onCreatePlaylistClick,
                     size = 44.dp,
                     iconSize = 22.dp,
-                    iconTint = PrimaryIvory
+                    iconTint = AppTheme.colors.textPrimary
                 )
             }
         }
@@ -146,7 +141,7 @@ internal fun HomePlaylistsContent(
                             Icon(
                                 imageVector = Icons.Rounded.Favorite,
                                 contentDescription = null,
-                                tint = PrimaryIvory,
+                                tint = AppTheme.colors.textPrimary,
                                 modifier = Modifier.size(34.dp)
                             )
                         }
@@ -156,7 +151,7 @@ internal fun HomePlaylistsContent(
                                 text = "Bài hát yêu thích",
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = TextPrimary,
+                                    color = AppTheme.colors.textPrimary,
                                     fontSize = 16.sp
                                 )
                             )
@@ -164,7 +159,7 @@ internal fun HomePlaylistsContent(
                             Text(
                                 text = "$favCount bài hát",
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = TextSecondary,
+                                    color = AppTheme.colors.textSecondary,
                                     fontSize = 13.5.sp
                                 )
                             )
@@ -174,7 +169,7 @@ internal fun HomePlaylistsContent(
                         HorizontalDivider(
                             modifier = Modifier.padding(start = 98.dp, end = 16.dp),
                             thickness = 0.6.dp,
-                            color = SurfaceDivider
+                            color = AppTheme.colors.divider
                         )
                     }
                 }
@@ -204,13 +199,13 @@ internal fun HomePlaylistsContent(
                             modifier = Modifier
                                 .size(68.dp)
                                 .clip(RoundedCornerShape(16.dp))
-                                .background(SurfaceActiveIndicator),
+                                .background(AppTheme.colors.surfaceActiveIndicator),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
                                 contentDescription = null,
-                                tint = Brand,
+                                tint = AppTheme.colors.accent,
                                 modifier = Modifier.size(34.dp)
                             )
                         }
@@ -220,7 +215,7 @@ internal fun HomePlaylistsContent(
                                 text = pl.name,
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = TextPrimary,
+                                    color = AppTheme.colors.textPrimary,
                                     fontSize = 16.sp
                                 ),
                                 maxLines = 1,
@@ -230,7 +225,7 @@ internal fun HomePlaylistsContent(
                             Text(
                                 text = "${pl.trackIds.size} bài hát",
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = TextSecondary,
+                                    color = AppTheme.colors.textSecondary,
                                     fontSize = 13.5.sp
                                 )
                             )
@@ -245,8 +240,8 @@ internal fun HomePlaylistsContent(
                                 },
                                 size = 38.dp,
                                 iconSize = 18.dp,
-                                iconTint = PrimaryIvory,
-                                backgroundColor = SurfaceActiveIndicator.copy(alpha = 0.60f)
+                                iconTint = AppTheme.colors.textPrimary,
+                                backgroundColor = AppTheme.colors.surfaceActiveIndicator.copy(alpha = 0.60f)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                         }
@@ -259,7 +254,7 @@ internal fun HomePlaylistsContent(
                             size = 38.dp,
                             iconSize = 18.dp,
                             iconTint = ApexRose.copy(alpha = 0.85f),
-                            backgroundColor = SurfaceActiveIndicator.copy(alpha = 0.60f)
+                            backgroundColor = AppTheme.colors.surfaceActiveIndicator.copy(alpha = 0.60f)
                         )
                     }
 
@@ -267,7 +262,7 @@ internal fun HomePlaylistsContent(
                         HorizontalDivider(
                             modifier = Modifier.padding(start = 98.dp, end = 16.dp),
                             thickness = 0.6.dp,
-                            color = SurfaceDivider
+                            color = AppTheme.colors.divider
                         )
                     }
                 }

@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.tabs
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -43,18 +44,9 @@ import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.IvoryDisabled
 import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.components.ApexDialogContainer
@@ -106,7 +98,7 @@ fun LazyListScope.playlistsTabContent(
                         modifier = Modifier
                             .size(54.dp)
                             .clip(RoundedCornerShape(14.dp))
-                            .background(SurfaceActiveIndicator),
+                            .background(AppTheme.colors.surfaceActiveIndicator),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -124,7 +116,7 @@ fun LazyListScope.playlistsTabContent(
                             text = "Bài hát yêu thích",
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = TextPrimary,
+                                color = AppTheme.colors.textPrimary,
                                 fontSize = 15.sp
                             ),
                             maxLines = 1,
@@ -134,7 +126,7 @@ fun LazyListScope.playlistsTabContent(
                         Text(
                             text = "${favoriteTracks.size} bài hát",
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 12.sp
                             ),
                             maxLines = 1,
@@ -147,7 +139,7 @@ fun LazyListScope.playlistsTabContent(
                     HorizontalDivider(
                         modifier = Modifier.padding(start = 84.dp, end = 16.dp),
                         thickness = 0.6.dp,
-                        color = SurfaceDivider
+                        color = AppTheme.colors.divider
                     )
                 }
             }
@@ -183,13 +175,13 @@ fun LazyListScope.playlistsTabContent(
                         modifier = Modifier
                             .size(54.dp)
                             .clip(RoundedCornerShape(14.dp))
-                            .background(SurfaceActiveIndicator),
+                            .background(AppTheme.colors.surfaceActiveIndicator),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
                             contentDescription = pl.name,
-                            tint = PrimaryIvory,
+                            tint = AppTheme.colors.textPrimary,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -201,7 +193,7 @@ fun LazyListScope.playlistsTabContent(
                             text = pl.name,
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = TextPrimary,
+                                color = AppTheme.colors.textPrimary,
                                 fontSize = 15.sp
                             ),
                             maxLines = 1,
@@ -211,7 +203,7 @@ fun LazyListScope.playlistsTabContent(
                         Text(
                             text = "${pl.trackIds.size} bài hát",
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 12.sp
                             ),
                             maxLines = 1,
@@ -226,7 +218,7 @@ fun LazyListScope.playlistsTabContent(
                             onClick = { onExportPlaylistM3u(pl) },
                             size = 36.dp,
                             iconSize = 18.dp,
-                            iconTint = TextSecondary
+                            iconTint = AppTheme.colors.textSecondary
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                     }
@@ -247,7 +239,7 @@ fun LazyListScope.playlistsTabContent(
                     HorizontalDivider(
                         modifier = Modifier.padding(start = 84.dp, end = 16.dp),
                         thickness = 0.6.dp,
-                        color = SurfaceDivider
+                        color = AppTheme.colors.divider
                     )
                 }
             }
@@ -281,13 +273,13 @@ private fun CreatePlaylistRow(total: Int, onClick: () -> Unit) {
                     modifier = Modifier
                         .size(54.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(SurfaceActiveIndicator),
+                        .background(AppTheme.colors.surfaceActiveIndicator),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Add,
                         contentDescription = null,
-                        tint = PrimaryIvory,
+                        tint = AppTheme.colors.textPrimary,
                         modifier = Modifier.size(28.dp)
                     )
                 }
@@ -298,7 +290,7 @@ private fun CreatePlaylistRow(total: Int, onClick: () -> Unit) {
                     text = "Tạo playlist mới",
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = PrimaryIvory,
+                        color = AppTheme.colors.textPrimary,
                         fontSize = 15.sp
                     ),
                     modifier = Modifier.weight(1f)
@@ -309,7 +301,7 @@ private fun CreatePlaylistRow(total: Int, onClick: () -> Unit) {
             HorizontalDivider(
                 modifier = Modifier.padding(start = 84.dp, end = 16.dp),
                 thickness = 0.6.dp,
-                color = SurfaceDivider
+                color = AppTheme.colors.divider
             )
         }
     }
@@ -336,7 +328,7 @@ fun LibraryNewPlaylistDialog(
                 text = "Tạo Danh Sách Phát Mới",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 18.sp
                 )
             )
@@ -346,13 +338,13 @@ fun LibraryNewPlaylistDialog(
             OutlinedTextField(
                 value = newPlaylistName,
                 onValueChange = { newPlaylistName = it },
-                placeholder = { Text("Tên danh sách phát...", color = TextSecondary) },
+                placeholder = { Text("Tên danh sách phát...", color = AppTheme.colors.textSecondary) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Brand,
-                    unfocusedBorderColor = SurfaceDivider,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary
+                    focusedBorderColor = AppTheme.colors.accent,
+                    unfocusedBorderColor = AppTheme.colors.divider,
+                    focusedTextColor = AppTheme.colors.textPrimary,
+                    unfocusedTextColor = AppTheme.colors.textPrimary
                 ),
                 singleLine = true
             )
@@ -366,18 +358,18 @@ fun LibraryNewPlaylistDialog(
                 Box(
                     modifier = Modifier
                         .clip(PillShape)
-                        .background(SurfaceControl)
-                        .border(1.5.dp, SurfaceBorderStrong, PillShape)
+                        .background(AppTheme.colors.surfaceControl)
+                        .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)
                         .apexBounceClick(scaleDown = 0.92f) { onDismissRequest() }
                         .padding(horizontal = 16.dp, vertical = 10.dp)
                 ) {
-                    Text("Hủy", color = PrimaryIvory, fontWeight = FontWeight.SemiBold)
+                    Text("Hủy", color = AppTheme.colors.textPrimary, fontWeight = FontWeight.SemiBold)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Box(
                     modifier = Modifier
                         .clip(PillShape)
-                        .background(PrimaryIvory)
+                        .background(AppTheme.colors.textPrimary)
                         .apexBounceClick(scaleDown = 0.92f) {
                             if (newPlaylistName.isNotBlank()) {
                                 onCreatePlaylist(newPlaylistName.trim())
@@ -386,7 +378,7 @@ fun LibraryNewPlaylistDialog(
                         }
                         .padding(horizontal = 18.dp, vertical = 10.dp)
                 ) {
-                    Text("Tạo", color = CharcoalBlack, fontWeight = FontWeight.Bold)
+                    Text("Tạo", color = AppTheme.colors.onInverse, fontWeight = FontWeight.Bold)
                 }
             }
         }

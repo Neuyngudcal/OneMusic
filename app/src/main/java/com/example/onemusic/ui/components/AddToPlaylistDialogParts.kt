@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -16,14 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.Brand
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.utils.apexBounceClick
 
 // Phần giao diện dùng chung (giống hệt nhau) của AddToPlaylistDialog và AddToPlaylistMultipleDialog.
@@ -35,7 +29,7 @@ internal fun AddToPlaylistTitle() {
         text = "Thêm vào danh sách phát",
         style = MaterialTheme.typography.titleLarge.copy(
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = AppTheme.colors.textPrimary,
             fontSize = 20.sp
         )
     )
@@ -50,13 +44,13 @@ internal fun NewPlaylistNameField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text("Tên danh sách phát...", color = TextSecondary) },
+        placeholder = { Text("Tên danh sách phát...", color = AppTheme.colors.textSecondary) },
         modifier = Modifier.fillMaxWidth(),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Brand,
-            unfocusedBorderColor = SurfaceDivider,
-            focusedTextColor = TextPrimary,
-            unfocusedTextColor = TextPrimary
+            focusedBorderColor = AppTheme.colors.accent,
+            unfocusedBorderColor = AppTheme.colors.divider,
+            focusedTextColor = AppTheme.colors.textPrimary,
+            unfocusedTextColor = AppTheme.colors.textPrimary
         ),
         singleLine = true
     )
@@ -69,8 +63,8 @@ internal fun AddToPlaylistCloseButton(onDismiss: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(PillShape)
-            .background(SurfaceControl)
-            .border(1.5.dp, SurfaceBorderStrong, PillShape)
+            .background(AppTheme.colors.surfaceControl)
+            .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)
             .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) {
                 onDismiss()
             }
@@ -79,7 +73,7 @@ internal fun AddToPlaylistCloseButton(onDismiss: () -> Unit) {
     ) {
         Text(
             text = "Đóng",
-            color = PrimaryIvory,
+            color = AppTheme.colors.textPrimary,
             fontWeight = FontWeight.Bold,
             fontSize = 15.sp
         )

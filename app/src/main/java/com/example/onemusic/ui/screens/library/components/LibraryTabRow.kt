@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -22,10 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.screens.library.LibraryTab
 import com.example.onemusic.ui.utils.apexBounceClick
 
@@ -52,12 +50,12 @@ fun LibraryTabRow(
             val isSelected = currentTab == tab
 
             val bgColor by animateColorAsState(
-                targetValue = if (isSelected) PrimaryIvory else Color.Transparent,
+                targetValue = if (isSelected) AppTheme.colors.textPrimary else Color.Transparent,
                 animationSpec = spring(stiffness = 500f),
                 label = "tab_bg_anim"
             )
             val textColor by animateColorAsState(
-                targetValue = if (isSelected) CharcoalBlack else TextSecondary,
+                targetValue = if (isSelected) AppTheme.colors.onInverse else AppTheme.colors.textSecondary,
                 animationSpec = spring(stiffness = 500f),
                 label = "tab_text_anim"
             )

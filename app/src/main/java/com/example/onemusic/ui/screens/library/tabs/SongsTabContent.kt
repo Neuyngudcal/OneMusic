@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.tabs
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -38,12 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.haptics.rememberApexHaptics
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.screens.library.LibraryViewMode
 import com.example.onemusic.ui.screens.library.items.SongGridItem
@@ -87,13 +83,13 @@ fun LazyListScope.songsTabContent(
                         modifier = Modifier
                             .size(60.dp)
                             .clip(CircleShape)
-                            .background(SurfaceActiveIndicator),
+                            .background(AppTheme.colors.surfaceActiveIndicator),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Headphones,
                             contentDescription = null,
-                            tint = PrimaryIvory,
+                            tint = AppTheme.colors.textPrimary,
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -104,7 +100,7 @@ fun LazyListScope.songsTabContent(
                         text = "Chưa có bài hát nào trong thư viện",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                            color = AppTheme.colors.textPrimary
                         )
                     )
 
@@ -112,7 +108,7 @@ fun LazyListScope.songsTabContent(
 
                     Text(
                         text = "Nhấn nút bên dưới để quét tệp âm thanh trên thiết bị",
-                        style = MaterialTheme.typography.bodyMedium.copy(color = TextSecondary)
+                        style = MaterialTheme.typography.bodyMedium.copy(color = AppTheme.colors.textSecondary)
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -120,7 +116,7 @@ fun LazyListScope.songsTabContent(
                     Box(
                         modifier = Modifier
                             .clip(PillShape)
-                            .background(PrimaryIvory)
+                            .background(AppTheme.colors.textPrimary)
                             .apexBounceClick(scaleDown = 0.95f, enableHaptic = true) {
                                 onRescan()
                             }
@@ -134,14 +130,14 @@ fun LazyListScope.songsTabContent(
                             Icon(
                                 imageVector = Icons.Rounded.Refresh,
                                 contentDescription = "Quét lại bài hát",
-                                tint = CharcoalBlack,
+                                tint = AppTheme.colors.onInverse,
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "Quét lại bài hát",
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = CharcoalBlack,
+                                    color = AppTheme.colors.onInverse,
                                     fontWeight = FontWeight.Bold
                                 )
                             )

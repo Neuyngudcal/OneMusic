@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,11 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.Brand
 import com.example.onemusic.theme.IvoryFaint
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import androidx.compose.foundation.lazy.LazyListScope
 
 /** Hàng ngang "Playlist": thẻ Yêu thích + các playlist tự tạo. */
@@ -60,7 +57,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                 text = "PLAYLIST (${customPlaylists.size + 1})",
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     letterSpacing = 1.sp,
                     fontSize = 12.sp
                 )
@@ -69,7 +66,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                 text = "Tất cả",
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = Brand,
+                    color = AppTheme.colors.accent,
                     fontSize = 12.sp
                 ),
                 modifier = Modifier
@@ -100,7 +97,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                             .fillMaxWidth()
                             .aspectRatio(1f)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(SurfaceActiveIndicator),
+                            .background(AppTheme.colors.surfaceActiveIndicator),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -115,7 +112,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                         text = "Yêu thích",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 13.sp
                         ),
                         maxLines = 1,
@@ -125,7 +122,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                     Text(
                         text = "$favoriteTrackCount bài hát",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 11.5.sp
                         ),
                         maxLines = 1,
@@ -148,7 +145,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                             .fillMaxWidth()
                             .aspectRatio(1f)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(SurfaceActiveIndicator),
+                            .background(AppTheme.colors.surfaceActiveIndicator),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -163,7 +160,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                         text = pl.name,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 13.sp
                         ),
                         maxLines = 1,
@@ -173,7 +170,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                     Text(
                         text = "${pl.trackIds.size} bài hát",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 11.5.sp
                         ),
                         maxLines = 1,

@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,12 +34,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.CharcoalBlack
-import com.example.onemusic.theme.IvoryBody
 import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.TextPrimary
 import androidx.compose.foundation.lazy.LazyListScope
 
 /** Banner "Nổi bật hôm nay" (một bài ngẫu nhiên, ưu tiên bài yêu thích có ảnh bìa). */
@@ -101,7 +98,7 @@ internal fun LazyListScope.homeHeroBannerSection(
                         Text(
                             text = "NỔI BẬT HÔM NAY",
                             style = MaterialTheme.typography.labelSmall.copy(
-                                color = TextPrimary,
+                                color = AppTheme.colors.textPrimary,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.sp
                             )
@@ -117,7 +114,7 @@ internal fun LazyListScope.homeHeroBannerSection(
                             Text(
                                 text = featuredTrack.title,
                                 style = MaterialTheme.typography.titleLarge.copy(
-                                    color = PrimaryIvory,
+                                    color = AppTheme.colors.textPrimary,
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 22.sp
                                 ),
@@ -128,7 +125,7 @@ internal fun LazyListScope.homeHeroBannerSection(
                             Text(
                                 text = featuredTrack.artist,
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = IvoryBody,
+                                    color = AppTheme.colors.textSecondary,
                                     fontSize = 14.sp
                                 ),
                                 maxLines = 1,
@@ -141,13 +138,13 @@ internal fun LazyListScope.homeHeroBannerSection(
                             modifier = Modifier
                                 .size(48.dp)
                                 .clip(CircleShape)
-                                .background(PrimaryIvory),
+                                .background(AppTheme.colors.textPrimary),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.PlayArrow,
                                 contentDescription = "Phát",
-                                tint = CharcoalBlack,
+                                tint = AppTheme.colors.onInverse,
                                 modifier = Modifier.size(28.dp)
                             )
                         }

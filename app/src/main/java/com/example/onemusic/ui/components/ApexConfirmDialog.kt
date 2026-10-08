@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.ui.graphics.Color
@@ -27,13 +28,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.theme.ApexReflectiveBorderBrush
 import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.TextPrimary
 
 /**
  * OneMusic Apex Prism Glassmorphic Confirmation Dialog
@@ -64,7 +59,7 @@ fun ApexConfirmDialog(
                     text = title,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = AppTheme.colors.textPrimary,
                         fontSize = 20.sp,
                         lineHeight = 26.sp
                     )
@@ -76,7 +71,7 @@ fun ApexConfirmDialog(
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = PrimaryIvory,
+                        color = AppTheme.colors.textPrimary,
                         fontSize = 14.sp,
                         lineHeight = 20.sp
                     )
@@ -94,8 +89,8 @@ fun ApexConfirmDialog(
                     Box(
                         modifier = Modifier
                             .clip(PillShape)
-                            .background(SurfaceControl)
-                            .border(1.5.dp, SurfaceBorderStrong, PillShape)
+                            .background(AppTheme.colors.surfaceControl)
+                            .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)
                             .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
                                 onDismiss()
                             }
@@ -105,7 +100,7 @@ fun ApexConfirmDialog(
                         Text(
                             text = dismissButtonText,
                             style = MaterialTheme.typography.labelLarge.copy(
-                                color = PrimaryIvory,
+                                color = AppTheme.colors.textPrimary,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 14.sp
                             )
@@ -118,7 +113,7 @@ fun ApexConfirmDialog(
                     Box(
                         modifier = Modifier
                             .clip(PillShape)
-                            .background(if (isDestructive) ApexRose else PrimaryIvory)
+                            .background(if (isDestructive) ApexRose else AppTheme.colors.textPrimary)
                             .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
                                 onConfirm()
                             }
@@ -128,7 +123,7 @@ fun ApexConfirmDialog(
                         Text(
                             text = confirmButtonText,
                             style = MaterialTheme.typography.labelLarge.copy(
-                                color = if (isDestructive) TextPrimary else CharcoalBlack,
+                                color = if (isDestructive) AppTheme.colors.textPrimary else AppTheme.colors.onInverse,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )

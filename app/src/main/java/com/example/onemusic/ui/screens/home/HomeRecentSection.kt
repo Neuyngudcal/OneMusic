@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,11 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.Brand
 import com.example.onemusic.theme.IvoryDisabled
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import androidx.compose.foundation.lazy.LazyListScope
 
@@ -62,7 +59,7 @@ internal fun LazyListScope.homeRecentSection(
                 text = "NGHE GẦN ĐÂY",
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     letterSpacing = 1.sp,
                     fontSize = 12.sp
                 )
@@ -83,7 +80,7 @@ internal fun LazyListScope.homeRecentSection(
                 Text(
                     text = "Chưa có bài hát nào được phát gần đây",
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 14.sp
                     )
                 )
@@ -112,7 +109,7 @@ internal fun LazyListScope.homeRecentSection(
                                 .fillMaxWidth()
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(SurfaceActiveIndicator)
+                                .background(AppTheme.colors.surfaceActiveIndicator)
                         ) {
                             if (!track.artworkUrl.isNullOrBlank()) {
                                 AsyncImage(
@@ -142,7 +139,7 @@ internal fun LazyListScope.homeRecentSection(
                             text = track.title,
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isCurrent) Brand else PrimaryIvory,
+                                color = if (isCurrent) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                                 fontSize = 13.sp
                             ),
                             maxLines = 1,
@@ -154,7 +151,7 @@ internal fun LazyListScope.homeRecentSection(
                         Text(
                             text = track.artist,
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 11.5.sp
                             ),
                             maxLines = 1,
@@ -180,7 +177,7 @@ internal fun LazyListScope.homeRecentSection(
                     text = "CÓ THỂ BẠN SẼ THÍCH",
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         letterSpacing = 1.sp,
                         fontSize = 12.sp
                     )
@@ -209,7 +206,7 @@ internal fun LazyListScope.homeRecentSection(
                                 .fillMaxWidth()
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(SurfaceActiveIndicator)
+                                .background(AppTheme.colors.surfaceActiveIndicator)
                         ) {
                             if (!track.artworkUrl.isNullOrBlank()) {
                                 AsyncImage(
@@ -239,7 +236,7 @@ internal fun LazyListScope.homeRecentSection(
                             text = track.title,
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isCurrent) Brand else PrimaryIvory,
+                                color = if (isCurrent) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                                 fontSize = 13.sp
                             ),
                             maxLines = 1,
@@ -251,7 +248,7 @@ internal fun LazyListScope.homeRecentSection(
                         Text(
                             text = track.artist,
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 11.5.sp
                             ),
                             maxLines = 1,

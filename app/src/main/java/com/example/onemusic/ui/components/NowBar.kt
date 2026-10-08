@@ -1,4 +1,5 @@
 package com.example.onemusic.ui.components
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.shape.CircleShape
 
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -69,13 +70,9 @@ import com.example.onemusic.ui.utils.apexBounceClick
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import com.example.onemusic.theme.ApexPillBorderBrush
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.LocalHazeState
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.ShadowColor
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexFrostedGlass
 
 /**
@@ -140,7 +137,7 @@ fun NowBar(
             .shadow(elevation = 16.dp, shape = PillShape, ambientColor = ShadowColor)
             .clip(PillShape)
             .apexFrostedGlass(
-                backgroundColor = SurfaceElevated.copy(alpha = 0.88f),
+                backgroundColor = AppTheme.colors.surface1.copy(alpha = 0.88f),
                 blurRadius = 20.dp,
                 hazeState = hazeState
             )
@@ -251,7 +248,7 @@ fun NowBar(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(SurfaceElevated),
+                    .background(AppTheme.colors.surface1),
                 contentAlignment = Alignment.Center
             ) {
                 AnimatedContent(
@@ -282,7 +279,7 @@ fun NowBar(
                             Icon(
                                 imageVector = Icons.Rounded.MusicNote,
                                 contentDescription = null,
-                                tint = PrimaryIvory.copy(alpha = 0.7f),
+                                tint = AppTheme.colors.textPrimary.copy(alpha = 0.7f),
                                 modifier = Modifier.size(22.dp)
                             )
                         }
@@ -301,7 +298,7 @@ fun NowBar(
                     text = track?.title ?: "Không phát nhạc",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Medium,
-                        color = PrimaryIvory,
+                        color = AppTheme.colors.textPrimary,
                         fontSize = 14.sp
                     ),
                     maxLines = 1,
@@ -311,7 +308,7 @@ fun NowBar(
                 Text(
                     text = track?.artist ?: "Nhấn để phát",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 12.sp
                     ),
                     maxLines = 1,
@@ -335,7 +332,7 @@ fun NowBar(
                 Icon(
                     imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                     contentDescription = if (isPlaying) "Tạm dừng" else "Phát",
-                    tint = PrimaryIvory,
+                    tint = AppTheme.colors.textPrimary,
                     modifier = Modifier.size(26.dp)
                 )
             }

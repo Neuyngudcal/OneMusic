@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.navigation
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -66,9 +67,6 @@ import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.ShadowColor
 import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexFrostedGlass
 
 enum class Screen(
@@ -153,7 +151,7 @@ fun ApexBottomNavigation(
                 )
                 .clip(PillShape)
                 .apexFrostedGlass(
-                    backgroundColor = SurfaceElevated.copy(alpha = 0.88f),
+                    backgroundColor = AppTheme.colors.surface1.copy(alpha = 0.88f),
                     blurRadius = 20.dp,
                     hazeState = hazeState
                 )
@@ -288,7 +286,7 @@ fun ApexBottomNavigation(
                             Icon(
                                 imageVector = screen.icon,
                                 contentDescription = null,
-                                tint = if (isSelected) TextPrimary else TextSecondary,
+                                tint = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textSecondary,
                                 modifier = Modifier.size(24.dp)
                             )
                         }

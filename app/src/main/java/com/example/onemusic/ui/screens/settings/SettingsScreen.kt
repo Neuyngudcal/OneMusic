@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.settings
 
+import com.example.onemusic.theme.AppTheme
 import com.example.onemusic.ui.utils.LocalBottomOverlayPadding
 import androidx.compose.foundation.background
 import androidx.compose.runtime.mutableFloatStateOf
@@ -38,10 +39,6 @@ import com.example.onemusic.ui.components.ApexConfirmDialog
 import com.example.onemusic.playback.AudioEffectManager
 import com.example.onemusic.ui.components.ApexEqualizerDialog
 import com.example.onemusic.theme.ObsidianBlack
-import com.example.onemusic.theme.SurfaceCard
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 
 /**
@@ -103,7 +100,7 @@ fun SettingsScreen(
                         text = "Cài đặt",
                         style = MaterialTheme.typography.displaySmall.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 32.sp
                         )
                     )
@@ -111,7 +108,7 @@ fun SettingsScreen(
                     Text(
                         text = "Tùy chỉnh & âm thanh",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 14.sp
                         )
                     )

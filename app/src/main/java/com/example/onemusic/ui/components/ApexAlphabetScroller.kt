@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import android.os.SystemClock
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -43,9 +44,6 @@ import com.example.onemusic.theme.IvoryMedium
 import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.ShadowColor
-import com.example.onemusic.theme.SurfaceCard
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextPrimary
 
 val ALPHABET_CHAR_LIST = listOf(
     '#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
@@ -109,7 +107,7 @@ fun ApexAlphabetScroller(
                 .width(18.dp)
                 .fillMaxHeight()
                 .clip(PillShape)
-                .background(if (isScrubbing) SurfaceCard.copy(alpha = 0.85f) else Color.Transparent)
+                .background(if (isScrubbing) AppTheme.colors.surface2.copy(alpha = 0.85f) else Color.Transparent)
                 .onSizeChanged { containerHeightPx = it.height.toFloat() }
                 .pointerInput(Unit) {
                     detectTapGestures(
@@ -186,7 +184,7 @@ fun ApexAlphabetScroller(
                     .size(72.dp)
                     .shadow(elevation = 20.dp, shape = RoundedCornerShape(24.dp), ambientColor = ShadowColor)
                     .clip(RoundedCornerShape(24.dp))
-                    .background(SurfaceElevated)
+                    .background(AppTheme.colors.surface1)
                     .border(1.dp, ApexCyan.copy(alpha = 0.50f), RoundedCornerShape(24.dp)),
                 contentAlignment = Alignment.Center
             ) {
@@ -194,7 +192,7 @@ fun ApexAlphabetScroller(
                     text = activeLetter?.toString() ?: "",
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = AppTheme.colors.textPrimary,
                         fontSize = 34.sp
                     )
                 )

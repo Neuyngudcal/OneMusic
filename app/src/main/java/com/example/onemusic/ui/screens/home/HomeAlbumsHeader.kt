@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,9 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.components.ApexDropdownDivider
 import com.example.onemusic.ui.components.ApexDropdownMenu
@@ -65,14 +63,14 @@ internal fun HomeAlbumsHeader(
                 text = "Album",
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 22.sp
                 )
             )
             Text(
                 text = "$albumCount album • $trackCount bài hát",
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     fontSize = 12.5.sp
                 )
             )
@@ -104,8 +102,8 @@ internal fun HomeAlbumsHeader(
                     text = "Danh sách",
                     icon = Icons.AutoMirrored.Rounded.ViewList,
                     trailingText = if (albumViewMode == AlbumViewMode.LIST) "✓" else null,
-                    trailingColor = Brand,
-                    textColor = if (albumViewMode == AlbumViewMode.LIST) Brand else TextPrimary,
+                    trailingColor = AppTheme.colors.accent,
+                    textColor = if (albumViewMode == AlbumViewMode.LIST) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                     onClick = {
                         onAlbumViewModeChange(AlbumViewMode.LIST)
                         onViewMenuExpandedChange(false)
@@ -116,8 +114,8 @@ internal fun HomeAlbumsHeader(
                     text = "Lưới 2 cột",
                     icon = Icons.Rounded.GridView,
                     trailingText = if (albumViewMode == AlbumViewMode.GRID_2) "✓" else null,
-                    trailingColor = Brand,
-                    textColor = if (albumViewMode == AlbumViewMode.GRID_2) Brand else TextPrimary,
+                    trailingColor = AppTheme.colors.accent,
+                    textColor = if (albumViewMode == AlbumViewMode.GRID_2) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                     onClick = {
                         onAlbumViewModeChange(AlbumViewMode.GRID_2)
                         onViewMenuExpandedChange(false)
@@ -128,8 +126,8 @@ internal fun HomeAlbumsHeader(
                     text = "Lưới 3 cột",
                     icon = Icons.Rounded.ViewModule,
                     trailingText = if (albumViewMode == AlbumViewMode.GRID_3) "✓" else null,
-                    trailingColor = Brand,
-                    textColor = if (albumViewMode == AlbumViewMode.GRID_3) Brand else TextPrimary,
+                    trailingColor = AppTheme.colors.accent,
+                    textColor = if (albumViewMode == AlbumViewMode.GRID_3) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                     onClick = {
                         onAlbumViewModeChange(AlbumViewMode.GRID_3)
                         onViewMenuExpandedChange(false)

@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.items
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,16 +35,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.IvoryDisabled
 import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.SquircleLarge
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.utils.apexBounceClick
 
@@ -84,15 +78,15 @@ fun VinylDiscEffect(
             modifier = Modifier
                 .fillMaxSize(0.32f)
                 .clip(CircleShape)
-                .background(PrimaryIvory.copy(alpha = 0.25f))
-                .border(1.dp, PrimaryIvory.copy(alpha = 0.4f), CircleShape),
+                .background(AppTheme.colors.textPrimary.copy(alpha = 0.25f))
+                .border(1.dp, AppTheme.colors.textPrimary.copy(alpha = 0.4f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize(0.28f)
                     .clip(CircleShape)
-                    .background(CharcoalBlack)
+                    .background(AppTheme.colors.onInverse)
             )
         }
     }
@@ -137,7 +131,7 @@ fun AlbumGridCard(
                     .fillMaxSize(0.96f)
                     .align(Alignment.BottomStart)
                     .clip(SquircleLarge)
-                    .background(SurfaceActiveIndicator)
+                    .background(AppTheme.colors.surfaceActiveIndicator)
                     .border(0.7.dp, IvoryStroke.copy(alpha = 0.5f), SquircleLarge)
             ) {
                 if (!artworkUrl.isNullOrBlank()) {
@@ -151,7 +145,7 @@ fun AlbumGridCard(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(SurfaceElevated),
+                            .background(AppTheme.colors.surface1),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -170,13 +164,13 @@ fun AlbumGridCard(
                             .align(Alignment.BottomEnd)
                             .padding(6.dp)
                             .clip(RoundedCornerShape(8.dp))
-                            .background(CharcoalBlack.copy(alpha = 0.75f))
+                            .background(AppTheme.colors.onInverse.copy(alpha = 0.75f))
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
                             text = "$trackCount bài",
                             style = MaterialTheme.typography.labelSmall.copy(
-                                color = PrimaryIvory,
+                                color = AppTheme.colors.textPrimary,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -193,7 +187,7 @@ fun AlbumGridCard(
             text = albumName,
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = AppTheme.colors.textPrimary,
                 fontSize = 15.sp
             ),
             maxLines = 1,
@@ -206,7 +200,7 @@ fun AlbumGridCard(
         Text(
             text = artistName,
             style = MaterialTheme.typography.bodySmall.copy(
-                color = TextSecondary,
+                color = AppTheme.colors.textSecondary,
                 fontSize = 13.sp
             ),
             maxLines = 1,
@@ -259,7 +253,7 @@ fun AlbumListItem(
                             .size(52.dp)
                             .align(Alignment.CenterStart)
                             .clip(RoundedCornerShape(14.dp))
-                            .background(SurfaceActiveIndicator)
+                            .background(AppTheme.colors.surfaceActiveIndicator)
                             .border(0.6.dp, IvoryStroke.copy(alpha = 0.5f), RoundedCornerShape(14.dp)),
                         contentAlignment = Alignment.Center
                     ) {
@@ -274,7 +268,7 @@ fun AlbumListItem(
                             Icon(
                                 imageVector = Icons.Rounded.MusicNote,
                                 contentDescription = null,
-                                tint = TextSecondary,
+                                tint = AppTheme.colors.textSecondary,
                                 modifier = Modifier.size(26.dp)
                             )
                         }
@@ -288,7 +282,7 @@ fun AlbumListItem(
                         text = albumName,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 15.sp
                         ),
                         maxLines = 1,
@@ -298,7 +292,7 @@ fun AlbumListItem(
                     Text(
                         text = "$artistName • $trackCount bài hát",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 12.sp
                         ),
                         maxLines = 1,
@@ -311,7 +305,7 @@ fun AlbumListItem(
                 HorizontalDivider(
                     modifier = Modifier.padding(start = 86.dp, end = 16.dp),
                     thickness = 0.6.dp,
-                    color = SurfaceDivider
+                    color = AppTheme.colors.divider
                 )
             }
         }

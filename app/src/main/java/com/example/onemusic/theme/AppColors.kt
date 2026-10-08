@@ -32,7 +32,7 @@ data class AppColors(
     val textSecondary: Color,
     val textTertiary: Color,
     val textDisabled: Color,
-    val onAccent: Color,          // chữ/icon in lên nền sáng (CharcoalBlack)
+    val onInverse: Color,         // chữ/icon in lên nền màu chữ chính, ví dụ pill đang chọn (CharcoalBlack)
     val accent: Color,
     val accentLight: Color,
     val accentDark: Color,
@@ -56,7 +56,7 @@ val DarkAppColors = AppColors(
     textSecondary = TextSecondary,
     textTertiary = TextTertiary,
     textDisabled = TextDisabled,
-    onAccent = CharcoalBlack,
+    onInverse = CharcoalBlack,
     accent = Brand,
     accentLight = BrandLight,
     accentDark = BrandDark,

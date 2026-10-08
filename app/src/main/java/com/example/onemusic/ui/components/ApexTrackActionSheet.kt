@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -62,20 +63,15 @@ import coil.request.ImageRequest
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.ApexReflectiveBorderBrush
 import com.example.onemusic.theme.LocalApexHazeState
-import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.ui.utils.apexBounceClick
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 import com.example.onemusic.theme.ScrimColor
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.IvoryBody
 import com.example.onemusic.theme.IvoryFaint
 import com.example.onemusic.theme.IvoryMuted
 import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.MutedIvory
 import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 
 /**
  * OneMusic Apex Prism Track Action Sheet (1:1 Apple Music Context Menu)
@@ -128,7 +124,7 @@ fun ApexTrackActionSheet(
                     shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
                 )
                 .apexFrostedGlass(
-                    backgroundColor = SurfaceElevated.copy(alpha = 0.94f),
+                    backgroundColor = AppTheme.colors.surface1.copy(alpha = 0.94f),
                     blurRadius = 28.dp,
                     hazeState = effectiveHazeState
                 )
@@ -161,7 +157,7 @@ fun ApexTrackActionSheet(
                     modifier = Modifier
                         .size(58.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(SurfaceElevated),
+                        .background(AppTheme.colors.surface1),
                     contentAlignment = Alignment.Center
                 ) {
                     if (track.artworkUrl.isNotBlank()) {
@@ -195,7 +191,7 @@ fun ApexTrackActionSheet(
                         text = track.title,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 15.sp,
                             letterSpacing = (-0.2).sp
                         ),
@@ -206,7 +202,7 @@ fun ApexTrackActionSheet(
                     Text(
                         text = track.artist,
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = IvoryBody,
+                            color = AppTheme.colors.textSecondary,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.sp
                         ),
@@ -216,7 +212,7 @@ fun ApexTrackActionSheet(
                     Text(
                         text = if (track.album.isNotBlank()) track.album else "Đơn khúc",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = MutedIvory,
+                            color = AppTheme.colors.textTertiary,
                             fontWeight = FontWeight.Normal,
                             fontSize = 15.sp
                         ),

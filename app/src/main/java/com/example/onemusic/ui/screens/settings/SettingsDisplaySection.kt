@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.settings
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,12 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.ThemeMode
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.utils.apexBounceClick
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Fullscreen
@@ -61,7 +57,7 @@ internal fun LazyListScope.settingsDisplaySection(
                 Text(
                     text = "Chế độ giao diện",
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 13.sp
                     )
                 )
@@ -76,8 +72,8 @@ internal fun LazyListScope.settingsDisplaySection(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(PillShape)
-                                .background(if (isSelected) PrimaryIvory else SurfaceControl)
-                                .border(1.5.dp, if (isSelected) Color.Transparent else SurfaceBorderStrong, PillShape)
+                                .background(if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.surfaceControl)
+                                .border(1.5.dp, if (isSelected) Color.Transparent else AppTheme.colors.borderStrong, PillShape)
                                 .apexBounceClick(scaleDown = 0.94f, enableHaptic = false) {
                                     settingsPreferences.updateSettings { it.copy(themeMode = mode) }
                                 }
@@ -88,7 +84,7 @@ internal fun LazyListScope.settingsDisplaySection(
                                 text = mode.title,
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (isSelected) CharcoalBlack else PrimaryIvory,
+                                    color = if (isSelected) AppTheme.colors.onInverse else AppTheme.colors.textPrimary,
                                     fontSize = 13.sp
                                 )
                             )

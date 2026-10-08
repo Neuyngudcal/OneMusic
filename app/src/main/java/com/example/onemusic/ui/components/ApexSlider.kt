@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,7 +45,7 @@ fun ApexSlider(
         onValueChangeFinished = onValueChangeFinished,
         modifier = modifier.fillMaxWidth(),
         colors = SliderDefaults.colors(
-            thumbColor = TextPrimary,
+            thumbColor = AppTheme.colors.textPrimary,
             activeTrackColor = activeColor,
             inactiveTrackColor = inactiveColor
         ),

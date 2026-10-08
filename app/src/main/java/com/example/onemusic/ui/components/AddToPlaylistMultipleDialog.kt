@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,17 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.IvoryMedium
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.utils.apexBounceClick
 
 @Composable
@@ -78,7 +70,7 @@ fun AddToPlaylistMultipleDialog(
                 Text(
                     text = "Đang chọn ${tracks.size} bài hát",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = Brand,
+                        color = AppTheme.colors.accent,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 13.sp
                     )
@@ -98,14 +90,14 @@ fun AddToPlaylistMultipleDialog(
                         Box(
                             modifier = Modifier
                                 .clip(PillShape)
-                                .background(SurfaceControl)
-                                .border(1.5.dp, SurfaceBorderStrong, PillShape)
+                                .background(AppTheme.colors.surfaceControl)
+                                .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)
                                 .apexBounceClick(scaleDown = 0.92f) { isCreatingNew = false }
                                 .padding(horizontal = 14.dp, vertical = 8.dp)
                         ) {
                             Text(
                                 text = "Hủy",
-                                color = PrimaryIvory,
+                                color = AppTheme.colors.textPrimary,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -114,7 +106,7 @@ fun AddToPlaylistMultipleDialog(
                         Box(
                             modifier = Modifier
                                 .clip(PillShape)
-                                .background(PrimaryIvory)
+                                .background(AppTheme.colors.textPrimary)
                                 .apexBounceClick(scaleDown = 0.92f) {
                                     if (newPlaylistName.isNotBlank()) {
                                         val pl = onCreatePlaylist(newPlaylistName.trim())
@@ -133,7 +125,7 @@ fun AddToPlaylistMultipleDialog(
                         ) {
                             Text(
                                 text = "Tạo & Thêm",
-                                color = CharcoalBlack,
+                                color = AppTheme.colors.onInverse,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -144,7 +136,7 @@ fun AddToPlaylistMultipleDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(14.dp))
-                            .background(SurfaceActiveIndicator)
+                            .background(AppTheme.colors.surfaceActiveIndicator)
                             .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) { isCreatingNew = true }
                             .padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -153,20 +145,20 @@ fun AddToPlaylistMultipleDialog(
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(PrimaryIvory),
+                                .background(AppTheme.colors.textPrimary),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Add,
                                 contentDescription = "Tạo mới",
-                                tint = CharcoalBlack,
+                                tint = AppTheme.colors.onInverse,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Tạo danh sách phát mới",
-                            color = PrimaryIvory,
+                            color = AppTheme.colors.textPrimary,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp
                         )
@@ -178,7 +170,7 @@ fun AddToPlaylistMultipleDialog(
                     Text(
                         text = "Chưa có danh sách phát nào",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 13.sp
                         ),
                         modifier = Modifier.padding(vertical = 12.dp)
@@ -218,7 +210,7 @@ fun AddToPlaylistMultipleDialog(
                                         Text(
                                             text = pl.name,
                                             style = MaterialTheme.typography.bodyMedium.copy(
-                                                color = TextPrimary,
+                                                color = AppTheme.colors.textPrimary,
                                                 fontWeight = FontWeight.SemiBold,
                                                 fontSize = 14.sp
                                             ),
@@ -228,13 +220,13 @@ fun AddToPlaylistMultipleDialog(
                                         Text(
                                             text = "${pl.trackIds.size} bài hát",
                                             style = MaterialTheme.typography.bodySmall.copy(
-                                                color = TextSecondary,
+                                                color = AppTheme.colors.textSecondary,
                                                 fontSize = 12.sp
                                             )
                                         )
                                     }
                                 }
-                                HorizontalDivider(thickness = 0.5.dp, color = SurfaceDivider)
+                                HorizontalDivider(thickness = 0.5.dp, color = AppTheme.colors.divider)
                             }
                         }
                     }

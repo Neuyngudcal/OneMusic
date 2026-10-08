@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -15,7 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.theme.HiResGoldGradient
-import com.example.onemusic.theme.CharcoalBlack
 
 /**
  * OneMusic Apex Hi-Res Audio Gold Metallic Badge
@@ -36,7 +36,7 @@ fun ApexHiResBadge(
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall.copy(
-                color = CharcoalBlack,
+                color = AppTheme.colors.onInverse,
                 fontSize = 8.5.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 0.3.sp

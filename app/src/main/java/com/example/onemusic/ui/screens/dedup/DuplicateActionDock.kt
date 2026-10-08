@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.dedup
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -28,11 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.ApexRose
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.ShadowColor
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.ui.utils.apexBounceClick
 
 /** Dock nổi phía dưới: "Ẩn (n)" (chỉ ẩn khỏi thư viện) và "Xóa File (n)" (mở hộp thoại xác nhận). */
@@ -51,7 +48,7 @@ internal fun DuplicateActionDock(
             .shadow(16.dp, PillShape, ambientColor = ShadowColor)
             .clip(PillShape)
             .border(0.85.dp, ApexPillBorderBrush, PillShape)
-            .background(SurfaceElevated.copy(alpha = 0.94f))
+            .background(AppTheme.colors.surface1.copy(alpha = 0.94f))
     ) {
 
         Row(
@@ -66,8 +63,8 @@ internal fun DuplicateActionDock(
                 modifier = Modifier
                     .weight(1f)
                     .clip(PillShape)
-                    .background(SurfaceControl)
-                    .border(1.5.dp, SurfaceBorderStrong, PillShape)
+                    .background(AppTheme.colors.surfaceControl)
+                    .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)
                     .apexBounceClick(scaleDown = 0.95f, enableHaptic = true) {
                         onHideClick()
                     }
@@ -78,7 +75,7 @@ internal fun DuplicateActionDock(
                     Icon(
                         imageVector = Icons.Rounded.VisibilityOff,
                         contentDescription = null,
-                        tint = PrimaryIvory,
+                        tint = AppTheme.colors.textPrimary,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
@@ -86,7 +83,7 @@ internal fun DuplicateActionDock(
                         text = "Ẩn ($totalSelectedCount)",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = PrimaryIvory,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 13.5.sp
                         )
                     )

@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.search
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,9 +44,6 @@ import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.theme.ApexRose
 import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGroupedCardItem
 import androidx.compose.foundation.lazy.LazyListScope
 
@@ -87,7 +85,7 @@ internal fun LazyListScope.searchBlankState(
                             text = "Đã tìm kiếm gần đây",
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.ExtraBold,
-                                color = TextPrimary,
+                                color = AppTheme.colors.textPrimary,
                                 fontSize = 20.sp
                             )
                         )
@@ -128,13 +126,13 @@ internal fun LazyListScope.searchBlankState(
                                     modifier = Modifier
                                         .size(44.dp)
                                         .clip(CircleShape)
-                                        .background(SurfaceActiveIndicator),
+                                        .background(AppTheme.colors.surfaceActiveIndicator),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
                                         imageVector = Icons.Rounded.History,
                                         contentDescription = null,
-                                        tint = TextSecondary,
+                                        tint = AppTheme.colors.textSecondary,
                                         modifier = Modifier.size(22.dp)
                                     )
                                 }
@@ -146,7 +144,7 @@ internal fun LazyListScope.searchBlankState(
                                         text = item.query,
                                         style = MaterialTheme.typography.bodyLarge.copy(
                                             fontWeight = FontWeight.SemiBold,
-                                            color = TextPrimary,
+                                            color = AppTheme.colors.textPrimary,
                                             fontSize = 16.sp
                                         ),
                                         maxLines = 1,
@@ -156,7 +154,7 @@ internal fun LazyListScope.searchBlankState(
                                     Text(
                                         text = item.subtitle,
                                         style = MaterialTheme.typography.bodyMedium.copy(
-                                            color = TextSecondary,
+                                            color = AppTheme.colors.textSecondary,
                                             fontSize = 13.sp
                                         ),
                                         maxLines = 1
@@ -172,8 +170,8 @@ internal fun LazyListScope.searchBlankState(
                                     size = 34.dp,
                                     iconSize = 16.dp,
                                     modifier = Modifier.minimumInteractiveComponentSize(), // vùng chạm ≥ 48dp
-                                    iconTint = TextSecondary.copy(alpha = 0.85f),
-                                    backgroundColor = SurfaceActiveIndicator.copy(alpha = 0.60f)
+                                    iconTint = AppTheme.colors.textSecondary.copy(alpha = 0.85f),
+                                    backgroundColor = AppTheme.colors.surfaceActiveIndicator.copy(alpha = 0.60f)
                                 )
                             }
 
@@ -181,7 +179,7 @@ internal fun LazyListScope.searchBlankState(
                                 HorizontalDivider(
                                     modifier = Modifier.padding(start = 74.dp, end = 16.dp),
                                     thickness = 0.6.dp,
-                                    color = SurfaceDivider
+                                    color = AppTheme.colors.divider
                                 )
                             }
                         }
@@ -206,7 +204,7 @@ internal fun LazyListScope.searchBlankState(
                             Text(
                                 text = "Tìm kiếm bài hát, nghệ sĩ hoặc lời bài hát",
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = TextSecondary,
+                                    color = AppTheme.colors.textSecondary,
                                     fontSize = 15.sp
                                 ),
                                 textAlign = TextAlign.Center
@@ -243,7 +241,7 @@ internal fun LazyListScope.searchBlankState(
                             HorizontalDivider(
                                 modifier = Modifier.padding(start = 98.dp, end = 16.dp),
                                 thickness = 0.6.dp,
-                                color = SurfaceDivider
+                                color = AppTheme.colors.divider
                             )
                         }
                     }
@@ -276,7 +274,7 @@ internal fun LazyListScope.searchBlankState(
                             HorizontalDivider(
                                 modifier = Modifier.padding(start = 102.dp, end = 16.dp),
                                 thickness = 0.6.dp,
-                                color = SurfaceDivider
+                                color = AppTheme.colors.divider
                             )
                         }
                     }

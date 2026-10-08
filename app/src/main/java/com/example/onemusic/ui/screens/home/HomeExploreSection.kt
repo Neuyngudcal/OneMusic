@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,10 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import androidx.compose.foundation.lazy.LazyListScope
 
@@ -50,7 +47,7 @@ internal fun LazyListScope.homeExploreSection(
                 text = "KHÁM PHÁ THƯ VIỆN",
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     letterSpacing = 1.sp,
                     fontSize = 12.sp
                 )
@@ -89,7 +86,7 @@ internal fun LazyListScope.homeExploreSection(
                         Icon(
                             imageVector = cat.icon,
                             contentDescription = cat.title,
-                            tint = PrimaryIvory,
+                            tint = AppTheme.colors.textPrimary,
                             modifier = Modifier.size(24.dp)
                         )
 
@@ -99,7 +96,7 @@ internal fun LazyListScope.homeExploreSection(
                             text = cat.title,
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = TextPrimary,
+                                color = AppTheme.colors.textPrimary,
                                 fontSize = 16.sp
                             ),
                             modifier = Modifier.weight(1f)
@@ -108,7 +105,7 @@ internal fun LazyListScope.homeExploreSection(
                         Icon(
                             imageVector = Icons.Rounded.ChevronRight,
                             contentDescription = null,
-                            tint = TextSecondary.copy(alpha = 0.7f),
+                            tint = AppTheme.colors.textSecondary.copy(alpha = 0.7f),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -117,7 +114,7 @@ internal fun LazyListScope.homeExploreSection(
                         HorizontalDivider(
                             modifier = Modifier.padding(start = 60.dp, end = 20.dp),
                             thickness = 0.5.dp,
-                            color = SurfaceDivider
+                            color = AppTheme.colors.divider
                         )
                     }
                 }

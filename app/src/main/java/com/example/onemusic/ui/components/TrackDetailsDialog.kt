@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,16 +35,10 @@ import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.data.scanner.AudioMetadataInspector
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.IvoryFaint
 import com.example.onemusic.theme.IvoryMedium
 import com.example.onemusic.theme.IvorySubtle
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceCard
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.TextPrimary
 
 /**
  * Dialog hiển thị chi tiết chất lượng âm thanh theo phong cách Apple Music Lossless Modal
@@ -102,7 +97,7 @@ fun TrackDetailsDialog(
                 Spacer(modifier = Modifier.height(6.dp))
                 AppleLosslessIcon(
                     modifier = Modifier.size(width = 72.dp, height = 46.dp),
-                    tint = TextPrimary
+                    tint = AppTheme.colors.textPrimary
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             } else {
@@ -113,7 +108,7 @@ fun TrackDetailsDialog(
                 text = qualityTitle,
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 21.sp,
                     letterSpacing = (-0.2).sp
                 ),
@@ -140,7 +135,7 @@ fun TrackDetailsDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(SurfaceCard)
+                    .background(AppTheme.colors.surface2)
                     .border(0.7.dp, IvorySubtle, RoundedCornerShape(16.dp))
                     .padding(horizontal = 14.dp, vertical = 11.dp)
             ) {
@@ -180,7 +175,7 @@ fun TrackDetailsDialog(
                             .weight(1f)
                             .height(46.dp)
                             .clip(PillShape)
-                            .background(PrimaryIvory)
+                            .background(AppTheme.colors.textPrimary)
                             .apexBounceClick(scaleDown = 0.94f, enableHaptic = true) {
                                 onPlayNext(track)
                                 onDismiss()
@@ -191,7 +186,7 @@ fun TrackDetailsDialog(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
                                 contentDescription = null,
-                                tint = CharcoalBlack,
+                                tint = AppTheme.colors.onInverse,
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -199,7 +194,7 @@ fun TrackDetailsDialog(
                                 text = "Phát kế tiếp",
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = CharcoalBlack,
+                                    color = AppTheme.colors.onInverse,
                                     fontSize = 13.5.sp
                                 )
                             )
@@ -212,9 +207,9 @@ fun TrackDetailsDialog(
                         .weight(1f)
                         .height(46.dp)
                         .clip(PillShape)
-                        .background(if (onPlayNext != null) SurfaceControl else PrimaryIvory)
+                        .background(if (onPlayNext != null) AppTheme.colors.surfaceControl else AppTheme.colors.textPrimary)
                         .then(
-                            if (onPlayNext != null) Modifier.border(1.5.dp, SurfaceBorderStrong, PillShape) else Modifier
+                            if (onPlayNext != null) Modifier.border(1.5.dp, AppTheme.colors.borderStrong, PillShape) else Modifier
                         )
                         .apexBounceClick(scaleDown = 0.94f, enableHaptic = true) {
                             onDismiss()
@@ -225,7 +220,7 @@ fun TrackDetailsDialog(
                         text = "Đóng",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = if (onPlayNext != null) PrimaryIvory else CharcoalBlack,
+                            color = if (onPlayNext != null) AppTheme.colors.textPrimary else AppTheme.colors.onInverse,
                             fontSize = 14.5.sp
                         )
                     )
