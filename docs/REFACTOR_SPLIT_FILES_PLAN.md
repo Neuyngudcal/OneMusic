@@ -718,9 +718,18 @@ Hàm `NowPlayingSheet` 556 → 241 dòng, file `NowPlayingSheet.kt` 650 → 301 
 - Môi trường thử (Compose Desktop 1.5) có 3 lỗi riêng, đã né giống nhau cho cả 2 bản: `scrollToItem` ngay frame `LazyColumn` vào `AnimatedContent` gây NPE (stub tạo danh sách chậm 700 ms); lò xo co cụm điều khiển cho vùng cắt âm (thêm `clip = false`); `NestedScrollSource.UserInput` chưa có (đổi `Drag`).
 - Hai điểm không ổn định ngay cả khi so bản gốc với chính nó (A/A) đã loại/khóa: ảnh *giữa* lúc vuốt pager (bỏ), mốc "đang đọc lời" 3,5 s tính bằng giờ thật (chờ thật 3,6 s). Còn ảnh bước `lyricsAgain` ở cấu hình "không hi-res" thỉnh thoảng lệch – lệch y hệt (cùng 2 giá trị) khi so bản gốc với chính nó, nên không do tách code (commit 1 dính đúng lỗi này, bản cuối và các commit khác đạt).
 
+### Sau Giai đoạn 8 – `HomeAlbumsContent` (08/10/2026) – ⚠️ còn chờ build Android + thử Trang chủ › Album
+
+Hàm `HomeAlbumsContent` 436 → 85 dòng (file 503 → 102); đã xóa khỏi baseline (`checkSizeLimits` → OK, còn 13 ngoại lệ). 3 file mới trong `home/`, đều `internal`, thân hàm chép nguyên văn:
+- `HomeAlbumsHeader.kt` (143): nút quay lại, tiêu đề + "n album • m bài hát" (nhận `albumCount`, `trackCount`), nút + menu chọn chế độ xem.
+- `HomeAlbumListRow.kt` (178): `HomeAlbumsEmptyState()` và `HomeAlbumListRow(album, index, total, …)`.
+- `HomeAlbumGridRows.kt` (209): `HomeAlbumGrid2Row(pair, …)`, `HomeAlbumGrid3Row(triplet, …)` (giữ riêng vì kích thước/khoảng cách khác nhau).
+- Ở cha: `remember` gộp album, `LazyColumn`, `key` các item (`albums_header`, `list_…`, `g2_…`, `g3_…`).
+- **Kiểm tra:** test giao diện so sánh gốc/mới (3 bộ dữ liệu: rỗng, 1 album, 9 album có bìa thiếu/tên dài/hàng lưới lẻ) × 9 ảnh chụp (danh sách, menu mở/đóng bằng nút, lưới 2, menu đóng bằng bấm ngoài, lưới 3, cuộn, về danh sách, cuộn) + cây semantics + nhật ký (phát nhanh, mở album, quay lại, đổi chế độ, mở/đóng menu) → giống hệt. Bắt được 5/5 lỗi cố tình cài.
+
 ## 9. Tiêu chí hoàn thành (Definition of Done)
 
-- [ ] Không còn file nào trong `app/src/main` vượt **600 dòng** (script ở Giai đoạn 8 trả `OK`). – *08/10/2026: `checkSizeLimits` đã có; còn 1 file (`MusicPlayerController.kt`) và 13 hàm > 250 dòng trong baseline.*
+- [ ] Không còn file nào trong `app/src/main` vượt **600 dòng** (script ở Giai đoạn 8 trả `OK`). – *08/10/2026: `checkSizeLimits` đã có; còn 1 file (`MusicPlayerController.kt`) và 12 hàm > 250 dòng trong baseline.*
 - [ ] Không còn hàm `@Composable` nào dài quá **~250 dòng**.
 - [ ] `./gradlew :app:testDebugUnitTest` xanh; `PlaybackQueueTest` gọi code thật (`QueueOperations`).
 - [ ] Smoke test mục 10 đạt trên ít nhất 1 máy thật.
