@@ -28,10 +28,12 @@ import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 
 // ============================================================================
-// OneMusic Warm Ivory Palette — nguồn màu DUY NHẤT của ứng dụng.
-// Mọi bề mặt dùng chung một sắc độ ngà ấm (hue ~40°, bão hoà thấp); chữ dùng
-// trắng ngà #F4F1EA. Không viết cứng Color(0x...) / Color.White ngoài thư mục theme.
-// Bản XML tương ứng (widget, splash): res/values/colors.xml — sửa ở đây thì sửa cả ở đó.
+// Hằng số màu GỐC (bảng ngà ấm + xanh lá) — KHÔNG còn là bảng màu của app.
+// Bảng màu đang dùng (Trắng – Xanh dương – Đen, sáng/tối) nằm ở theme/AppColors.kt, truy cập qua
+// AppTheme.colors trong composable. Các hằng số dưới đây chỉ còn là nguồn giá trị của LegacyDarkAppColors
+// (bảng riêng của Now Playing, được giữ nguyên) và của vài chỗ ngoài ngữ cảnh composable.
+// Không viết cứng Color(0x...) hay Color.White ngoài thư mục theme.
+// Bản XML tương ứng (widget, splash): res/values/colors.xml và res/values-night/colors.xml.
 // ============================================================================
 
 // ---- Surfaces (tối → sáng) -------------------------------------------------
@@ -84,7 +86,9 @@ val BrandDark = Color(0xFF1B6E1B)                    // Trạng thái nhấn / n
 val ApexCyan = Color(0xFF00D8F6)                     // Badge Lossless / Hi-Res
 val ApexRose = Color(0xFFFA2D48)                     // Xoá / yêu thích / cảnh báo nguy hiểm
 val ApexAmber = Color(0xFFF59E0B)                    // Cảnh báo, bit depth cao
-val ApexIndigo = Color(0xFF6366F1)                   // Ambient glow (DynamicMeshBackground)
+
+// Đĩa vinyl trên thẻ album (xám trung tính, dùng chung cho cả hai theme)
+val VinylDiscGray = Color(0xFF6B6B6B)
 
 // Hi-Res Audio Metallic Gold (Japan Audio Society)
 private val HiResGoldStart = Color(0xFFE5A01A)
@@ -155,9 +159,6 @@ fun Modifier.apexFrostedGlass(
         this.background(bg)
     }
 }
-
-val ApexGlassSurfaceBg = SurfaceElevated.copy(alpha = 0.88f)
-val ApexButtonGlassBg = SurfaceElevated.copy(alpha = 0.72f)
 
 // ============================================================================
 // Card Tokens & Modifiers

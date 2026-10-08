@@ -225,3 +225,9 @@ Mỗi bước là một commit, build được và xem được trước khi san
   - Viền phản chiếu `ApexReflectiveBorderBrush` / `ApexPillBorderBrush` (trắng ngà cố định, mất hút trên nền trắng) thay bằng `AppTheme.colors.reflectiveBorderBrush` / `pillBorderBrush` (màu chữ chính trong suốt, theme sáng đậm hơn một chút) ở 7 chỗ. Trong Now Playing vẫn ra đúng giá trị cũ vì dùng bảng cũ.
   - Lớp phủ sau bảng thao tác bài (`ModalBottomSheet`) dùng `AppTheme.colors.scrim`: đen 40% ở theme sáng, giữ 60% ở theme tối và trong Now Playing.
   - Hộp thoại và `Popup` là cửa sổ riêng, nhưng nhận được `AppTheme.colors` vì CompositionLocal đi theo composition. Việc Haze lấy mẫu qua cửa sổ khác vẫn chưa được kiểm chứng trên máy thật.
+- **Bước 8 (xong, chưa build được trong môi trường viết code):** dọn dẹp.
+  - Xoá `ui/components/DynamicMeshBackground.kt` (không ai gọi) cùng token `ApexIndigo`; xoá token không còn dùng `ApexGlassSurfaceBg`, `ApexButtonGlassBg`.
+  - `VinylGray` (hex cứng trong `AlbumGridCard.kt`) chuyển thành `VinylDiscGray` trong `theme/Color.kt`.
+  - Viết lại chú thích đầu `Color.kt` (các hằng số ngà ấm chỉ còn là nguồn của `LegacyDarkAppColors`) và cập nhật `GEMINI.md`.
+  - **Giữ lại có chủ ý:** `PaletteHelper.kt` và nền động của Now Playing, `ApexCyan` (dùng ở Material `tertiary`), `HiResGoldGradient`, các hằng số cũ trong `Color.kt` (nguồn của `LegacyDarkAppColors`).
+  - **Không đụng:** `.agents/rules/oneui_design_guidelines.md` mô tả bảng màu Samsung Blue/Galaxy Violet từ trước, đã lỗi thời so với app; cần chủ dự án quyết định sửa hay xoá.

@@ -62,7 +62,6 @@ import com.example.onemusic.haptics.rememberApexHaptics
 import com.example.onemusic.theme.LocalHazeState
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import com.example.onemusic.theme.ApexGlassSurfaceBg
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.SurfaceActiveIndicator
 import com.example.onemusic.theme.apexFrostedGlass
@@ -84,7 +83,7 @@ enum class Screen(
  * - 4 Minimalist Tabs: Home -> Library -> Search -> Settings (22dp..24dp 100% Centered Icons)
  * - Dual-Touch Interaction: Single Tap + Continuous 1:1 Drag-to-Snap
  * - Elastic Border Resistance & Real-time Slot Snapping Haptic Ticks
- * - Real-Time GPU Frosted Glass Surface (ApexGlassSurfaceBg with 24dp blur)
+ * - Real-Time GPU Frosted Glass Surface (surface1 theo theme với blur)
  */
 @Composable
 fun ApexBottomNavigation(

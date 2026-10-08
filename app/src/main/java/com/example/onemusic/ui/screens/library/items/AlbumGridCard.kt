@@ -1,6 +1,7 @@
 package com.example.onemusic.ui.screens.library.items
 
 import com.example.onemusic.theme.AppTheme
+import com.example.onemusic.theme.VinylDiscGray
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +41,6 @@ import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.utils.apexBounceClick
 
 // Mid-gray disc so the vinyl reads as a soft accent instead of a black blob on the dark background
-private val VinylGray = Color(0xFF6B6B6B)
 private val VinylGroove = Color.Black
 
 /**
@@ -53,7 +53,7 @@ fun VinylDiscEffect(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(VinylGray)
+            .background(VinylDiscGray)
             .border(1.dp, AppTheme.colors.stroke.copy(alpha = 0.4f), CircleShape),
         contentAlignment = Alignment.Center
     ) {
