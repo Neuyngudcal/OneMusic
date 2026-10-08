@@ -156,9 +156,9 @@ internal fun BoxScope.BottomControlsOverlay(
             snackbarData = data,
             modifier = Modifier.padding(horizontal = 16.dp),
             shape = androidx.compose.foundation.shape.RoundedCornerShape(18.dp),
-            containerColor = com.example.onemusic.theme.SurfaceElevated,
-            contentColor = TextPrimary,
-            actionColor = com.example.onemusic.theme.Brand
+            containerColor = AppTheme.colors.surface1,
+            contentColor = AppTheme.colors.textPrimary,
+            actionColor = AppTheme.colors.accent
         )
     }
 }

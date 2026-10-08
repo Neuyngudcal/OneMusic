@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import androidx.compose.ui.graphics.takeOrElse
 import com.example.onemusic.theme.AppTheme
 import android.content.Context
 import android.content.Intent
@@ -421,9 +422,11 @@ private fun ActionSheetRow(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    iconTint: Color = TextPrimary,
-    textColor: Color = TextPrimary
+    iconTint: Color = Color.Unspecified,
+    textColor: Color = Color.Unspecified
 ) {
+    val iconTint = iconTint.takeOrElse { AppTheme.colors.textPrimary }
+    val textColor = textColor.takeOrElse { AppTheme.colors.textPrimary }
     Row(
         modifier = modifier
             .fillMaxWidth()

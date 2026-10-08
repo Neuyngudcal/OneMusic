@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.HazeState
@@ -134,23 +135,24 @@ val LocalHazeState = LocalApexHazeState
  * with pure single-layer sampling to eliminate noise, overdraw, and visual artifacts.
  */
 fun Modifier.apexFrostedGlass(
-    backgroundColor: Color = SurfaceElevated.copy(alpha = 0.88f),
+    backgroundColor: Color = Color.Unspecified, // Unspecified → surface1 alpha 0.88 theo theme
     blurRadius: androidx.compose.ui.unit.Dp = 20.dp,
     hazeState: HazeState? = null
 ): Modifier = composed {
+    val bg = backgroundColor.takeOrElse { AppTheme.colors.surface1.copy(alpha = 0.88f) }
     val effectiveHazeState = hazeState ?: LocalApexHazeState.current
     if (effectiveHazeState != null) {
         this.hazeEffect(
             state = effectiveHazeState,
             style = HazeStyle(
-                backgroundColor = backgroundColor,
-                tint = HazeTint(backgroundColor.copy(alpha = 0.76f)),
+                backgroundColor = bg,
+                tint = HazeTint(bg.copy(alpha = 0.76f)),
                 blurRadius = blurRadius,
                 noiseFactor = 0f
             )
         )
     } else {
-        this.background(backgroundColor)
+        this.background(bg)
     }
 }
 
@@ -179,14 +181,16 @@ val ApexPillBorderBrush = Brush.verticalGradient(
  */
 fun Modifier.apexGlassCard(
     shape: Shape = RoundedCornerShape(24.dp),
-    backgroundColor: Color = SurfaceCard,
+    backgroundColor: Color = Color.Unspecified, // Unspecified → surface2 theo theme
     borderWidth: Dp = 0.dp,
     borderBrush: Brush = ApexReflectiveBorderBrush,
     elevation: Dp = 0.dp,
     shadowColor: Color = Color.Transparent
-): Modifier = this
-    .clip(shape)
-    .background(backgroundColor)
+): Modifier = composed {
+    this
+        .clip(shape)
+        .background(backgroundColor.takeOrElse { AppTheme.colors.surface2 })
+}
 
 /**
  * Grouped Card Item Modifier for continuous lists (LazyColumn items).
@@ -196,7 +200,7 @@ fun Modifier.apexGroupedCardItem(
     index: Int,
     total: Int,
     cornerRadius: Dp = 24.dp,
-    backgroundColor: Color = SurfaceCard,
+    backgroundColor: Color = Color.Unspecified, // Unspecified → surface2 theo theme
     borderColor: Color = Color.Transparent,
     borderWidth: Dp = 0.dp
 ): Modifier = composed {
@@ -209,6 +213,6 @@ fun Modifier.apexGroupedCardItem(
 
     this
         .clip(shape)
-        .background(backgroundColor)
+        .background(backgroundColor.takeOrElse { AppTheme.colors.surface2 })
 }
 

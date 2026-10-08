@@ -10,6 +10,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -17,42 +18,45 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.example.onemusic.data.local.ThemeMode
 
-// Scheme duy nhất của app: AMOLED đen + bề mặt ngà ấm + chữ trắng ngà, màu nhấn Forest Green.
-// Mọi component Material (TextField, Switch, ripple, Snackbar…) lấy màu từ đây.
-internal val DarkMaterialColorScheme = darkColorScheme(
-    primary = Brand,
-    onPrimary = PrimaryIvory,
-    primaryContainer = BrandDark,
-    onPrimaryContainer = PrimaryIvory,
-    inversePrimary = BrandLight,
-    secondary = PrimaryIvory,
-    onSecondary = CharcoalBlack,
-    secondaryContainer = SurfaceActiveIndicator,
-    onSecondaryContainer = TextPrimary,
+// Mọi component Material (TextField, Switch, ripple, Snackbar…) lấy màu từ scheme dựng theo AppColors.
+internal fun materialColorSchemeFor(c: AppColors) = darkColorScheme(
+    primary = c.accent,
+    onPrimary = c.textPrimary,
+    primaryContainer = c.accentDark,
+    onPrimaryContainer = c.textPrimary,
+    inversePrimary = c.accentLight,
+    secondary = c.textPrimary,
+    onSecondary = c.onInverse,
+    secondaryContainer = c.surfaceActiveIndicator,
+    onSecondaryContainer = c.textPrimary,
     tertiary = ApexCyan,
-    onTertiary = CharcoalBlack,
-    background = ObsidianBlack,
-    onBackground = TextPrimary,
-    surface = SurfaceElevated,
-    onSurface = TextPrimary,
-    surfaceVariant = SurfaceCard,
-    onSurfaceVariant = TextSecondary,
+    onTertiary = c.onInverse,
+    background = c.background,
+    onBackground = c.textPrimary,
+    surface = c.surface1,
+    onSurface = c.textPrimary,
+    surfaceVariant = c.surface2,
+    onSurfaceVariant = c.textSecondary,
     surfaceTint = Color.Transparent,
-    surfaceBright = SurfaceActive,
-    surfaceDim = ObsidianBlack,
-    surfaceContainerLowest = ObsidianBlack,
-    surfaceContainerLow = SurfaceBase,
-    surfaceContainer = SurfaceElevated,
-    surfaceContainerHigh = SurfaceCard,
-    surfaceContainerHighest = SurfaceActive,
-    inverseSurface = PrimaryIvory,
-    inverseOnSurface = CharcoalBlack,
+    surfaceBright = c.surfaceActive,
+    surfaceDim = c.background,
+    surfaceContainerLowest = c.background,
+    surfaceContainerLow = c.surfaceBase,
+    surfaceContainer = c.surface1,
+    surfaceContainerHigh = c.surface2,
+    surfaceContainerHighest = c.surfaceActive,
+    inverseSurface = c.textPrimary,
+    inverseOnSurface = c.onInverse,
     error = ApexRose,
-    onError = PrimaryIvory,
-    outline = SurfaceBorderStrong,
-    outlineVariant = SurfaceDivider,
-    scrim = ScrimColor
+    onError = c.textPrimary,
+    outline = c.borderStrong,
+    outlineVariant = c.divider,
+    scrim = c.scrim
 )
+
+internal val DarkMaterialColorScheme = materialColorSchemeFor(DarkAppColors)
+/** Scheme bản cũ (ngà ấm), dùng riêng cho Now Playing. */
+internal val LegacyMaterialColorScheme = materialColorSchemeFor(LegacyDarkAppColors)
 
 // TODO(bước 4): thay bằng lightColorScheme thật. Tạm thời giống tối.
 private val LightMaterialColorScheme = DarkMaterialColorScheme
@@ -69,6 +73,7 @@ fun OneMusicTheme(
         ThemeMode.SYSTEM -> isSystemInDarkTheme()
     }
     val appColors = if (darkTheme) DarkAppColors else LightAppColors
+    val typography = remember(appColors) { typographyFor(appColors) }
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -94,7 +99,7 @@ fun OneMusicTheme(
     CompositionLocalProvider(LocalAppColors provides appColors) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = Typography,
+            typography = typography,
             content = content
         )
     }

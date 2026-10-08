@@ -1,5 +1,7 @@
 package com.example.onemusic.ui.screens.settings
 
+import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.graphics.takeOrElse
 import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -179,9 +181,11 @@ internal fun SettingsActionRow(
     icon: ImageVector,
     title: String,
     subtitle: String,
-    titleColor: Color = TextPrimary,
+    titleColor: Color = Color.Unspecified, // Unspecified → textPrimary theo theme
     onClick: () -> Unit
 ) {
+    val hasCustomTitleColor = titleColor.isSpecified
+    val titleColor = titleColor.takeOrElse { AppTheme.colors.textPrimary }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -199,7 +203,7 @@ internal fun SettingsActionRow(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (titleColor != AppTheme.colors.textPrimary) titleColor else AppTheme.colors.textSecondary,
+                tint = if (hasCustomTitleColor) titleColor else AppTheme.colors.textSecondary,
                 modifier = Modifier.size(20.dp)
             )
         }

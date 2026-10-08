@@ -253,7 +253,7 @@ fun ApexBottomNavigation(
                             transformOrigin = TransformOrigin(0.5f, 0.5f)
                         }
                         .clip(PillShape)
-                        .background(SurfaceActiveIndicator)
+                        .background(AppTheme.colors.surfaceActiveIndicator)
                 )
 
                 // 2. Interactive Icons-Only Tab Items

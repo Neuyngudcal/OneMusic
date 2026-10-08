@@ -1,5 +1,7 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +17,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.material3.Icon
 import androidx.compose.ui.res.painterResource
 import com.example.onemusic.R
-import com.example.onemusic.theme.TextPrimary
 
 /**
  * Bespoke Apple Music style Pause icon.
@@ -24,8 +25,9 @@ import com.example.onemusic.theme.TextPrimary
 @Composable
 fun ApplePauseIcon(
     modifier: Modifier = Modifier,
-    tint: Color = TextPrimary
+    tint: Color = Color.Unspecified
 ) {
+    val resolvedTint = tint.takeOrElse { AppTheme.colors.textPrimary }
     Canvas(modifier = modifier) {
         val h = size.height
         val pillW = h * 0.34f
@@ -37,14 +39,14 @@ fun ApplePauseIcon(
 
         // Left Pill
         drawRoundRect(
-            color = tint,
+            color = resolvedTint,
             topLeft = Offset(startX, startY),
             size = Size(pillW, h),
             cornerRadius = CornerRadius(r, r)
         )
         // Right Pill
         drawRoundRect(
-            color = tint,
+            color = resolvedTint,
             topLeft = Offset(startX + pillW + gap, startY),
             size = Size(pillW, h),
             cornerRadius = CornerRadius(r, r)
@@ -59,8 +61,9 @@ fun ApplePauseIcon(
 @Composable
 fun ApplePlayIcon(
     modifier: Modifier = Modifier,
-    tint: Color = TextPrimary
+    tint: Color = Color.Unspecified
 ) {
+    val resolvedTint = tint.takeOrElse { AppTheme.colors.textPrimary }
     Canvas(modifier = modifier) {
         val h = size.height
         val w = h * 0.84f
@@ -99,7 +102,7 @@ fun ApplePlayIcon(
             )
             close()
         }
-        drawPath(path = path, color = tint)
+        drawPath(path = path, color = resolvedTint)
     }
 }
 
@@ -110,8 +113,9 @@ fun ApplePlayIcon(
 @Composable
 fun AppleBackwardIcon(
     modifier: Modifier = Modifier,
-    tint: Color = TextPrimary
+    tint: Color = Color.Unspecified
 ) {
+    val resolvedTint = tint.takeOrElse { AppTheme.colors.textPrimary }
     Canvas(modifier = modifier) {
         val h = size.height
         val totalW = h * 1.76f
@@ -153,7 +157,7 @@ fun AppleBackwardIcon(
                 )
                 close()
             }
-            drawPath(path = path, color = tint)
+            drawPath(path = path, color = resolvedTint)
         }
     }
 }
@@ -165,15 +169,16 @@ fun AppleBackwardIcon(
 @Composable
 fun AppleForwardIcon(
     modifier: Modifier = Modifier,
-    tint: Color = TextPrimary
+    tint: Color = Color.Unspecified
 ) {
+    val resolvedTint = tint.takeOrElse { AppTheme.colors.textPrimary }
     Box(
         modifier = modifier.graphicsLayer(scaleX = -1f),
         contentAlignment = Alignment.Center
     ) {
         AppleBackwardIcon(
             modifier = Modifier.fillMaxSize(),
-            tint = tint
+            tint = resolvedTint
         )
     }
 }
@@ -185,12 +190,13 @@ fun AppleForwardIcon(
 @Composable
 fun AppleLosslessIcon(
     modifier: Modifier = Modifier,
-    tint: Color = TextPrimary
+    tint: Color = Color.Unspecified
 ) {
+    val resolvedTint = tint.takeOrElse { AppTheme.colors.textPrimary }
     Icon(
         painter = painterResource(id = R.drawable.ic_apple_lossless),
         contentDescription = null,
-        tint = tint,
+        tint = resolvedTint,
         modifier = modifier
     )
 }

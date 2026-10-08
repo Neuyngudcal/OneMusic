@@ -52,7 +52,7 @@ import com.example.onemusic.theme.IvoryDisabled
 import com.example.onemusic.theme.IvoryFaint
 import com.example.onemusic.theme.IvoryHigh
 import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.SurfaceActiveIndicator
+import AppTheme.colors.surfaceActiveIndicator
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.theme.apexGlassCard
 
@@ -164,7 +164,7 @@ internal fun ArtistRow(
                 modifier = Modifier
                     .size(68.dp)
                     .clip(CircleShape)
-                    .background(com.example.onemusic.theme.SurfaceActiveIndicator),
+                    .background(AppTheme.colors.surfaceActiveIndicator),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -234,7 +234,7 @@ internal fun ArtistCard(
                     modifier = Modifier
                         .size(68.dp)
                         .clip(CircleShape)
-                        .background(com.example.onemusic.theme.SurfaceActiveIndicator),
+                        .background(AppTheme.colors.surfaceActiveIndicator),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(

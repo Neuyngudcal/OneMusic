@@ -1,5 +1,7 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -52,7 +54,7 @@ fun ApexDialogContainer(
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     shape: Shape = RoundedCornerShape(28.dp),
-    backgroundColor: Color = SurfaceElevated.copy(alpha = 0.50f),
+    backgroundColor: Color = Color.Unspecified, // Unspecified → surface1 alpha 0.50 theo theme
     hazeState: HazeState? = null,
     horizontalMargin: Dp = 20.dp,
     elevation: Dp = 16.dp,
@@ -96,7 +98,7 @@ fun ApexDialogContainer(
                     )
                     .clip(shape)
                     .apexFrostedGlass(
-                        backgroundColor = backgroundColor,
+                        backgroundColor = backgroundColor.takeOrElse { AppTheme.colors.surface1.copy(alpha = 0.50f) },
                         blurRadius = 24.dp,
                         hazeState = effectiveHazeState
                     )

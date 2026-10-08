@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import androidx.compose.ui.graphics.takeOrElse
 import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,10 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.onemusic.theme.Brand
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.SurfaceActive
-import com.example.onemusic.theme.TextPrimary
 
 /**
  * OneMusic Apex Prism Ergonomic Slider with Pill track and tactile thumb
@@ -34,9 +32,11 @@ fun ApexSlider(
     steps: Int = 0,
     // Gọi khi thả tay – nơi nên lưu giá trị (tránh ghi bộ nhớ ở mỗi bước kéo)
     onValueChangeFinished: (() -> Unit)? = null,
-    activeColor: Color = Brand,
-    inactiveColor: Color = SurfaceActive
+    activeColor: Color = Color.Unspecified, // Unspecified → accent theo theme
+    inactiveColor: Color = Color.Unspecified // Unspecified → surfaceActive theo theme
 ) {
+    val activeColor = activeColor.takeOrElse { AppTheme.colors.accent }
+    val inactiveColor = inactiveColor.takeOrElse { AppTheme.colors.surfaceActive }
     Slider(
         value = value,
         onValueChange = onValueChange,
@@ -54,7 +54,7 @@ fun ApexSlider(
                 modifier = Modifier
                     .size(16.dp)
                     .clip(CircleShape)
-                    .background(TextPrimary)
+                    .background(AppTheme.colors.textPrimary)
             )
         },
         track = { sliderState ->

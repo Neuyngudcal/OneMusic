@@ -1,5 +1,7 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
@@ -19,8 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.onemusic.theme.SquircleLarge
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.SurfaceCard
 
 /**
  * OneMusic Apex Prism Squircle Card with 120Hz Spring Physics Touch Response
@@ -29,8 +29,8 @@ import com.example.onemusic.theme.SurfaceCard
 fun ApexCard(
     modifier: Modifier = Modifier,
     shape: CornerBasedShape = SquircleLarge,
-    backgroundColor: Color = SurfaceCard,
-    borderColor: Color = SurfaceDivider,
+    backgroundColor: Color = Color.Unspecified, // Unspecified → surface2 theo theme
+    borderColor: Color = Color.Unspecified, // Unspecified → divider theo theme
     onClick: (() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
@@ -59,8 +59,8 @@ fun ApexCard(
                 } else Modifier
             ),
         shape = shape,
-        color = backgroundColor,
-        border = BorderStroke(1.dp, borderColor)
+        color = backgroundColor.takeOrElse { AppTheme.colors.surface2 },
+        border = BorderStroke(1.dp, borderColor.takeOrElse { AppTheme.colors.divider })
     ) {
         Box(content = content)
     }

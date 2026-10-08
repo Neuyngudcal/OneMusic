@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import androidx.compose.ui.graphics.takeOrElse
 import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -134,11 +135,13 @@ fun ApexDropdownMenuItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    iconTint: Color = TextPrimary,
+    iconTint: Color = Color.Unspecified,
     trailingText: String? = null,
     trailingColor: Color? = null,
-    textColor: Color = TextPrimary
+    textColor: Color = Color.Unspecified
 ) {
+    val iconTint = iconTint.takeOrElse { AppTheme.colors.textPrimary }
+    val textColor = textColor.takeOrElse { AppTheme.colors.textPrimary }
     Row(
         modifier = modifier
             .fillMaxWidth()
