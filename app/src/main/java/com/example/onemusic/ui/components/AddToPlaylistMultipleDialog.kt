@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +44,7 @@ import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.Brand
 import com.example.onemusic.theme.CharcoalBlack
+import com.example.onemusic.theme.IvoryMedium
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.PrimaryIvory
 import com.example.onemusic.theme.SurfaceActiveIndicator
@@ -56,11 +56,13 @@ import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.utils.apexBounceClick
 
 @Composable
-fun AddToPlaylistDialog(
-    track: Track,
+fun AddToPlaylistMultipleDialog(
+    tracks: List<Track>,
     playlists: List<CustomPlaylist>,
     onCreatePlaylist: (String) -> CustomPlaylist?,
     onAddToPlaylist: (playlistId: String, trackId: String) -> Boolean,
+    // Chỉ gọi khi đã thêm thành công (khác onDismiss: đóng dialog, kể cả khi bấm Hủy/ra ngoài)
+    onAdded: () -> Unit = {},
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -83,13 +85,12 @@ fun AddToPlaylistDialog(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${track.title} • ${track.artist}",
+                    text = "Đang chọn ${tracks.size} bài hát",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = TextSecondary,
+                        color = Brand,
+                        fontWeight = FontWeight.SemiBold,
                         fontSize = 13.sp
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    )
                 )
                 Spacer(modifier = Modifier.height(18.dp))
 
@@ -107,7 +108,7 @@ fun AddToPlaylistDialog(
                         ),
                         singleLine = true
                     )
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
@@ -120,7 +121,11 @@ fun AddToPlaylistDialog(
                                 .apexBounceClick(scaleDown = 0.92f) { isCreatingNew = false }
                                 .padding(horizontal = 14.dp, vertical = 8.dp)
                         ) {
-                            Text("Hủy", color = PrimaryIvory, fontWeight = FontWeight.SemiBold)
+                            Text(
+                                text = "Hủy",
+                                color = PrimaryIvory,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
 
                         Spacer(modifier = Modifier.width(8.dp))
@@ -130,30 +135,36 @@ fun AddToPlaylistDialog(
                                 .background(PrimaryIvory)
                                 .apexBounceClick(scaleDown = 0.92f) {
                                     if (newPlaylistName.isNotBlank()) {
-                                        val created = onCreatePlaylist(newPlaylistName.trim())
-                                        if (created != null) {
-                                            onAddToPlaylist(created.id, track.id)
-                                            Toast.makeText(context, "Đã tạo và thêm vào \"${created.name}\"", Toast.LENGTH_SHORT).show()
+                                        val pl = onCreatePlaylist(newPlaylistName.trim())
+                                        if (pl != null) {
+                                            var addedCount = 0
+                                            tracks.forEach { tr ->
+                                                if (onAddToPlaylist(pl.id, tr.id)) addedCount++
+                                            }
+                                            Toast.makeText(context, "Đã thêm $addedCount bài vào ${pl.name}", Toast.LENGTH_SHORT).show()
+                                            onAdded()
+                                            onDismiss()
                                         }
-                                        onDismiss()
                                     }
                                 }
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            Text("Tạo & Thêm", color = CharcoalBlack, fontWeight = FontWeight.Bold)
+                            Text(
+                                text = "Tạo & Thêm",
+                                color = CharcoalBlack,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
                 } else {
-                    // Create New Playlist Trigger Row
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(14.dp))
                             .background(SurfaceActiveIndicator)
-                            .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) {
-                                isCreatingNew = true
-                            }
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                            .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) { isCreatingNew = true }
+                            .padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
@@ -165,77 +176,69 @@ fun AddToPlaylistDialog(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Add,
-                                contentDescription = "Tạo playlist",
+                                contentDescription = "Tạo mới",
                                 tint = CharcoalBlack,
-                                modifier = Modifier.size(22.dp)
+                                modifier = Modifier.size(20.dp)
                             )
                         }
-                        Spacer(modifier = Modifier.width(14.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Tạo danh sách phát mới",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = PrimaryIvory,
-                                fontSize = 15.sp
-                            )
+                            color = PrimaryIvory,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp
                         )
                     }
-
                     Spacer(modifier = Modifier.height(14.dp))
+                }
 
-                    if (playlists.isEmpty()) {
-                        Text(
-                            text = "Chưa có danh sách phát nào.",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextSecondary
-                            ),
-                            modifier = Modifier.padding(vertical = 14.dp)
-                        )
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 240.dp)
-                        ) {
-                            items(playlists, key = { it.id }) { pl ->
-                                val containsTrack = pl.trackIds.contains(track.id)
+                if (playlists.isEmpty()) {
+                    Text(
+                        text = "Chưa có danh sách phát nào",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = TextSecondary,
+                            fontSize = 13.sp
+                        ),
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 240.dp)
+                    ) {
+                        items(playlists, key = { it.id }) { pl ->
+                            Column(modifier = Modifier.fillMaxWidth()) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .clip(RoundedCornerShape(12.dp))
+                                        .clip(RoundedCornerShape(10.dp))
                                         .apexBounceClick(scaleDown = 0.98f, enableHaptic = true) {
-                                            if (containsTrack) {
-                                                Toast.makeText(context, "Bài hát đã có trong \"${pl.name}\"", Toast.LENGTH_SHORT).show()
-                                            } else {
-                                                onAddToPlaylist(pl.id, track.id)
-                                                Toast.makeText(context, "Đã thêm vào \"${pl.name}\"", Toast.LENGTH_SHORT).show()
-                                                onDismiss()
+                                            var count = 0
+                                            tracks.forEach { tr ->
+                                                if (onAddToPlaylist(pl.id, tr.id)) count++
                                             }
+                                            Toast.makeText(context, "Đã thêm $count bài vào ${pl.name}", Toast.LENGTH_SHORT).show()
+                                            onAdded()
+                                            onDismiss()
                                         }
-                                        .padding(vertical = 10.dp, horizontal = 8.dp),
+                                        .padding(vertical = 12.dp, horizontal = 4.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .clip(RoundedCornerShape(10.dp))
-                                            .background(SurfaceActiveIndicator),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
-                                            contentDescription = null,
-                                            tint = if (containsTrack) Brand else TextPrimary,
-                                            modifier = Modifier.size(22.dp)
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.width(14.dp))
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
+                                        contentDescription = null,
+                                        tint = IvoryMedium,
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
                                             text = pl.name,
                                             style = MaterialTheme.typography.bodyMedium.copy(
+                                                color = TextPrimary,
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = TextPrimary
+                                                fontSize = 14.sp
                                             ),
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
@@ -243,23 +246,13 @@ fun AddToPlaylistDialog(
                                         Text(
                                             text = "${pl.trackIds.size} bài hát",
                                             style = MaterialTheme.typography.bodySmall.copy(
-                                                color = TextSecondary
+                                                color = TextSecondary,
+                                                fontSize = 12.sp
                                             )
                                         )
                                     }
-                                    if (containsTrack) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Check,
-                                            contentDescription = "Đã có",
-                                            tint = Brand,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
                                 }
-                                HorizontalDivider(
-                                    thickness = 0.5.dp,
-                                    color = SurfaceDivider
-                                )
+                                HorizontalDivider(thickness = 0.5.dp, color = SurfaceDivider)
                             }
                         }
                     }
