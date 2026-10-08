@@ -632,9 +632,14 @@ data/scanner/replaygain/
 - Thân hàm chép nguyên văn; gọi chéo giữa các parser bằng import thành viên object (vd `import ...GainValueParsers.parseGainString`) nên không phải sửa dòng nào. Các hàm public cũ (`parseGainString`, `parseR128Gain`, `parseItunNorm`, `parseVorbisCommentBlock`) giữ trên `ReplayGainExtractor`, chỉ gọi sang parser.
 - Kiểm tra (JVM thuần, không cần Android): `ReplayGainExtractorTest` 5/5; **test so sánh** bản gốc với bản mới trên 40.000 đầu vào (FLAC/ID3v2.2–2.4/MP4/OGG/Opus dựng ngẫu nhiên, byte rác, tệp bị cắt, 10 phần mở rộng) + 15.000 chuỗi giá trị → kết quả giống hệt (≈14.000 đầu vào có dữ liệu thật). Test so sánh bắt được lỗi khi cố tình sửa 1 ký tự trong chuỗi `origin`.
 
-### 7.4 `MusicSearchEngine.kt` (572 dòng – đã có test, dễ nhất)
+### 7.4 `MusicSearchEngine.kt` (572 dòng – đã có test, dễ nhất) ✅ Đã xong (08/10/2026)
 
 Đã chia sẵn thành nhiều `object`, chỉ cần mỗi cái một file trong `data/search/`: `SearchTextNormalizer.kt`, `ArtistExtractor.kt`, `SearchModels.kt` (SearchMatchReason, MatchedTrack, MatchedArtist, MatchedAlbum, SearchResults, SearchableTrack), `MusicSearchIndex.kt`, `MusicSearchEngine.kt`. Cùng package → test không phải sửa.
+
+**Kết quả thực tế (08/10/2026):** `MusicSearchEngine.kt` 572 → 301 dòng, đúng cấu trúc dự kiến, tất cả trong package `data.search`:
+- `SearchTextNormalizer.kt` (47), `ArtistExtractor.kt` (96), `SearchModels.kt` (59: SearchMatchReason, MatchedTrack, MatchedArtist, MatchedAlbum, SearchResults, SearchableTrack), `MusicSearchIndex.kt` (79), `MusicSearchEngine.kt` (301: `search` ×2, `isFuzzyMatch`, `computeLevenshteinDistance`).
+- Chỉ cắt file: ghép thân 5 file mới (bỏ dòng package/import) **giống hệt từng byte** dòng 8–572 của bản gốc. Không đổi phạm vi truy cập nào (các `private` đều nằm trong object của chính nó). Bỏ import thừa `kotlin.math.min` (không dùng).
+- Kiểm tra (JVM thuần): `MusicSearchEngineTest` 8/8 không sửa; **test so sánh** bản gốc (package `orig`) với bản mới trên 400 thư viện ngẫu nhiên × 10 truy vấn (tiếng Việt có dấu, feat./&/x, Remix/Live, gõ sai chính tả) – index, kết quả `search` (cả 2 overload), `extractIndividualArtists`, `tokenize`, `mergeCanonicalArtists` giống hệt (2.791/4.000 truy vấn có kết quả bài hát). Test bắt được lỗi khi cố tình đổi ngưỡng fuzzy hoặc đổi `đ`→`D`.
 
 ### 7.5 Các file 500–780 dòng còn lại
 
