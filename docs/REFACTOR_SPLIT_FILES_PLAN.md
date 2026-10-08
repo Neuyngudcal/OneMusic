@@ -650,6 +650,14 @@ data/scanner/replaygain/
 | `ui/screens/folder/FolderManagerScreen.kt` (565) | Tách danh sách thư mục và dialog xác nhận (dòng 549+). |
 | `ui/components/AddToPlaylistDialog.kt` (526) | `AddToPlaylistMultipleDialog` (dòng 300+) sang `AddToPlaylistMultipleDialog.kt`; phần giao diện chung của 2 dialog (nếu trùng) gom thành composable nội bộ. |
 
+**Kết quả thực tế – `DetailScreen.kt` (08/10/2026) – ⚠️ còn chờ build Android + thử màn chi tiết Album/Nghệ sĩ/Yêu thích/Playlist:** 765 → 199 dòng. 4 file mới **ngang hàng trong `detail/`**, đều `internal`; `DetailScreen` giữ nguyên chữ ký public:
+- `DetailHero.kt` (321): `DetailHeroBackground` (LAYER 1 – ảnh bìa/icon 520dp + parallax; nhận `listState`, đọc offset trong `graphicsLayer` như cũ; `bottomScrim` chuyển vào đây vì chỉ dùng ở đây) và `DetailHeroHeader` (nội dung item `hero_album_header`: tên, nghệ sĩ + Hi-Res, số bài & thời lượng, nút Phát tất cả / Trộn bài).
+- `DetailTrackList.kt` (226): `DetailTrackRow` – nội dung một item bài hát. `itemsIndexed` (cùng `key` `"${track.id}_$index"` và `contentType`) và `isCurrent` giữ ở cha.
+- `DetailStickyTopBar.kt` (137): LAYER 3. `topBarBackgroundAlpha` truyền dạng lambda (đọc trong thanh trên → khi animation chạy chỉ thanh trên recompose, không cả màn). Nút Chia sẻ tự lấy `LocalContext`.
+- `DetailDialogs.kt` (104): `RenamePlaylistDialog`. Hộp thoại xóa playlist (chỉ là lời gọi `ApexConfirmDialog`) và `TrackActionMenu` để lại ở cha.
+- State (`showRenameDialog`, `renameInput`, `showDeleteConfirmDialog`, `trackForActions`, `listState`, `showTopTitle`, cài đặt) giữ ở `DetailScreen`; con nhận giá trị + callback: `trackForActions = track` → `onTrackLongClick`, `appSettings.isHiResBadgeEnabled` → tham số, nút Đổi tên → `onRenameClick(customPlaylist)` (cha nạp `renameInput` rồi mở hộp thoại), `showRenameDialog = false` → `onDismiss()`, `onRenamePlaylist(id, tên.trim())` → `onRename(tên.trim())`. Ngoài các chỗ này, thân hàm chép nguyên văn.
+- **Kiểm tra:** bản gốc và bản mới biên dịch với cùng bộ stub (Compose Desktop 1.7.3). **Test giao diện so sánh** gốc/mới bằng Compose Desktop **1.5.12 + Kotlin 1.9.22** (bản 1.6+ cần `androidx.collection` trên dl.google.com bị chặn; Material3 1.1 thiếu `HorizontalDivider`/`Icons.AutoMirrored` → thêm stub/đổi icon giống nhau cho cả 2 bản): 6 cấu hình (album có ảnh, Yêu thích, nghệ sĩ, danh sách rỗng, playlist có/không callback), mỗi cấu hình 7–8 ảnh chụp (ban đầu, menu nhấn giữ, mở/gõ/mở lại Đổi tên, hộp thoại xóa, giữa/cuối animation thanh trên khi cuộn, cuộn ngược, parallax) + cây semantics + nhật ký callback/snackbar → **giống hệt từng pixel**. Test bắt được cả 5 lỗi cố tình cài (vạch kẻ lệch 4dp, nền thanh trên luôn tối, parallax 0.40, bỏ `trim`, không nạp lại tên khi mở Đổi tên).
+
 ---
 
 ## Giai đoạn 8 – Rào chắn để file không phình lại
