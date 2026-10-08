@@ -1,20 +1,13 @@
 package com.example.onemusic.ui.screens.player
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,7 +41,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.example.onemusic.data.local.AppSettings
@@ -70,8 +62,6 @@ import com.example.onemusic.ui.screens.player.controls.rememberAudioQualityInfo
 import com.example.onemusic.ui.screens.player.dialogs.FavoriteToastBanner
 import com.example.onemusic.ui.screens.player.dialogs.PlaybackSpeedDialog
 import com.example.onemusic.ui.screens.player.dialogs.SleepTimerDialog
-import com.example.onemusic.ui.screens.player.lyrics.NowPlayingLyricsPane
-import com.example.onemusic.ui.screens.player.queue.NowPlayingQueuePane
 import com.example.onemusic.ui.screens.player.state.rememberArtworkPagerState
 import com.example.onemusic.ui.screens.player.state.rememberCenterViewAutoScroll
 import com.example.onemusic.ui.screens.player.state.rememberControlsDeckVisibility
@@ -79,6 +69,7 @@ import com.example.onemusic.ui.screens.player.state.rememberNowPlayingSheetState
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 
 /**
@@ -299,92 +290,40 @@ fun NowPlayingSheet(
             )
 
             // SÂN KHẤU TRUNG TÂM (FLUID IN-PLACE OVERLAYS FOR LYRICS & QUEUE)
-            Box(
+            NowPlayingCenterStage(
+                centerView = centerView,
+                track = track,
+                playbackState = playbackState,
+                positionState = positionState,
+                lyricsListState = lyricsListState,
+                queueListState = queueListState,
+                deckVisibility = deckVisibility,
+                activeLyricIndex = { centerAutoScroll.activeLyricIndex },
+                onSeekToLine = { index, seekTime ->
+                    centerAutoScroll.resetLyricsUserScroll()
+                    scope.launch {
+                        lyricsListState.animateScrollToItem(index)
+                    }
+                    onSeek(seekTime)
+                },
+                hazeState = nowPlayingHazeState,
+                onPlayQueueIndex = onPlayQueueIndex,
+                onMoveQueueItem = onMoveQueueItem,
+                onRemoveQueueItem = onRemoveQueueItem,
+                onClearPlaybackHistory = onClearPlaybackHistory,
+                onToggleFavorite = handleToggleFavorite,
+                onAddToPlaylist = onAddToPlaylist,
+                onToggleShuffle = onToggleShuffle,
+                onCycleRepeat = onCycleRepeat,
+                onToggleAutoplay = onToggleAutoplay,
+                onOpenSpeedMenu = { isSpeedMenuOpen = true },
+                onOpenSleepTimer = { showSleepTimerDialog = true },
+                onOpenDetails = { showTrackDetailsDialog = true },
+                onOpenOptions = { showOptionsMenu = true },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(horizontal = if (centerView == NowPlayingCenterView.ARTWORK) 0.dp else 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                AnimatedContent(
-                    targetState = centerView,
-                    transitionSpec = {
-                        val springSpec = spring<IntOffset>(dampingRatio = 0.84f, stiffness = 320f)
-                        val horizontalSpringSpec = spring<IntOffset>(dampingRatio = 0.84f, stiffness = 360f)
-                        val fadeSpec = tween<Float>(durationMillis = 260, easing = FastOutSlowInEasing)
-                        val fadeOutSpec = tween<Float>(durationMillis = 200, easing = FastOutSlowInEasing)
-
-                        when {
-                            // 1. Chuyển ngang Parallax giữa LYRICS và QUEUE (Ăn khớp 100% hướng trượt của Island Dock)
-                            initialState == NowPlayingCenterView.LYRICS && targetState == NowPlayingCenterView.QUEUE -> {
-                                (slideInHorizontally(initialOffsetX = { (it * 0.35f).toInt() }, animationSpec = horizontalSpringSpec) + fadeIn(animationSpec = fadeSpec))
-                                    .togetherWith(slideOutHorizontally(targetOffsetX = { (-it * 0.35f).toInt() }, animationSpec = horizontalSpringSpec) + fadeOut(animationSpec = fadeOutSpec))
-                            }
-                            initialState == NowPlayingCenterView.QUEUE && targetState == NowPlayingCenterView.LYRICS -> {
-                                (slideInHorizontally(initialOffsetX = { (-it * 0.35f).toInt() }, animationSpec = horizontalSpringSpec) + fadeIn(animationSpec = fadeSpec))
-                                    .togetherWith(slideOutHorizontally(targetOffsetX = { (it * 0.35f).toInt() }, animationSpec = horizontalSpringSpec) + fadeOut(animationSpec = fadeOutSpec))
-                            }
-                            // 2. Đóng về ARTWORK: Chìm êm ái xuống dưới đáy
-                            targetState == NowPlayingCenterView.ARTWORK -> {
-                                fadeIn(animationSpec = fadeSpec).togetherWith(
-                                    slideOutVertically(targetOffsetY = { (it * 0.65f).toInt() }, animationSpec = springSpec) + fadeOut(animationSpec = fadeOutSpec)
-                                )
-                            }
-                            // 3. Mở từ ARTWORK lên LYRICS hoặc QUEUE: Trồi vút lên từ dưới đáy màn hình
-                            else -> {
-                                (slideInVertically(initialOffsetY = { (it * 0.65f).toInt() }, animationSpec = springSpec) + fadeIn(animationSpec = fadeSpec))
-                                    .togetherWith(fadeOut(animationSpec = fadeOutSpec))
-                            }
-                        }
-                    },
-                    label = "center_overlay_transition",
-                    modifier = Modifier.fillMaxSize()
-                ) { targetMode ->
-                    when (targetMode) {
-                        NowPlayingCenterView.ARTWORK -> {
-                            // Empty transparent space to let the permanently mounted Hero Artwork in Layer 1 receive touches and display 100% full bleed
-                            Box(modifier = Modifier.fillMaxSize())
-                        }
-                        NowPlayingCenterView.LYRICS -> {
-                            NowPlayingLyricsPane(
-                                track = track,
-                                listState = lyricsListState,
-                                nestedScrollConnection = deckVisibility.lyricsNestedScrollConnection,
-                                activeLyricIndex = { centerAutoScroll.activeLyricIndex },
-                                positionState = positionState,
-                                onSeekToLine = { index, seekTime ->
-                                    centerAutoScroll.resetLyricsUserScroll()
-                                    scope.launch {
-                                        lyricsListState.animateScrollToItem(index)
-                                    }
-                                    onSeek(seekTime)
-                                }
-                            )
-                        }
-                        NowPlayingCenterView.QUEUE -> {
-                            NowPlayingQueuePane(
-                                playbackState = playbackState,
-                                listState = queueListState,
-                                nestedScrollConnection = deckVisibility.queueNestedScrollConnection,
-                                hazeState = nowPlayingHazeState,
-                                onPlayQueueIndex = onPlayQueueIndex,
-                                onMoveQueueItem = onMoveQueueItem,
-                                onRemoveQueueItem = onRemoveQueueItem,
-                                onClearPlaybackHistory = onClearPlaybackHistory,
-                                onToggleFavorite = handleToggleFavorite,
-                                onAddToPlaylist = onAddToPlaylist,
-                                onToggleShuffle = onToggleShuffle,
-                                onCycleRepeat = onCycleRepeat,
-                                onToggleAutoplay = onToggleAutoplay,
-                                onOpenSpeedMenu = { isSpeedMenuOpen = true },
-                                onOpenSleepTimer = { showSleepTimerDialog = true },
-                                onOpenDetails = { showTrackDetailsDialog = true },
-                                onOpenOptions = { showOptionsMenu = true }
-                            )
-                        }
-                    }
-                }
-            }
+            )
 
             // BỘ ĐIỀU KHIỂN PHÁT NHẠC & DOCK ĐÁY (ẨN KHI CUỘN XUỐNG DUYỆT BÀI / ĐỌC LỜI, HIỆN KHI VUỐT LÊN TRÊN HOẶC ĐẦU TRANG)
             val isControlsDeckVisible = deckVisibility.isVisible(centerView)
