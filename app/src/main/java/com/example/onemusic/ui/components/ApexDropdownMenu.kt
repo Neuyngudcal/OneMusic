@@ -1,5 +1,7 @@
 package com.example.onemusic.ui.components
 
+import androidx.compose.ui.graphics.takeOrElse
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -37,18 +39,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
-import com.example.onemusic.theme.ApexReflectiveBorderBrush
 import com.example.onemusic.theme.LocalHazeState
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.ui.utils.apexBounceClick
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
-import com.example.onemusic.theme.ShadowColor
 import com.example.onemusic.theme.TextPrimary
 
 /**
@@ -104,16 +101,16 @@ fun ApexDropdownMenu(
                     .shadow(
                         elevation = 24.dp,
                         shape = RoundedCornerShape(22.dp),
-                        ambientColor = ShadowColor,
-                        spotColor = ShadowColor
+                        ambientColor = AppTheme.colors.shadow,
+                        spotColor = AppTheme.colors.shadow
                     )
                     .clip(RoundedCornerShape(22.dp))
                     .apexFrostedGlass(
-                        backgroundColor = SurfaceElevated.copy(alpha = 0.82f),
+                        backgroundColor = AppTheme.colors.surface1.copy(alpha = 0.82f),
                         blurRadius = 26.dp,
                         hazeState = effectiveHazeState
                     )
-                    .border(0.85.dp, ApexReflectiveBorderBrush, RoundedCornerShape(22.dp))
+                    .border(0.85.dp, AppTheme.colors.reflectiveBorderBrush, RoundedCornerShape(22.dp))
                     .padding(vertical = 6.dp),
                 color = Color.Transparent
             ) {
@@ -136,11 +133,13 @@ fun ApexDropdownMenuItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    iconTint: Color = TextPrimary,
+    iconTint: Color = Color.Unspecified,
     trailingText: String? = null,
     trailingColor: Color? = null,
-    textColor: Color = TextPrimary
+    textColor: Color = Color.Unspecified
 ) {
+    val iconTint = iconTint.takeOrElse { AppTheme.colors.textPrimary }
+    val textColor = textColor.takeOrElse { AppTheme.colors.textPrimary }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -177,7 +176,7 @@ fun ApexDropdownMenuItem(
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontSize = 12.5.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = trailingColor ?: TextSecondary
+                    color = trailingColor ?: AppTheme.colors.textSecondary
                 )
             )
         }
@@ -194,7 +193,7 @@ fun ApexDropdownDivider(
     HorizontalDivider(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp),
         thickness = 0.5.dp,
-        color = SurfaceActiveIndicator.copy(alpha = 0.65f)
+        color = AppTheme.colors.surfaceActiveIndicator.copy(alpha = 0.65f)
     )
 }
 

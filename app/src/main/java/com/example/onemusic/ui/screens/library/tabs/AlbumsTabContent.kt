@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.tabs
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.onemusic.data.search.AlbumGroup
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.screens.library.LibraryViewMode
 import com.example.onemusic.ui.screens.library.components.LibraryFilterBar
@@ -49,7 +49,7 @@ fun LazyListScope.albumsTabContent(
             ) {
                 Text(
                     text = "Chưa có album nào",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = TextSecondary)
+                    style = MaterialTheme.typography.bodyMedium.copy(color = AppTheme.colors.textSecondary)
                 )
             }
         }

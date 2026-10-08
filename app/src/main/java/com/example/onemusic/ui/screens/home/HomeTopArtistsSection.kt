@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import com.example.onemusic.data.repository.ArtistImageRepository
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.ui.text.style.TextAlign
@@ -31,10 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.avatarColorFor
 import androidx.compose.foundation.lazy.LazyListScope
 
@@ -60,7 +57,7 @@ internal fun LazyListScope.homeTopArtistsSection(
                     text = "NGHỆ SĨ NỔI BẬT",
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         letterSpacing = 1.sp,
                         fontSize = 12.sp
                     )
@@ -69,7 +66,7 @@ internal fun LazyListScope.homeTopArtistsSection(
                     text = "Tất cả",
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = Brand,
+                        color = AppTheme.colors.accent,
                         fontSize = 12.sp
                     ),
                     modifier = Modifier
@@ -107,7 +104,7 @@ internal fun LazyListScope.homeTopArtistsSection(
                                 modifier = Modifier
                                     .size(76.dp)
                                     .clip(CircleShape)
-                                    .border(1.dp, IvoryStroke, CircleShape)
+                                    .border(1.dp, AppTheme.colors.stroke, CircleShape)
                             )
                         } else {
                             val initials = artistName.split(" ").filter { it.isNotBlank() }.take(2)
@@ -122,7 +119,7 @@ internal fun LazyListScope.homeTopArtistsSection(
                             ) {
                                 Text(
                                     text = if (initials.isNotBlank()) initials else "♪",
-                                    color = TextPrimary,
+                                    color = AppTheme.colors.textPrimary,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 24.sp
                                 )
@@ -135,7 +132,7 @@ internal fun LazyListScope.homeTopArtistsSection(
                             text = artistName,
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontWeight = FontWeight.SemiBold,
-                                color = TextPrimary,
+                                color = AppTheme.colors.textPrimary,
                                 fontSize = 13.sp
                             ),
                             maxLines = 1,
@@ -146,7 +143,7 @@ internal fun LazyListScope.homeTopArtistsSection(
                         Text(
                             text = "$trackCount bài",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 11.5.sp
                             ),
                             textAlign = TextAlign.Center

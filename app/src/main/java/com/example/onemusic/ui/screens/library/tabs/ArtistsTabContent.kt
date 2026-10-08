@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.tabs
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -30,10 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.theme.avatarColorFor
@@ -61,7 +58,7 @@ fun LazyListScope.artistsTabContent(
             ) {
                 Text(
                     text = "Chưa có nghệ sĩ nào",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = TextSecondary)
+                    style = MaterialTheme.typography.bodyMedium.copy(color = AppTheme.colors.textSecondary)
                 )
             }
         }
@@ -103,7 +100,7 @@ fun LazyListScope.artistsTabContent(
                                 modifier = Modifier
                                     .size(54.dp)
                                     .clip(CircleShape)
-                                    .border(0.7.dp, IvoryStroke, CircleShape)
+                                    .border(0.7.dp, AppTheme.colors.stroke, CircleShape)
                             )
                         } else {
                             Box(
@@ -115,7 +112,7 @@ fun LazyListScope.artistsTabContent(
                             ) {
                                 Text(
                                     text = if (initials.isNotBlank()) initials else "♪",
-                                    color = TextPrimary,
+                                    color = AppTheme.colors.textPrimary,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp
                                 )
@@ -129,7 +126,7 @@ fun LazyListScope.artistsTabContent(
                                 text = artistName,
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = TextPrimary,
+                                    color = AppTheme.colors.textPrimary,
                                     fontSize = 15.sp
                                 ),
                                 maxLines = 1,
@@ -139,7 +136,7 @@ fun LazyListScope.artistsTabContent(
                             Text(
                                 text = "${artistTracks.size} bài hát",
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = TextSecondary,
+                                    color = AppTheme.colors.textSecondary,
                                     fontSize = 12.sp
                                 ),
                                 maxLines = 1,
@@ -152,7 +149,7 @@ fun LazyListScope.artistsTabContent(
                         HorizontalDivider(
                             modifier = Modifier.padding(start = 84.dp, end = 16.dp),
                             thickness = 0.6.dp,
-                            color = SurfaceDivider
+                            color = AppTheme.colors.divider
                         )
                     }
                 }

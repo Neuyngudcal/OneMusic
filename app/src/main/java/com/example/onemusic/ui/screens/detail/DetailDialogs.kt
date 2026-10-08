@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.detail
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,14 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
 import com.example.onemusic.ui.components.ApexDialogContainer
 import com.example.onemusic.ui.utils.apexBounceClick
 
@@ -50,7 +44,7 @@ internal fun RenamePlaylistDialog(
                 text = "Đổi tên danh sách phát",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 18.sp
                 )
             )
@@ -60,10 +54,10 @@ internal fun RenamePlaylistDialog(
                 onValueChange = onRenameInputChange,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Brand,
-                    unfocusedBorderColor = SurfaceDivider,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary
+                    focusedBorderColor = AppTheme.colors.accent,
+                    unfocusedBorderColor = AppTheme.colors.divider,
+                    focusedTextColor = AppTheme.colors.textPrimary,
+                    unfocusedTextColor = AppTheme.colors.textPrimary
                 ),
                 singleLine = true
             )
@@ -75,18 +69,18 @@ internal fun RenamePlaylistDialog(
                 Box(
                     modifier = Modifier
                         .clip(PillShape)
-                        .background(SurfaceControl)
-                        .border(1.5.dp, SurfaceBorderStrong, PillShape)
+                        .background(AppTheme.colors.surfaceControl)
+                        .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)
                         .apexBounceClick(scaleDown = 0.92f) { onDismiss() }
                         .padding(horizontal = 14.dp, vertical = 8.dp)
                 ) {
-                    Text("Hủy", color = PrimaryIvory, fontWeight = FontWeight.SemiBold)
+                    Text("Hủy", color = AppTheme.colors.textPrimary, fontWeight = FontWeight.SemiBold)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Box(
                     modifier = Modifier
                         .clip(PillShape)
-                        .background(PrimaryIvory)
+                        .background(AppTheme.colors.textPrimary)
                         .apexBounceClick(scaleDown = 0.92f) {
                             if (renameInput.isNotBlank()) {
                                 // Tên mới hiện ngay trên màn → không cần thông báo
@@ -96,7 +90,7 @@ internal fun RenamePlaylistDialog(
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    Text("Lưu", color = CharcoalBlack, fontWeight = FontWeight.Bold)
+                    Text("Lưu", color = AppTheme.colors.onInverse, fontWeight = FontWeight.Bold)
                 }
             }
         }

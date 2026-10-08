@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.folder
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,12 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.FolderInfo
-import com.example.onemusic.theme.ApexAmber
-import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 
@@ -53,7 +48,7 @@ internal fun FolderListCard(
             text = "THƯ MỤC ĐANG QUẢN LÝ (${folders.size})",
             style = MaterialTheme.typography.labelMedium.copy(
                 fontWeight = FontWeight.Bold,
-                color = TextSecondary,
+                color = AppTheme.colors.textSecondary,
                 letterSpacing = 1.sp
             ),
             modifier = Modifier.padding(start = 6.dp, bottom = 10.dp)
@@ -75,13 +70,13 @@ internal fun FolderListCard(
                         modifier = Modifier
                             .size(60.dp)
                             .clip(CircleShape)
-                            .background(SurfaceActiveIndicator),
+                            .background(AppTheme.colors.surfaceActiveIndicator),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.FolderOpen,
                             contentDescription = null,
-                            tint = ApexAmber,
+                            tint = AppTheme.colors.warning,
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -92,7 +87,7 @@ internal fun FolderListCard(
                         text = "Chưa có thư mục nào",
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 16.sp
                         )
                     )
@@ -102,7 +97,7 @@ internal fun FolderListCard(
                     Text(
                         text = "Nhấn nút 'Thêm thư mục mới' bên dưới để quét các bài hát yêu thích của bạn.",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 13.sp
                         ),
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -121,13 +116,13 @@ internal fun FolderListCard(
                                 modifier = Modifier
                                     .size(46.dp)
                                     .clip(RoundedCornerShape(14.dp))
-                                    .background(SurfaceActiveIndicator),
+                                    .background(AppTheme.colors.surfaceActiveIndicator),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Rounded.Folder,
                                     contentDescription = null, // biểu tượng trang trí, tên thư mục đã có ở cạnh
-                                    tint = ApexAmber,
+                                    tint = AppTheme.colors.warning,
                                     modifier = Modifier.size(26.dp)
                                 )
                             }
@@ -139,7 +134,7 @@ internal fun FolderListCard(
                                     text = folder.displayName,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         fontWeight = FontWeight.SemiBold,
-                                        color = TextPrimary,
+                                        color = AppTheme.colors.textPrimary,
                                         fontSize = 15.sp
                                     ),
                                     maxLines = 1,
@@ -149,7 +144,7 @@ internal fun FolderListCard(
                                 Text(
                                     text = "${folder.trackCount} bài hát tìm thấy",
                                     style = MaterialTheme.typography.bodySmall.copy(
-                                        color = TextSecondary,
+                                        color = AppTheme.colors.textSecondary,
                                         fontSize = 12.sp
                                     )
                                 )
@@ -162,8 +157,8 @@ internal fun FolderListCard(
                                 onClick = { onRemoveClick(folder.uriString, folder.displayName) },
                                 size = 38.dp,
                                 iconSize = 18.dp,
-                                iconTint = ApexRose.copy(alpha = 0.85f),
-                                backgroundColor = SurfaceActiveIndicator.copy(alpha = 0.60f)
+                                iconTint = AppTheme.colors.danger.copy(alpha = 0.85f),
+                                backgroundColor = AppTheme.colors.surfaceActiveIndicator.copy(alpha = 0.60f)
                             )
                         }
 
@@ -171,7 +166,7 @@ internal fun FolderListCard(
                             HorizontalDivider(
                                 modifier = Modifier.padding(start = 74.dp, end = 18.dp),
                                 thickness = 0.5.dp,
-                                color = SurfaceDivider
+                                color = AppTheme.colors.divider
                             )
                         }
                     }

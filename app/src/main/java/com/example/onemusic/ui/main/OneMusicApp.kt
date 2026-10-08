@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.main
 
+import com.example.onemusic.theme.AppTheme
 import com.example.onemusic.haptics.LocalApexHaptics
 import com.example.onemusic.haptics.rememberApexHaptics
 import androidx.compose.runtime.CompositionLocalProvider
@@ -31,7 +32,6 @@ import com.example.onemusic.ui.utils.LocalAppSnackbar
 import com.example.onemusic.ui.utils.LocalBottomOverlayPadding
 import com.example.onemusic.ui.utils.ShowSnackbar
 import com.example.onemusic.theme.LocalApexHazeState
-import com.example.onemusic.theme.ObsidianBlack
 import androidx.compose.material3.SnackbarHostState
 
 /**
@@ -183,7 +183,7 @@ fun OneMusicApp(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ObsidianBlack)
+                .background(AppTheme.colors.background)
         ) {
         MainTabsHost(
             currentScreen = currentScreen,

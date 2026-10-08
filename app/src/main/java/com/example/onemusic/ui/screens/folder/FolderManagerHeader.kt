@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.folder
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -26,10 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.SurfaceCard
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 
 /** Item 1: nút quay lại, tiêu đề "Thư mục nhạc" và mô tả. */
@@ -60,7 +57,7 @@ internal fun FolderManagerTopBar(onBack: () -> Unit) {
             text = "Thư mục nhạc",
             style = MaterialTheme.typography.headlineLarge.copy(
                 fontWeight = FontWeight.ExtraBold,
-                color = TextPrimary,
+                color = AppTheme.colors.textPrimary,
                 fontSize = 32.sp
             )
         )
@@ -70,7 +67,7 @@ internal fun FolderManagerTopBar(onBack: () -> Unit) {
         Text(
             text = "Chọn các thư mục chứa nhạc trên thiết bị để ứng dụng quét và tự động phát nhạc Hi-Res chất lượng cao.",
             style = MaterialTheme.typography.bodyMedium.copy(
-                color = TextSecondary,
+                color = AppTheme.colors.textSecondary,
                 fontSize = 14.sp,
                 lineHeight = 20.sp
             )
@@ -91,7 +88,7 @@ internal fun FolderScanningBanner(isScanning: Boolean) {
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 8.dp)
                 .clip(RoundedCornerShape(20.dp)),
-            color = SurfaceCard
+            color = AppTheme.colors.surface2
         ) {
             Row(
                 modifier = Modifier
@@ -101,7 +98,7 @@ internal fun FolderScanningBanner(isScanning: Boolean) {
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
-                    color = Brand,
+                    color = AppTheme.colors.accent,
                     strokeWidth = 2.5.dp
                 )
                 Spacer(modifier = Modifier.width(16.dp))
@@ -110,13 +107,13 @@ internal fun FolderScanningBanner(isScanning: Boolean) {
                         text = "Đang quét tệp âm thanh...",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                            color = AppTheme.colors.textPrimary
                         )
                     )
                     Text(
                         text = "Trích xuất thông số Hi-Res & Album artwork",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = Brand
+                            color = AppTheme.colors.accent
                         )
                     )
                 }

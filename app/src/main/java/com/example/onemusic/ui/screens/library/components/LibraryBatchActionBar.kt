@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -35,15 +36,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
-import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.IvorySubtle
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.ShadowColor
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextPrimary
 import com.example.onemusic.ui.utils.LocalBottomOverlayPadding
 import com.example.onemusic.ui.utils.apexBounceClick
 
@@ -74,10 +67,10 @@ fun LibraryBatchActionBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(58.dp)
-                .shadow(18.dp, PillShape, ambientColor = ShadowColor)
+                .shadow(18.dp, PillShape, ambientColor = AppTheme.colors.shadow)
                 .clip(PillShape)
-                .background(SurfaceElevated.copy(alpha = 0.95f))
-                .border(0.85.dp, IvoryStroke, PillShape)
+                .background(AppTheme.colors.surface1.copy(alpha = 0.95f))
+                .border(0.85.dp, AppTheme.colors.stroke, PillShape)
                 .padding(horizontal = 12.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -101,7 +94,7 @@ fun LibraryBatchActionBar(
                         Icon(
                             imageVector = Icons.Rounded.Close,
                             contentDescription = "Hủy",
-                            tint = PrimaryIvory,
+                            tint = AppTheme.colors.textPrimary,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -110,7 +103,7 @@ fun LibraryBatchActionBar(
                         text = "$selectedCount đã chọn",
                         style = MaterialTheme.typography.labelMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 13.sp
                         )
                     )
@@ -125,7 +118,7 @@ fun LibraryBatchActionBar(
                     Box(
                         modifier = Modifier
                             .clip(PillShape)
-                            .background(IvorySubtle)
+                            .background(AppTheme.colors.subtle)
                             .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
                                 onToggleSelectAll()
                             }
@@ -134,7 +127,7 @@ fun LibraryBatchActionBar(
                         Text(
                             text = if (selectedCount == totalCount && totalCount > 0) "Bỏ chọn" else "Tất cả",
                             style = MaterialTheme.typography.labelSmall.copy(
-                                color = TextPrimary,
+                                color = AppTheme.colors.textPrimary,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 12.sp
                             )
@@ -146,7 +139,7 @@ fun LibraryBatchActionBar(
                         Box(
                             modifier = Modifier
                                 .clip(PillShape)
-                                .background(PrimaryIvory)
+                                .background(AppTheme.colors.textPrimary)
                                 .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
                                     onPlaySelected()
                                 }
@@ -156,14 +149,14 @@ fun LibraryBatchActionBar(
                                 Icon(
                                     imageVector = Icons.Rounded.PlayArrow,
                                     contentDescription = null,
-                                    tint = CharcoalBlack,
+                                    tint = AppTheme.colors.onInverse,
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
                                 Text(
                                     text = "Phát",
                                     style = MaterialTheme.typography.labelSmall.copy(
-                                        color = CharcoalBlack,
+                                        color = AppTheme.colors.onInverse,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 12.sp
                                     )
@@ -178,7 +171,7 @@ fun LibraryBatchActionBar(
                                     .minimumInteractiveComponentSize()
                                     .size(36.dp)
                                     .clip(CircleShape)
-                                    .background(IvoryStroke)
+                                    .background(AppTheme.colors.stroke)
                                     .apexBounceClick(scaleDown = 0.90f, enableHaptic = true) {
                                         onPlayNextSelected()
                                     },
@@ -187,7 +180,7 @@ fun LibraryBatchActionBar(
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
                                     contentDescription = "Phát kế tiếp",
-                                    tint = Brand,
+                                    tint = AppTheme.colors.accent,
                                     modifier = Modifier.size(19.dp)
                                 )
                             }
@@ -199,7 +192,7 @@ fun LibraryBatchActionBar(
                                 .minimumInteractiveComponentSize()
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(IvoryStroke)
+                                .background(AppTheme.colors.stroke)
                                 .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
                                     onAddToPlaylist()
                                 },
@@ -208,7 +201,7 @@ fun LibraryBatchActionBar(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.PlaylistAdd,
                                 contentDescription = "Thêm vào playlist",
-                                tint = PrimaryIvory,
+                                tint = AppTheme.colors.textPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                         }

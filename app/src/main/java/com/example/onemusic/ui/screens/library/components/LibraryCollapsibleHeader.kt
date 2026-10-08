@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,8 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.components.ApexDropdownDivider
 import com.example.onemusic.ui.components.ApexDropdownMenu
@@ -65,7 +64,7 @@ fun LibraryCollapsibleHeader(
                 text = title,
                 style = MaterialTheme.typography.displaySmall.copy(
                     fontWeight = FontWeight.Bold,
-                    color = PrimaryIvory,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 32.sp
                 )
             )
@@ -73,7 +72,7 @@ fun LibraryCollapsibleHeader(
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     fontSize = 14.sp
                 )
             )

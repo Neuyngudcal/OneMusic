@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,11 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.onemusic.theme.IvoryDisabled
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.utils.apexBounceClick
 
 /** Một hàng lưới 2 cột (ô trống bù bằng Spacer khi hàng cuối lẻ). */
@@ -61,7 +57,7 @@ internal fun HomeAlbumGrid2Row(
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(SurfaceActiveIndicator)
+                        .background(AppTheme.colors.surfaceActiveIndicator)
                 ) {
                     if (!album.artworkUrl.isNullOrBlank()) {
                         AsyncImage(
@@ -74,13 +70,13 @@ internal fun HomeAlbumGrid2Row(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(SurfaceElevated),
+                                .background(AppTheme.colors.surface1),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Album,
                                 contentDescription = null,
-                                tint = IvoryDisabled,
+                                tint = AppTheme.colors.disabled,
                                 modifier = Modifier.size(52.dp)
                             )
                         }
@@ -94,7 +90,7 @@ internal fun HomeAlbumGrid2Row(
                     text = album.name,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = AppTheme.colors.textPrimary,
                         fontSize = 15.sp
                     ),
                     maxLines = 1,
@@ -107,7 +103,7 @@ internal fun HomeAlbumGrid2Row(
                 Text(
                     text = album.artist,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 13.sp
                     ),
                     maxLines = 1,
@@ -147,7 +143,7 @@ internal fun HomeAlbumGrid3Row(
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(SurfaceActiveIndicator)
+                        .background(AppTheme.colors.surfaceActiveIndicator)
                 ) {
                     if (!album.artworkUrl.isNullOrBlank()) {
                         AsyncImage(
@@ -160,13 +156,13 @@ internal fun HomeAlbumGrid3Row(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(SurfaceElevated),
+                                .background(AppTheme.colors.surface1),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Album,
                                 contentDescription = null,
-                                tint = IvoryDisabled,
+                                tint = AppTheme.colors.disabled,
                                 modifier = Modifier.size(36.dp)
                             )
                         }
@@ -180,7 +176,7 @@ internal fun HomeAlbumGrid3Row(
                     text = album.name,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = AppTheme.colors.textPrimary,
                         fontSize = 13.sp
                     ),
                     maxLines = 1,
@@ -193,7 +189,7 @@ internal fun HomeAlbumGrid3Row(
                 Text(
                     text = album.artist,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 11.5.sp
                     ),
                     maxLines = 1,

@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.navigation
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -61,14 +62,8 @@ import com.example.onemusic.haptics.rememberApexHaptics
 import com.example.onemusic.theme.LocalHazeState
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import com.example.onemusic.theme.ApexGlassSurfaceBg
-import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.ShadowColor
 import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexFrostedGlass
 
 enum class Screen(
@@ -88,7 +83,7 @@ enum class Screen(
  * - 4 Minimalist Tabs: Home -> Library -> Search -> Settings (22dp..24dp 100% Centered Icons)
  * - Dual-Touch Interaction: Single Tap + Continuous 1:1 Drag-to-Snap
  * - Elastic Border Resistance & Real-time Slot Snapping Haptic Ticks
- * - Real-Time GPU Frosted Glass Surface (ApexGlassSurfaceBg with 24dp blur)
+ * - Real-Time GPU Frosted Glass Surface (surface1 theo theme với blur)
  */
 @Composable
 fun ApexBottomNavigation(
@@ -148,16 +143,16 @@ fun ApexBottomNavigation(
                 .shadow(
                     elevation = 16.dp,
                     shape = PillShape,
-                    ambientColor = ShadowColor,
-                    spotColor = ShadowColor
+                    ambientColor = AppTheme.colors.shadow,
+                    spotColor = AppTheme.colors.shadow
                 )
                 .clip(PillShape)
                 .apexFrostedGlass(
-                    backgroundColor = SurfaceElevated.copy(alpha = 0.88f),
+                    backgroundColor = AppTheme.colors.surface1.copy(alpha = 0.88f),
                     blurRadius = 20.dp,
                     hazeState = hazeState
                 )
-                .border(0.85.dp, ApexPillBorderBrush, PillShape)
+                .border(0.85.dp, AppTheme.colors.pillBorderBrush, PillShape)
                 .padding(4.dp),
             contentAlignment = Alignment.CenterStart
         ) {
@@ -255,7 +250,7 @@ fun ApexBottomNavigation(
                             transformOrigin = TransformOrigin(0.5f, 0.5f)
                         }
                         .clip(PillShape)
-                        .background(SurfaceActiveIndicator)
+                        .background(AppTheme.colors.surfaceActiveIndicator)
                 )
 
                 // 2. Interactive Icons-Only Tab Items
@@ -288,7 +283,7 @@ fun ApexBottomNavigation(
                             Icon(
                                 imageVector = screen.icon,
                                 contentDescription = null,
-                                tint = if (isSelected) TextPrimary else TextSecondary,
+                                tint = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textSecondary,
                                 modifier = Modifier.size(24.dp)
                             )
                         }

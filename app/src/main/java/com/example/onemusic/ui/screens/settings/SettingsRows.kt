@@ -1,5 +1,8 @@
 package com.example.onemusic.ui.screens.settings
 
+import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.graphics.takeOrElse
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -40,12 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.ui.components.ApexToggle
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceCard
-import com.example.onemusic.theme.SurfaceDivider
 import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 
 /** Tiêu đề nhóm cài đặt (chữ in hoa nhỏ phía trên mỗi thẻ). */
 @Composable
@@ -54,7 +52,7 @@ internal fun SettingsSectionHeader(title: String) {
         text = title.uppercase(),
         style = MaterialTheme.typography.labelMedium.copy(
             fontWeight = FontWeight.Bold,
-            color = TextSecondary,
+            color = AppTheme.colors.textSecondary,
             letterSpacing = 1.sp,
             fontSize = 12.sp
         ),
@@ -71,7 +69,7 @@ internal fun SettingsGroupCard(content: @Composable () -> Unit) {
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .clip(RoundedCornerShape(26.dp))
-            .background(SurfaceCard)
+            .background(AppTheme.colors.surface2)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             content()
@@ -84,7 +82,7 @@ internal fun SettingsDivider() {
     HorizontalDivider(
         modifier = Modifier.padding(start = 70.dp, end = 16.dp),
         thickness = 0.8.dp,
-        color = SurfaceDivider
+        color = AppTheme.colors.divider
     )
 }
 
@@ -132,13 +130,13 @@ internal fun SettingsToggleRow(
             modifier = Modifier
                 .size(38.dp)
                 .clip(CircleShape)
-                .background(if (checked) Brand.copy(alpha = 0.20f) else SurfaceActiveIndicator),
+                .background(if (checked) AppTheme.colors.accent.copy(alpha = 0.20f) else AppTheme.colors.surfaceActiveIndicator),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (checked) Brand else TextSecondary,
+                tint = if (checked) AppTheme.colors.accent else AppTheme.colors.textSecondary,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -150,7 +148,7 @@ internal fun SettingsToggleRow(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 15.sp
                 )
             )
@@ -159,7 +157,7 @@ internal fun SettingsToggleRow(
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 12.5.sp,
                         lineHeight = 16.sp
                     )
@@ -183,9 +181,11 @@ internal fun SettingsActionRow(
     icon: ImageVector,
     title: String,
     subtitle: String,
-    titleColor: Color = TextPrimary,
+    titleColor: Color = Color.Unspecified, // Unspecified → textPrimary theo theme
     onClick: () -> Unit
 ) {
+    val hasCustomTitleColor = titleColor.isSpecified
+    val titleColor = titleColor.takeOrElse { AppTheme.colors.textPrimary }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -197,13 +197,13 @@ internal fun SettingsActionRow(
             modifier = Modifier
                 .size(38.dp)
                 .clip(CircleShape)
-                .background(SurfaceActiveIndicator),
+                .background(AppTheme.colors.surfaceActiveIndicator),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (titleColor != TextPrimary) titleColor else TextSecondary,
+                tint = if (hasCustomTitleColor) titleColor else AppTheme.colors.textSecondary,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -223,7 +223,7 @@ internal fun SettingsActionRow(
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     fontSize = 12.sp
                 )
             )

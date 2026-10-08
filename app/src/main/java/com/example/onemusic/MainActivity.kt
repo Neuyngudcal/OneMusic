@@ -24,6 +24,9 @@ import android.net.Uri
 import android.media.MediaMetadataRetriever
 import kotlinx.coroutines.withContext
 import com.example.onemusic.theme.OneMusicTheme
+import com.example.onemusic.data.local.SettingsPreferences
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import com.example.onemusic.ui.main.OneMusicApp
 
 class MainActivity : ComponentActivity() {
@@ -65,7 +68,9 @@ class MainActivity : ComponentActivity() {
 
         // 3. Direct UI render with true zero artificial delay (instant 120Hz display)
         setContent {
-            OneMusicTheme {
+            val themeSettings by SettingsPreferences.getInstance(applicationContext)
+                .settingsFlow.collectAsState()
+            OneMusicTheme(themeMode = themeSettings.themeMode) {
                 LaunchedEffect(Unit) {
                     requestNotificationPermission()
                 }

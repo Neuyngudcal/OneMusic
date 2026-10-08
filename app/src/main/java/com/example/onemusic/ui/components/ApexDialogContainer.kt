@@ -1,5 +1,7 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -27,19 +29,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.onemusic.haptics.ApexHapticEngine
-import com.example.onemusic.theme.ApexReflectiveBorderBrush
 import com.example.onemusic.theme.LocalApexHazeState
 import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.theme.apexFrostedGlass
 import dev.chrisbanes.haze.HazeState
-import com.example.onemusic.theme.ShadowColor
 
 /**
  * Standard OneMusic Apex Prism Optical Glassmorphic Dialog Container
  *
  * Mandatory Specs (GEMINI.md 3.5):
  * - Real-time GPU Frosted Glass (Haze) with blurRadius = 28.dp, noiseFactor = 0f.
- * - Obsidian Space Glass base: SurfaceElevated.copy(alpha = 0.88f).
+ * - Obsidian Space Glass base: SurfaceElevated.copy(alpha = 0.50f) (đủ trong để thấy blur, tint của apexFrostedGlass tự suy ra từ alpha này).
  * - AMOLED deep shadow: elevation = 16.dp with Color.Black.copy(alpha = 0.55f).
  * - 2.5D Top-lit Specular Reflection Border: ApexReflectiveBorderBrush with width = 0.85.dp.
  * - Corner Geometry: RoundedCornerShape(28.dp).
@@ -52,7 +52,7 @@ fun ApexDialogContainer(
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     shape: Shape = RoundedCornerShape(28.dp),
-    backgroundColor: Color = SurfaceElevated.copy(alpha = 0.88f),
+    backgroundColor: Color = Color.Unspecified, // Unspecified → surface1 alpha 0.50 theo theme
     hazeState: HazeState? = null,
     horizontalMargin: Dp = 20.dp,
     elevation: Dp = 16.dp,
@@ -91,18 +91,18 @@ fun ApexDialogContainer(
                     .shadow(
                         elevation = elevation,
                         shape = shape,
-                        ambientColor = ShadowColor,
-                        spotColor = ShadowColor
+                        ambientColor = AppTheme.colors.shadow,
+                        spotColor = AppTheme.colors.shadow
                     )
                     .clip(shape)
                     .apexFrostedGlass(
-                        backgroundColor = backgroundColor,
+                        backgroundColor = backgroundColor.takeOrElse { AppTheme.colors.surface1.copy(alpha = 0.50f) },
                         blurRadius = 24.dp,
                         hazeState = effectiveHazeState
                     )
                     .border(
                         width = 0.85.dp,
-                        brush = ApexReflectiveBorderBrush,
+                        brush = AppTheme.colors.reflectiveBorderBrush,
                         shape = shape
                     )
                     .clickable(

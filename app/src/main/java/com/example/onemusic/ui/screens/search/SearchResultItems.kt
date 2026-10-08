@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.search
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.material3.minimumInteractiveComponentSize
 import com.example.onemusic.data.search.LibraryGrouping
 import androidx.compose.foundation.background
@@ -46,17 +47,7 @@ import com.example.onemusic.data.search.MatchedAlbum
 import com.example.onemusic.data.search.MatchedArtist
 import com.example.onemusic.data.search.MatchedTrack
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.IvoryDisabled
-import com.example.onemusic.theme.IvoryFaint
-import com.example.onemusic.theme.IvoryHigh
-import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
+import AppTheme.colors.surfaceActiveIndicator
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.theme.apexGlassCard
 
@@ -83,7 +74,7 @@ internal fun SearchAlbumCard(
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(12.dp))
-                .background(SurfaceActiveIndicator)
+                .background(AppTheme.colors.surfaceActiveIndicator)
         ) {
             val artUrl = album.representativeTrack.artworkUrl
             if (!artUrl.isNullOrBlank()) {
@@ -97,13 +88,13 @@ internal fun SearchAlbumCard(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(SurfaceElevated),
+                        .background(AppTheme.colors.surface1),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Album,
                         contentDescription = null,
-                        tint = IvoryDisabled,
+                        tint = AppTheme.colors.disabled,
                         modifier = Modifier.size(52.dp)
                     )
                 }
@@ -117,7 +108,7 @@ internal fun SearchAlbumCard(
             text = album.albumName,
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = AppTheme.colors.textPrimary,
                 fontSize = 15.sp
             ),
             maxLines = 1,
@@ -130,7 +121,7 @@ internal fun SearchAlbumCard(
         Text(
             text = album.artistName,
             style = MaterialTheme.typography.bodySmall.copy(
-                color = TextSecondary,
+                color = AppTheme.colors.textSecondary,
                 fontSize = 13.sp
             ),
             maxLines = 1,
@@ -161,20 +152,20 @@ internal fun ArtistRow(
                 modifier = Modifier
                     .size(68.dp)
                     .clip(CircleShape)
-                    .border(0.7.dp, IvoryStroke, CircleShape)
+                    .border(0.7.dp, AppTheme.colors.stroke, CircleShape)
             )
         } else {
             Box(
                 modifier = Modifier
                     .size(68.dp)
                     .clip(CircleShape)
-                    .background(com.example.onemusic.theme.SurfaceActiveIndicator),
+                    .background(AppTheme.colors.surfaceActiveIndicator),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Mic,
                     contentDescription = null,
-                    tint = PrimaryIvory,
+                    tint = AppTheme.colors.textPrimary,
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -185,7 +176,7 @@ internal fun ArtistRow(
                 text = artistName,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 16.sp
                 ),
                 maxLines = 1,
@@ -195,7 +186,7 @@ internal fun ArtistRow(
             Text(
                 text = "$trackCount bài hát",
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     fontSize = 13.sp
                 ),
                 maxLines = 1
@@ -231,20 +222,20 @@ internal fun ArtistCard(
                     modifier = Modifier
                         .size(68.dp)
                         .clip(CircleShape)
-                        .border(0.7.dp, IvoryStroke, CircleShape)
+                        .border(0.7.dp, AppTheme.colors.stroke, CircleShape)
                 )
             } else {
                 Box(
                     modifier = Modifier
                         .size(68.dp)
                         .clip(CircleShape)
-                        .background(com.example.onemusic.theme.SurfaceActiveIndicator),
+                        .background(AppTheme.colors.surfaceActiveIndicator),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Mic,
                         contentDescription = null,
-                        tint = PrimaryIvory,
+                        tint = AppTheme.colors.textPrimary,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -256,7 +247,7 @@ internal fun ArtistCard(
                 text = artist.artistName,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 14.sp
                 ),
                 maxLines = 1,
@@ -269,7 +260,7 @@ internal fun ArtistCard(
             Text(
                 text = "${artist.trackCount} bài hát",
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     fontSize = 12.sp
                 ),
                 maxLines = 1,
@@ -320,7 +311,7 @@ internal fun TrackResultRow(
                 text = track.title,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 16.sp
                 ),
                 maxLines = 1,
@@ -332,7 +323,7 @@ internal fun TrackResultRow(
             Text(
                 text = track.artist,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     fontSize = 13.sp
                 ),
                 maxLines = 1,
@@ -352,14 +343,14 @@ internal fun TrackResultRow(
                     Icon(
                         imageVector = Icons.Rounded.FormatQuote,
                         contentDescription = null,
-                        tint = Brand,
+                        tint = AppTheme.colors.accent,
                         modifier = Modifier.size(14.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "\"${matchedTrack.matchedLyricSnippet}\"",
                         style = MaterialTheme.typography.labelSmall.copy(
-                            color = IvoryHigh,
+                            color = AppTheme.colors.high,
                             fontStyle = FontStyle.Italic,
                             fontSize = 11.sp
                         ),
@@ -390,7 +381,7 @@ internal fun TrackResultRow(
                 Icon(
                     imageVector = if (track.isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                     contentDescription = if (track.isFavorite) "Bỏ yêu thích" else "Yêu thích",
-                    tint = if (track.isFavorite) ApexRose else IvoryFaint,
+                    tint = if (track.isFavorite) AppTheme.colors.danger else AppTheme.colors.faint,
                     modifier = Modifier.size(20.dp)
                 )
             }

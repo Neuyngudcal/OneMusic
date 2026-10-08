@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.detail
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,7 +22,6 @@ import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.local.SettingsPreferences
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.LocalApexHazeState
-import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.ui.components.ApexConfirmDialog
 import com.example.onemusic.ui.utils.LocalBottomOverlayPadding
 import dev.chrisbanes.haze.HazeState
@@ -85,7 +85,7 @@ fun DetailScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
     ) {
         // LAYER 1: HERO BACKGROUND LAYER (520dp - Góc nhìn điện ảnh tràn viền)
         DetailHeroBackground(

@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import com.example.onemusic.data.search.LibraryGrouping
 import com.example.onemusic.ui.utils.rememberScanWithPermission
 import android.content.Intent
@@ -37,7 +38,6 @@ import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.components.ApexConfirmDialog
 import com.example.onemusic.theme.LocalApexHazeState
-import com.example.onemusic.theme.ObsidianBlack
 
 /**
  * Home Screen: Displays library category navigation (Playlist, Nghệ sĩ, Album, Bài hát)
@@ -207,7 +207,7 @@ fun HomeScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
     ) {
         AnimatedContent(
             targetState = currentSubView,

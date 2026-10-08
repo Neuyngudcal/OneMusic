@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,16 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.utils.apexBounceClick
 
 @Composable
@@ -76,7 +68,7 @@ fun AddToPlaylistDialog(
                 Text(
                     text = "${track.title} • ${track.artist}",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 13.sp
                     ),
                     maxLines = 1,
@@ -97,19 +89,19 @@ fun AddToPlaylistDialog(
                         Box(
                             modifier = Modifier
                                 .clip(PillShape)
-                                .background(SurfaceControl)
-                                .border(1.5.dp, SurfaceBorderStrong, PillShape)
+                                .background(AppTheme.colors.surfaceControl)
+                                .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)
                                 .apexBounceClick(scaleDown = 0.92f) { isCreatingNew = false }
                                 .padding(horizontal = 14.dp, vertical = 8.dp)
                         ) {
-                            Text("Hủy", color = PrimaryIvory, fontWeight = FontWeight.SemiBold)
+                            Text("Hủy", color = AppTheme.colors.textPrimary, fontWeight = FontWeight.SemiBold)
                         }
 
                         Spacer(modifier = Modifier.width(8.dp))
                         Box(
                             modifier = Modifier
                                 .clip(PillShape)
-                                .background(PrimaryIvory)
+                                .background(AppTheme.colors.textPrimary)
                                 .apexBounceClick(scaleDown = 0.92f) {
                                     if (newPlaylistName.isNotBlank()) {
                                         val created = onCreatePlaylist(newPlaylistName.trim())
@@ -122,7 +114,7 @@ fun AddToPlaylistDialog(
                                 }
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            Text("Tạo & Thêm", color = CharcoalBlack, fontWeight = FontWeight.Bold)
+                            Text("Tạo & Thêm", color = AppTheme.colors.onInverse, fontWeight = FontWeight.Bold)
                         }
                     }
                 } else {
@@ -131,7 +123,7 @@ fun AddToPlaylistDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(14.dp))
-                            .background(SurfaceActiveIndicator)
+                            .background(AppTheme.colors.surfaceActiveIndicator)
                             .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) {
                                 isCreatingNew = true
                             }
@@ -142,13 +134,13 @@ fun AddToPlaylistDialog(
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(PrimaryIvory),
+                                .background(AppTheme.colors.textPrimary),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Add,
                                 contentDescription = "Tạo playlist",
-                                tint = CharcoalBlack,
+                                tint = AppTheme.colors.onInverse,
                                 modifier = Modifier.size(22.dp)
                             )
                         }
@@ -157,7 +149,7 @@ fun AddToPlaylistDialog(
                             text = "Tạo danh sách phát mới",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = PrimaryIvory,
+                                color = AppTheme.colors.textPrimary,
                                 fontSize = 15.sp
                             )
                         )
@@ -169,7 +161,7 @@ fun AddToPlaylistDialog(
                         Text(
                             text = "Chưa có danh sách phát nào.",
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextSecondary
+                                color = AppTheme.colors.textSecondary
                             ),
                             modifier = Modifier.padding(vertical = 14.dp)
                         )
@@ -201,13 +193,13 @@ fun AddToPlaylistDialog(
                                         modifier = Modifier
                                             .size(40.dp)
                                             .clip(RoundedCornerShape(10.dp))
-                                            .background(SurfaceActiveIndicator),
+                                            .background(AppTheme.colors.surfaceActiveIndicator),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
                                             contentDescription = null,
-                                            tint = if (containsTrack) Brand else TextPrimary,
+                                            tint = if (containsTrack) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                                             modifier = Modifier.size(22.dp)
                                         )
                                     }
@@ -217,7 +209,7 @@ fun AddToPlaylistDialog(
                                             text = pl.name,
                                             style = MaterialTheme.typography.bodyMedium.copy(
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = TextPrimary
+                                                color = AppTheme.colors.textPrimary
                                             ),
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
@@ -225,7 +217,7 @@ fun AddToPlaylistDialog(
                                         Text(
                                             text = "${pl.trackIds.size} bài hát",
                                             style = MaterialTheme.typography.bodySmall.copy(
-                                                color = TextSecondary
+                                                color = AppTheme.colors.textSecondary
                                             )
                                         )
                                     }
@@ -233,14 +225,14 @@ fun AddToPlaylistDialog(
                                         Icon(
                                             imageVector = Icons.Rounded.Check,
                                             contentDescription = "Đã có",
-                                            tint = Brand,
+                                            tint = AppTheme.colors.accent,
                                             modifier = Modifier.size(20.dp)
                                         )
                                     }
                                 }
                                 HorizontalDivider(
                                     thickness = 0.5.dp,
-                                    color = SurfaceDivider
+                                    color = AppTheme.colors.divider
                                 )
                             }
                         }

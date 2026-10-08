@@ -17,6 +17,13 @@ enum class HapticIntensity(val title: String) {
 }
 
 @Serializable
+enum class ThemeMode(val title: String) {
+    LIGHT("Sáng"),
+    DARK("Tối"),
+    SYSTEM("Theo hệ thống")
+}
+
+@Serializable
 data class AppSettings(
     // 1. Âm thanh & Phát nhạc (Audio & Playback)
     val isReplayGainEnabled: Boolean = true,
@@ -28,6 +35,7 @@ data class AppSettings(
     val resumeOnHeadsetConnect: Boolean = false,
 
     // 2. Giao diện & Hiển thị (Display & UI)
+    val themeMode: ThemeMode = ThemeMode.LIGHT,
     val isDynamicMeshBackgroundEnabled: Boolean = true,
     val isMotionArtworkEnabled: Boolean = true,
     val isAutoMotionScanEnabled: Boolean = false,

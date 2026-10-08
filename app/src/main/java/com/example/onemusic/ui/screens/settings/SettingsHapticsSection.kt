@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.settings
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -30,12 +31,7 @@ import com.example.onemusic.data.local.AppSettings
 import com.example.onemusic.data.local.HapticIntensity
 import com.example.onemusic.data.local.SettingsPreferences
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.TextSecondary
 import androidx.compose.foundation.lazy.LazyListScope
 import com.example.onemusic.haptics.ApexHapticEngine
 
@@ -77,7 +73,7 @@ internal fun LazyListScope.settingsHapticsSection(
                     Text(
                         text = "Mức độ rung",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 13.sp
                         )
                     )
@@ -92,8 +88,8 @@ internal fun LazyListScope.settingsHapticsSection(
                                 modifier = Modifier
                                     .weight(1f)
                                     .clip(PillShape)
-                                    .background(if (isSelected) PrimaryIvory else SurfaceControl)
-                                    .border(1.5.dp, if (isSelected) Color.Transparent else SurfaceBorderStrong, PillShape)
+                                    .background(if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.surfaceControl)
+                                    .border(1.5.dp, if (isSelected) Color.Transparent else AppTheme.colors.borderStrong, PillShape)
                                     .apexBounceClick(scaleDown = 0.94f, enableHaptic = false) {
                                         settingsPreferences.updateSettings {
                                             it.copy(hapticIntensity = intensity)
@@ -107,7 +103,7 @@ internal fun LazyListScope.settingsHapticsSection(
                                     text = intensity.title,
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                        color = if (isSelected) CharcoalBlack else PrimaryIvory,
+                                        color = if (isSelected) AppTheme.colors.onInverse else AppTheme.colors.textPrimary,
                                         fontSize = 13.sp
                                     )
                                 )

@@ -1,6 +1,7 @@
 package com.example.onemusic.ui.screens.search
 
 
+import com.example.onemusic.theme.AppTheme
 import com.example.onemusic.data.search.LibraryGrouping
 
 import com.example.onemusic.ui.utils.LocalBottomOverlayPadding
@@ -54,7 +55,6 @@ import androidx.compose.ui.focus.focusRequester
 import com.example.onemusic.ui.screens.detail.DetailScreen
 import dev.chrisbanes.haze.HazeState
 import com.example.onemusic.theme.LocalApexHazeState
-import com.example.onemusic.theme.ObsidianBlack
 
 enum class SearchFilterTab(val title: String) {
     ALL("Tất cả"),
@@ -265,7 +265,7 @@ fun SearchScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
     ) {
         Column(
             modifier = Modifier

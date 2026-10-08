@@ -1,6 +1,29 @@
 package com.example.onemusic.ui.screens.settings
 
+import com.example.onemusic.theme.AppTheme
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.onemusic.data.local.ThemeMode
+import com.example.onemusic.theme.PillShape
+import com.example.onemusic.ui.utils.apexBounceClick
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Fullscreen
 import androidx.compose.material.icons.rounded.GraphicEq
@@ -13,7 +36,7 @@ import com.example.onemusic.data.local.AppSettings
 import com.example.onemusic.data.local.SettingsPreferences
 import androidx.compose.foundation.lazy.LazyListScope
 
-/** Nhóm "Giao diện": nền màu động, bìa động, lời bài hát, ảnh nghệ sĩ, màn hình, thanh hệ thống. */
+/** Nhóm "Giao diện": chế độ Sáng/Tối/Theo hệ thống, nền màu động, bìa động, lời bài hát, ảnh nghệ sĩ, màn hình, thanh hệ thống. */
 internal fun LazyListScope.settingsDisplaySection(
     settings: AppSettings,
     settingsPreferences: SettingsPreferences
@@ -25,6 +48,53 @@ internal fun LazyListScope.settingsDisplaySection(
 
     item(key = "section_card_ui") {
         SettingsGroupCard {
+            // Chế độ giao diện: Sáng (mặc định) / Tối / Theo hệ thống
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text = "Chế độ giao diện",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = AppTheme.colors.textSecondary,
+                        fontSize = 13.sp
+                    )
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ThemeMode.entries.forEach { mode ->
+                        val isSelected = settings.themeMode == mode
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(PillShape)
+                                .background(if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.surfaceControl)
+                                .border(1.5.dp, if (isSelected) Color.Transparent else AppTheme.colors.borderStrong, PillShape)
+                                .apexBounceClick(scaleDown = 0.94f, enableHaptic = false) {
+                                    settingsPreferences.updateSettings { it.copy(themeMode = mode) }
+                                }
+                                .padding(vertical = 10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = mode.title,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (isSelected) AppTheme.colors.onInverse else AppTheme.colors.textPrimary,
+                                    fontSize = 13.sp
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            SettingsDivider()
+
             // Dynamic Mesh Background
             SettingsToggleRow(
                 icon = Icons.Rounded.Palette,

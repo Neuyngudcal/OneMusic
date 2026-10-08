@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,14 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.CharcoalBlack
-import com.example.onemusic.theme.IvoryFaint
-import com.example.onemusic.theme.IvoryMuted
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.utils.apexBounceClick
 
@@ -54,14 +47,14 @@ internal fun HomeAlbumsEmptyState() {
             Icon(
                 imageVector = Icons.Rounded.Album,
                 contentDescription = null,
-                tint = IvoryMuted,
+                tint = AppTheme.colors.muted,
                 modifier = Modifier.size(64.dp)
             )
             Spacer(modifier = Modifier.height(14.dp))
             Text(
                 text = "Không có album nào trong thư viện",
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = TextSecondary,
+                    color = AppTheme.colors.textSecondary,
                     fontSize = 14.5.sp
                 )
             )
@@ -109,13 +102,13 @@ internal fun HomeAlbumListRow(
                         modifier = Modifier
                             .size(64.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .background(SurfaceElevated),
+                            .background(AppTheme.colors.surface1),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Album,
                             contentDescription = null,
-                            tint = IvoryFaint,
+                            tint = AppTheme.colors.faint,
                             modifier = Modifier.size(34.dp)
                         )
                     }
@@ -128,7 +121,7 @@ internal fun HomeAlbumListRow(
                         text = album.name,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 16.sp
                         ),
                         maxLines = 1,
@@ -138,7 +131,7 @@ internal fun HomeAlbumListRow(
                     Text(
                         text = "${album.artist} • ${album.trackCount} bài hát",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 13.5.sp
                         ),
                         maxLines = 1,
@@ -151,7 +144,7 @@ internal fun HomeAlbumListRow(
                     modifier = Modifier
                         .size(38.dp)
                         .clip(CircleShape)
-                        .background(PrimaryIvory)
+                        .background(AppTheme.colors.textPrimary)
                         .apexBounceClick(scaleDown = 0.85f, enableHaptic = true) {
                             onPlayTracks(album.tracks)
                         },
@@ -160,7 +153,7 @@ internal fun HomeAlbumListRow(
                     Icon(
                         imageVector = Icons.Rounded.PlayArrow,
                         contentDescription = "Phát nhanh",
-                        tint = CharcoalBlack,
+                        tint = AppTheme.colors.onInverse,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -170,7 +163,7 @@ internal fun HomeAlbumListRow(
                 HorizontalDivider(
                     modifier = Modifier.padding(start = 94.dp, end = 16.dp),
                     thickness = 0.6.dp,
-                    color = SurfaceDivider
+                    color = AppTheme.colors.divider
                 )
             }
         }

@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.folder
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,11 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.ApexAmber
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.IvorySubtle
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 
 /** Item 4: thẻ "THÔNG TIN BỘ NHỚ & ĐỊNH DẠNG" (tổng số bài, định dạng hỗ trợ). */
@@ -41,7 +37,7 @@ internal fun FolderInfoCard(totalTrackCount: Int) {
             text = "THÔNG TIN BỘ NHỚ & ĐỊNH DẠNG",
             style = MaterialTheme.typography.labelMedium.copy(
                 fontWeight = FontWeight.Bold,
-                color = TextSecondary,
+                color = AppTheme.colors.textSecondary,
                 letterSpacing = 1.sp
             ),
             modifier = Modifier.padding(start = 6.dp, bottom = 10.dp)
@@ -63,14 +59,14 @@ internal fun FolderInfoCard(totalTrackCount: Int) {
                     Icon(
                         imageVector = Icons.Rounded.AudioFile,
                         contentDescription = null,
-                        tint = Brand,
+                        tint = AppTheme.colors.accent,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(14.dp))
                     Text(
                         text = "Tổng số bài hát khả dụng",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontWeight = FontWeight.Medium
                         ),
                         modifier = Modifier.weight(1f)
@@ -78,7 +74,7 @@ internal fun FolderInfoCard(totalTrackCount: Int) {
                     Text(
                         text = "$totalTrackCount bài",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = Brand,
+                            color = AppTheme.colors.accent,
                             fontWeight = FontWeight.Bold
                         )
                     )
@@ -87,7 +83,7 @@ internal fun FolderInfoCard(totalTrackCount: Int) {
                 HorizontalDivider(
                     modifier = Modifier.padding(start = 56.dp, end = 18.dp),
                     thickness = 0.5.dp,
-                    color = IvorySubtle
+                    color = AppTheme.colors.subtle
                 )
 
                 // Row 2: Định dạng hỗ trợ
@@ -100,7 +96,7 @@ internal fun FolderInfoCard(totalTrackCount: Int) {
                     Icon(
                         imageVector = Icons.Rounded.SdCard,
                         contentDescription = null,
-                        tint = ApexAmber,
+                        tint = AppTheme.colors.warning,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(14.dp))
@@ -108,14 +104,14 @@ internal fun FolderInfoCard(totalTrackCount: Int) {
                         Text(
                             text = "Định dạng giải mã",
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextPrimary,
+                                color = AppTheme.colors.textPrimary,
                                 fontWeight = FontWeight.Medium
                             )
                         )
                         Text(
                             text = "FLAC 24-bit, WAV 192kHz, DSD, ALAC, MP3, AAC, M4A",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 11.sp
                             )
                         )

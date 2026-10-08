@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -43,17 +44,7 @@ import com.example.onemusic.haptics.rememberApexHaptics
 import com.example.onemusic.playback.AudioEffectManager
 import com.example.onemusic.ui.utils.apexBounceClick
 import kotlin.math.roundToInt
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
-import com.example.onemusic.theme.IvoryHairline
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceBorderStrong
-import com.example.onemusic.theme.SurfaceCard
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 
 private val FREQUENCY_LABELS = listOf(
     "32Hz", "64Hz", "125Hz", "250Hz", "500Hz",
@@ -63,7 +54,8 @@ private val FREQUENCY_LABELS = listOf(
 @Composable
 fun ApexEqualizerDialog(
     audioEffectManager: AudioEffectManager,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    hazeState: dev.chrisbanes.haze.HazeState? = null
 ) {
     val settings by audioEffectManager.settings.collectAsState()
     val hapticEngine = rememberApexHaptics()
@@ -71,7 +63,8 @@ fun ApexEqualizerDialog(
     val scrollState = rememberScrollState()
 
     ApexDialogContainer(
-        onDismissRequest = onDismiss
+        onDismissRequest = onDismiss,
+        hazeState = hazeState
     ) {
         Column(
             modifier = Modifier
@@ -89,14 +82,14 @@ fun ApexEqualizerDialog(
                     modifier = Modifier
                         .size(46.dp)
                         .clip(CircleShape)
-                        .background(Brand.copy(alpha = 0.15f))
-                        .border(0.8.dp, Brand.copy(alpha = 0.35f), CircleShape),
+                        .background(AppTheme.colors.accent.copy(alpha = 0.15f))
+                        .border(0.8.dp, AppTheme.colors.accent.copy(alpha = 0.35f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.GraphicEq,
                         contentDescription = null,
-                        tint = Brand,
+                        tint = AppTheme.colors.accent,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -106,14 +99,14 @@ fun ApexEqualizerDialog(
                         text = "Bộ Chỉnh Âm & DSP",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 20.sp
                         )
                     )
                     Text(
                         text = "SoundAlive Hardware Audio Engine",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 12.5.sp
                         )
                     )
@@ -133,12 +126,12 @@ fun ApexEqualizerDialog(
                 SoundPreset.entries.forEach { preset ->
                     val isSelected = settings.preset == preset
                     val bgColor by animateColorAsState(
-                        targetValue = if (isSelected) PrimaryIvory else SurfaceControl,
+                        targetValue = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.surfaceControl,
                         animationSpec = spring(stiffness = 500f),
                         label = "preset_bg"
                     )
                     val textColor by animateColorAsState(
-                        targetValue = if (isSelected) CharcoalBlack else TextSecondary,
+                        targetValue = if (isSelected) AppTheme.colors.onInverse else AppTheme.colors.textSecondary,
                         animationSpec = spring(stiffness = 500f),
                         label = "preset_text"
                     )
@@ -150,7 +143,7 @@ fun ApexEqualizerDialog(
                             .background(bgColor)
                             .border(
                                 width = 1.5.dp,
-                                color = if (isSelected) Color.Transparent else SurfaceBorderStrong,
+                                color = if (isSelected) Color.Transparent else AppTheme.colors.borderStrong,
                                 shape = PillShape
                             )
                             .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
@@ -181,8 +174,8 @@ fun ApexEqualizerDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(18.dp))
-                    .background(SurfaceCard)
-                    .border(0.8.dp, IvoryHairline, RoundedCornerShape(18.dp))
+                    .background(AppTheme.colors.surface2)
+                    .border(0.8.dp, AppTheme.colors.hairline, RoundedCornerShape(18.dp))
                     .padding(horizontal = 16.dp, vertical = 14.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -195,7 +188,7 @@ fun ApexEqualizerDialog(
                             Icon(
                                 imageVector = Icons.Rounded.Tune,
                                 contentDescription = null,
-                                tint = Brand,
+                                tint = AppTheme.colors.accent,
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
@@ -203,7 +196,7 @@ fun ApexEqualizerDialog(
                                 text = "Tăng Âm Trầm (Bass Boost)",
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     fontWeight = FontWeight.SemiBold,
-                                    color = TextPrimary,
+                                    color = AppTheme.colors.textPrimary,
                                     fontSize = 13.5.sp
                                 )
                             )
@@ -212,7 +205,7 @@ fun ApexEqualizerDialog(
                             text = if (settings.bassBoostLevel > 0) "${settings.bassBoostLevel}/10" else "Tắt",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = if (settings.bassBoostLevel > 0) Brand else TextSecondary,
+                                color = if (settings.bassBoostLevel > 0) AppTheme.colors.accent else AppTheme.colors.textSecondary,
                                 fontSize = 13.sp
                             )
                         )
@@ -242,8 +235,8 @@ fun ApexEqualizerDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(18.dp))
-                    .background(SurfaceCard)
-                    .border(0.8.dp, IvoryHairline, RoundedCornerShape(18.dp))
+                    .background(AppTheme.colors.surface2)
+                    .border(0.8.dp, AppTheme.colors.hairline, RoundedCornerShape(18.dp))
                     .padding(horizontal = 14.dp, vertical = 14.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -251,7 +244,7 @@ fun ApexEqualizerDialog(
                         text = "Cần Gạt Tần Số Âm Thanh",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 13.5.sp
                         )
                     )
@@ -270,7 +263,7 @@ fun ApexEqualizerDialog(
                                 text = label,
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontWeight = FontWeight.Medium,
-                                    color = TextSecondary,
+                                    color = AppTheme.colors.textSecondary,
                                     fontSize = 11.5.sp
                                 ),
                                 modifier = Modifier.width(46.dp)
@@ -290,7 +283,7 @@ fun ApexEqualizerDialog(
                                 text = String.format("%+.1fdB", gain),
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = if (gain != 0f) Brand else TextSecondary,
+                                    color = if (gain != 0f) AppTheme.colors.accent else AppTheme.colors.textSecondary,
                                     fontSize = 11.sp
                                 ),
                                 modifier = Modifier.width(48.dp)
@@ -301,7 +294,7 @@ fun ApexEqualizerDialog(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(0.5.dp)
-                                    .background(SurfaceDivider.copy(alpha = 0.5f))
+                                    .background(AppTheme.colors.divider.copy(alpha = 0.5f))
                             )
                         }
                     }
@@ -321,8 +314,8 @@ fun ApexEqualizerDialog(
                         .weight(1f)
                         .height(46.dp)
                         .clip(PillShape)
-                        .background(SurfaceControl)
-                        .border(1.5.dp, SurfaceBorderStrong, PillShape)
+                        .background(AppTheme.colors.surfaceControl)
+                        .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)
                         .apexBounceClick(scaleDown = 0.94f, enableHaptic = true) {
                             audioEffectManager.resetToFlat()
                             try {
@@ -335,7 +328,7 @@ fun ApexEqualizerDialog(
                         Icon(
                             imageVector = Icons.Rounded.Refresh,
                             contentDescription = null,
-                            tint = PrimaryIvory,
+                            tint = AppTheme.colors.textPrimary,
                             modifier = Modifier.size(17.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
@@ -343,7 +336,7 @@ fun ApexEqualizerDialog(
                             text = "Mặc định",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.SemiBold,
-                                color = PrimaryIvory,
+                                color = AppTheme.colors.textPrimary,
                                 fontSize = 14.sp
                             )
                         )
@@ -356,7 +349,7 @@ fun ApexEqualizerDialog(
                         .weight(1f)
                         .height(46.dp)
                         .clip(PillShape)
-                        .background(PrimaryIvory)
+                        .background(AppTheme.colors.textPrimary)
                         .apexBounceClick(scaleDown = 0.94f, enableHaptic = true) {
                             onDismiss()
                         },
@@ -366,7 +359,7 @@ fun ApexEqualizerDialog(
                         text = "Xong",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = CharcoalBlack,
+                            color = AppTheme.colors.onInverse,
                             fontSize = 14.sp
                         )
                     )

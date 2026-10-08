@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -35,11 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.R
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceControl
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.components.ApexDropdownMenu
 import com.example.onemusic.ui.components.ApexDropdownMenuItem
@@ -99,8 +95,8 @@ fun LibraryFilterBar(
             onClick = { onViewModeChange(nextViewMode) },
             size = ToolbarButtonSize,
             iconSize = 20.dp,
-            backgroundColor = SurfaceControl,
-            iconTint = PrimaryIvory,
+            backgroundColor = AppTheme.colors.surfaceControl,
+            iconTint = AppTheme.colors.textPrimary,
             elevation = 0.dp
         )
 
@@ -111,8 +107,8 @@ fun LibraryFilterBar(
                 onClick = onShuffleAll,
                 size = ToolbarButtonSize,
                 iconSize = 20.dp,
-                backgroundColor = SurfaceControl,
-                iconTint = PrimaryIvory,
+                backgroundColor = AppTheme.colors.surfaceControl,
+                iconTint = AppTheme.colors.textPrimary,
                 elevation = 0.dp
             )
         }
@@ -124,8 +120,8 @@ fun LibraryFilterBar(
                 onClick = onPlayAll,
                 size = ToolbarButtonSize,
                 iconSize = 24.dp,
-                backgroundColor = PrimaryIvory,
-                iconTint = CharcoalBlack,
+                backgroundColor = AppTheme.colors.textPrimary,
+                iconTint = AppTheme.colors.onInverse,
                 elevation = 0.dp
             )
         }
@@ -157,7 +153,7 @@ private fun SortDropdownButton(
                 text = currentSortOption.title,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = PrimaryIvory,
+                    color = AppTheme.colors.textPrimary,
                     fontSize = 14.sp
                 )
             )
@@ -166,14 +162,14 @@ private fun SortDropdownButton(
                 Icon(
                     imageVector = if (sortAscending) Icons.Rounded.ArrowUpward else Icons.Rounded.ArrowDownward,
                     contentDescription = if (sortAscending) "Tăng dần" else "Giảm dần",
-                    tint = PrimaryIvory,
+                    tint = AppTheme.colors.textPrimary,
                     modifier = Modifier.size(14.dp)
                 )
             }
             Icon(
                 imageVector = Icons.Rounded.KeyboardArrowDown,
                 contentDescription = "Chọn cách sắp xếp",
-                tint = TextSecondary,
+                tint = AppTheme.colors.textSecondary,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -189,14 +185,14 @@ private fun SortDropdownButton(
                 val isSelected = option == currentSortOption
                 ApexDropdownMenuItem(
                     text = option.title,
-                    textColor = if (isSelected) PrimaryIvory else TextSecondary,
+                    textColor = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textSecondary,
                     trailingText = when {
                         !isSelected -> null
                         option == SongSortOption.ALL -> "✓"
                         sortAscending -> "↑"
                         else -> "↓"
                     },
-                    trailingColor = Brand,
+                    trailingColor = AppTheme.colors.accent,
                     onClick = {
                         isMenuOpen = false
                         onSortOptionChange(option)

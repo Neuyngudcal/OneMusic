@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.settings
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -31,8 +32,6 @@ import com.example.onemusic.data.local.SettingsPreferences
 import com.example.onemusic.ui.components.ApexSlider
 import kotlin.math.roundToInt
 import androidx.compose.material.icons.rounded.Tune
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.TextSecondary
 import androidx.compose.foundation.lazy.LazyListScope
 
 /** Nhóm "Âm thanh & phát nhạc": bộ chỉnh âm, ReplayGain, chống vỡ tiếng, gapless, crossfade, tai nghe. */
@@ -130,7 +129,7 @@ internal fun LazyListScope.settingsAudioSection(
                         Text(
                             text = "Thời gian làm mờ",
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 13.sp
                             )
                         )
@@ -138,7 +137,7 @@ internal fun LazyListScope.settingsAudioSection(
                             text = "${crossfadeDraft().roundToInt()} giây",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = Brand,
+                                color = AppTheme.colors.accent,
                                 fontSize = 14.sp
                             )
                         )

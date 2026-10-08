@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.search
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,11 +37,6 @@ import com.example.onemusic.data.repository.ArtistImageRepository
 import com.example.onemusic.data.search.MatchedAlbum
 import com.example.onemusic.data.search.MatchedArtist
 import com.example.onemusic.data.search.MatchedTrack
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.SurfaceCard
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGroupedCardItem
 import androidx.compose.foundation.lazy.LazyListScope
 
@@ -75,7 +71,7 @@ internal fun LazyListScope.searchResultsSection(
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                    color = Brand,
+                    color = AppTheme.colors.accent,
                     strokeWidth = 2.dp,
                     modifier = Modifier.size(28.dp)
                 )
@@ -94,13 +90,13 @@ internal fun LazyListScope.searchResultsSection(
                         modifier = Modifier
                             .size(64.dp)
                             .clip(CircleShape)
-                            .background(SurfaceCard),
+                            .background(AppTheme.colors.surface2),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.SearchOff,
                             contentDescription = null,
-                            tint = TextSecondary,
+                            tint = AppTheme.colors.textSecondary,
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -109,7 +105,7 @@ internal fun LazyListScope.searchResultsSection(
                         text = "Không tìm thấy kết quả nào cho \"$searchQuery\"",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 17.sp
                         ),
                         textAlign = TextAlign.Center
@@ -118,7 +114,7 @@ internal fun LazyListScope.searchResultsSection(
                     Text(
                         text = "Kiểm tra lại chính tả hoặc thử tìm kiếm bằng tên nghệ sĩ, bài hát hoặc từ khóa khác.",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 13.sp,
                             lineHeight = 18.sp
                         ),
@@ -141,7 +137,7 @@ internal fun LazyListScope.searchResultsSection(
                         text = "Nghệ sĩ (${displayArtists.size})",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 18.sp
                         )
                     )
@@ -173,7 +169,7 @@ internal fun LazyListScope.searchResultsSection(
                             HorizontalDivider(
                                 modifier = Modifier.padding(start = 98.dp, end = 16.dp),
                                 thickness = 0.6.dp,
-                                color = SurfaceDivider
+                                color = AppTheme.colors.divider
                             )
                         }
                     }
@@ -191,7 +187,7 @@ internal fun LazyListScope.searchResultsSection(
                         text = "Nghệ sĩ",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 18.sp
                         )
                     )
@@ -236,7 +232,7 @@ internal fun LazyListScope.searchResultsSection(
                         text = "Album (${displayAlbums.size})",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 18.sp
                         )
                     )
@@ -280,7 +276,7 @@ internal fun LazyListScope.searchResultsSection(
                         text = "Album",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 18.sp
                         )
                     )
@@ -323,7 +319,7 @@ internal fun LazyListScope.searchResultsSection(
                         text = "Bài hát",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 18.sp
                         )
                     )
@@ -331,7 +327,7 @@ internal fun LazyListScope.searchResultsSection(
                     Text(
                         text = "(${displayTracks.size})",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontWeight = FontWeight.Normal
                         )
                     )
@@ -364,7 +360,7 @@ internal fun LazyListScope.searchResultsSection(
                             HorizontalDivider(
                                 modifier = Modifier.padding(start = 102.dp, end = 16.dp),
                                 thickness = 0.6.dp,
-                                color = SurfaceDivider
+                                color = AppTheme.colors.divider
                             )
                         }
                     }

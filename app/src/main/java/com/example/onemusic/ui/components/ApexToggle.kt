@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -25,10 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalView
 import com.example.onemusic.haptics.rememberApexHaptics
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.SurfaceActive
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
 
 /**
  * OneMusic Apex Prism Signature Switch Toggle with Hardware Tactile Haptics
@@ -43,7 +40,7 @@ fun ApexToggle(
     val currentView = LocalView.current
 
     val trackColor by animateColorAsState(
-        targetValue = if (checked) Brand else SurfaceActive,
+        targetValue = if (checked) AppTheme.colors.accent else AppTheme.colors.surfaceActive,
         label = "trackColor"
     )
 
@@ -59,7 +56,7 @@ fun ApexToggle(
             .height(30.dp)
             .clip(PillShape)
             .background(trackColor)
-            .border(BorderStroke(1.dp, if (checked) Brand else SurfaceDivider), PillShape)
+            .border(BorderStroke(1.dp, if (checked) AppTheme.colors.accent else AppTheme.colors.divider), PillShape)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -77,7 +74,7 @@ fun ApexToggle(
                 .offset(x = thumbOffset)
                 .size(24.dp)
                 .clip(CircleShape)
-                .background(TextPrimary)
+                .background(if (checked) AppTheme.colors.onAccent else AppTheme.colors.textPrimary)
         )
     }
 }

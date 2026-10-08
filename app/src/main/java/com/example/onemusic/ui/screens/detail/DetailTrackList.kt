@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.detail
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,14 +35,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.ObsidianBlack
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.SurfaceElevated
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.components.ApexHiResBadge
@@ -70,7 +63,7 @@ internal fun DetailTrackRow(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
             .padding(horizontal = 20.dp)
             .apexGroupedCardItem(index = index, total = total)
     ) {
@@ -91,7 +84,7 @@ internal fun DetailTrackRow(
                 Text(
                     text = "${index + 1}",
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = if (isCurrent) Brand else TextSecondary,
+                        color = if (isCurrent) AppTheme.colors.accent else AppTheme.colors.textSecondary,
                         fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal,
                         fontSize = 14.sp
                     ),
@@ -112,13 +105,13 @@ internal fun DetailTrackRow(
                         modifier = Modifier
                             .size(52.dp)
                             .clip(RoundedCornerShape(14.dp))
-                            .background(SurfaceActiveIndicator),
+                            .background(AppTheme.colors.surfaceActiveIndicator),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.MusicNote,
                             contentDescription = null,
-                            tint = Brand,
+                            tint = AppTheme.colors.accent,
                             modifier = Modifier.size(26.dp)
                         )
                     }
@@ -131,7 +124,7 @@ internal fun DetailTrackRow(
                         text = track.title,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isCurrent) Brand else PrimaryIvory,
+                            color = if (isCurrent) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                             fontSize = 15.sp
                         ),
                         maxLines = 1,
@@ -146,7 +139,7 @@ internal fun DetailTrackRow(
                         Text(
                             text = track.artist,
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 12.sp
                             ),
                             maxLines = 1,
@@ -161,7 +154,7 @@ internal fun DetailTrackRow(
                         .size(36.dp)
                         .clip(CircleShape)
                         .apexFrostedGlass(
-                            backgroundColor = SurfaceElevated.copy(alpha = 0.60f),
+                            backgroundColor = AppTheme.colors.surface1.copy(alpha = 0.60f),
                             blurRadius = 12.dp,
                             hazeState = hazeState
                         )
@@ -173,7 +166,7 @@ internal fun DetailTrackRow(
                     Icon(
                         imageVector = if (track.isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                         contentDescription = if (track.isFavorite) "Bỏ yêu thích" else "Yêu thích",
-                        tint = if (track.isFavorite) ApexRose else TextSecondary,
+                        tint = if (track.isFavorite) AppTheme.colors.danger else AppTheme.colors.textSecondary,
                         modifier = Modifier.size(19.dp)
                     )
                 }
@@ -188,7 +181,7 @@ internal fun DetailTrackRow(
                             .size(36.dp)
                             .clip(CircleShape)
                             .apexFrostedGlass(
-                                backgroundColor = SurfaceElevated.copy(alpha = 0.60f),
+                                backgroundColor = AppTheme.colors.surface1.copy(alpha = 0.60f),
                                 blurRadius = 12.dp,
                                 hazeState = hazeState
                             )
@@ -207,7 +200,7 @@ internal fun DetailTrackRow(
                         Icon(
                             imageVector = Icons.Rounded.Delete,
                             contentDescription = "Xóa khỏi playlist",
-                            tint = ApexRose.copy(alpha = 0.7f),
+                            tint = AppTheme.colors.danger.copy(alpha = 0.7f),
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -218,7 +211,7 @@ internal fun DetailTrackRow(
                 HorizontalDivider(
                     modifier = Modifier.padding(start = 94.dp, end = 16.dp),
                     thickness = 0.6.dp,
-                    color = SurfaceDivider
+                    color = AppTheme.colors.divider
                 )
             }
         }

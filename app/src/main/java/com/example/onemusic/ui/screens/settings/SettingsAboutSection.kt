@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.settings
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,10 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import androidx.compose.foundation.lazy.LazyListScope
 
 /** Nhóm "Thông tin": tên và phiên bản ứng dụng. */
@@ -47,13 +44,13 @@ internal fun LazyListScope.settingsAboutSection() {
                     modifier = Modifier
                         .size(48.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(SurfaceActiveIndicator),
+                        .background(AppTheme.colors.surfaceActiveIndicator),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Info,
                         contentDescription = null,
-                        tint = Brand,
+                        tint = AppTheme.colors.accent,
                         modifier = Modifier.size(26.dp)
                     )
                 }
@@ -65,7 +62,7 @@ internal fun LazyListScope.settingsAboutSection() {
                         text = "OneMusic",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = AppTheme.colors.textPrimary,
                             fontSize = 17.sp
                         )
                     )
@@ -73,7 +70,7 @@ internal fun LazyListScope.settingsAboutSection() {
                     Text(
                         text = "Phiên bản 1.0.0 (OneMusic Apex Prism Edition)",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = TextSecondary,
+                            color = AppTheme.colors.textSecondary,
                             fontSize = 12.sp
                         )
                     )
@@ -81,7 +78,7 @@ internal fun LazyListScope.settingsAboutSection() {
                     Text(
                         text = "ExoPlayer Engine • EBU R128 ReplayGain DSP • Tactile Haptics",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = Brand,
+                            color = AppTheme.colors.accent,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium
                         )

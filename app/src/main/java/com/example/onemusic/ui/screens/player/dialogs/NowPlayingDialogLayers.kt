@@ -76,6 +76,7 @@ internal fun NowPlayingDialogLayers(
     if (dialogs.showTrackDetailsDialog && currentInspectedTrack != null) {
         TrackDetailsDialog(
             track = currentInspectedTrack,
+            hazeState = hazeState,
             onDismiss = { dialogs.showTrackDetailsDialog = false }
         )
     }
@@ -84,6 +85,7 @@ internal fun NowPlayingDialogLayers(
     if (dialogs.showEqualizerDialog && audioEffectManager != null) {
         ApexEqualizerDialog(
             audioEffectManager = audioEffectManager,
+            hazeState = hazeState,
             onDismiss = { dialogs.showEqualizerDialog = false }
         )
     }

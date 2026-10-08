@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.folder
 
+import com.example.onemusic.theme.AppTheme
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -26,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
 import com.example.onemusic.data.repository.MusicRepository
 import com.example.onemusic.theme.LocalApexHazeState
-import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.ui.components.ApexConfirmDialog
 import dev.chrisbanes.haze.HazeState
 
@@ -75,7 +75,7 @@ fun FolderManagerScreen(
                 indication = null,
                 onClick = {}
             )
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

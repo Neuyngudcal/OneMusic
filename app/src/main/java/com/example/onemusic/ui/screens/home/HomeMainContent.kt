@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import com.example.onemusic.ui.utils.LocalBottomOverlayPadding
 import com.example.onemusic.data.repository.ArtistImageRepository
 import androidx.compose.ui.text.style.TextAlign
@@ -31,12 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGlassCard
 import androidx.compose.foundation.lazy.LazyListState
 
@@ -82,7 +78,7 @@ internal fun HomeMainContent(
                     text = greetingTitle,
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = AppTheme.colors.textPrimary,
                         fontSize = 32.sp
                     )
                 )
@@ -90,7 +86,7 @@ internal fun HomeMainContent(
                 Text(
                     text = greetingSubtitle,
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 14.sp
                     )
                 )
@@ -111,20 +107,20 @@ internal fun HomeMainContent(
                     Icon(
                         imageVector = Icons.Rounded.LibraryMusic,
                         contentDescription = null,
-                        tint = Brand,
+                        tint = AppTheme.colors.accent,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(Modifier.height(12.dp))
                     Text(
                         text = "Thư viện đang trống",
-                        color = TextPrimary,
+                        color = AppTheme.colors.textPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
                         text = "Quét bộ nhớ máy hoặc chọn thư mục chứa nhạc để bắt đầu.",
-                        color = TextSecondary,
+                        color = AppTheme.colors.textSecondary,
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center
                     )
@@ -132,16 +128,16 @@ internal fun HomeMainContent(
                     Box(
                         modifier = Modifier
                             .clip(PillShape)
-                            .background(PrimaryIvory)
+                            .background(AppTheme.colors.textPrimary)
                             .apexBounceClick { onScanLibrary() }
                             .padding(horizontal = 22.dp, vertical = 12.dp)
                     ) {
-                        Text("Quét nhạc trên máy", color = CharcoalBlack, fontWeight = FontWeight.Bold)
+                        Text("Quét nhạc trên máy", color = AppTheme.colors.onInverse, fontWeight = FontWeight.Bold)
                     }
                     Spacer(Modifier.height(10.dp))
                     Text(
                         text = "Chọn thư mục",
-                        color = PrimaryIvory,
+                        color = AppTheme.colors.textPrimary,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
                             .apexBounceClick { onOpenFolders() }

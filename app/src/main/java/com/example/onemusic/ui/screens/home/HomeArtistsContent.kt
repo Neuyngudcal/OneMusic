@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.AppTheme
 import com.example.onemusic.data.search.LibraryGrouping
 import com.example.onemusic.ui.utils.LocalBottomOverlayPadding
 import com.example.onemusic.data.repository.ArtistImageRepository
@@ -48,14 +49,6 @@ import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.Brand
-import com.example.onemusic.theme.IvoryMuted
-import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.PrimaryIvory
-import com.example.onemusic.theme.SurfaceActiveIndicator
-import com.example.onemusic.theme.SurfaceDivider
-import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.theme.TextSecondary
 import com.example.onemusic.theme.apexGroupedCardItem
 
 /** HomeSubView.ARTISTS: danh sách nghệ sĩ, menu chọn gộp/tách nghệ sĩ. Chế độ gộp và trạng thái menu do màn cha giữ. */
@@ -111,14 +104,14 @@ internal fun HomeArtistsContent(
                             text = "Nghệ sĩ",
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = TextPrimary,
+                                color = AppTheme.colors.textPrimary,
                                 fontSize = 22.sp
                             )
                         )
                         Text(
                             text = "${artistItems.size} nghệ sĩ • ${tracks.size} bài hát",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = TextSecondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontSize = 12.5.sp
                             )
                         )
@@ -132,7 +125,7 @@ internal fun HomeArtistsContent(
                             onClick = { onGroupMenuExpandedChange(!isGroupMenuExpanded) },
                             size = 44.dp,
                             iconSize = 22.dp,
-                            iconTint = PrimaryIvory
+                            iconTint = AppTheme.colors.textPrimary
                         )
 
                         ApexDropdownMenu(
@@ -145,8 +138,8 @@ internal fun HomeArtistsContent(
                                 text = "Gộp nghệ sĩ trùng tên",
                                 icon = Icons.Rounded.Groups,
                                 trailingText = if (artistGroupMode == ArtistGroupMode.MERGED) "✓" else null,
-                                trailingColor = Brand,
-                                textColor = if (artistGroupMode == ArtistGroupMode.MERGED) Brand else TextPrimary,
+                                trailingColor = AppTheme.colors.accent,
+                                textColor = if (artistGroupMode == ArtistGroupMode.MERGED) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                                 onClick = {
                                     onArtistGroupModeChange(ArtistGroupMode.MERGED)
                                     onGroupMenuExpandedChange(false)
@@ -157,8 +150,8 @@ internal fun HomeArtistsContent(
                                 text = "Tách riêng theo thẻ gốc",
                                 icon = Icons.Rounded.PersonOutline,
                                 trailingText = if (artistGroupMode == ArtistGroupMode.SEPARATE) "✓" else null,
-                                trailingColor = Brand,
-                                textColor = if (artistGroupMode == ArtistGroupMode.SEPARATE) Brand else TextPrimary,
+                                trailingColor = AppTheme.colors.accent,
+                                textColor = if (artistGroupMode == ArtistGroupMode.SEPARATE) AppTheme.colors.accent else AppTheme.colors.textPrimary,
                                 onClick = {
                                     onArtistGroupModeChange(ArtistGroupMode.SEPARATE)
                                     onGroupMenuExpandedChange(false)
@@ -183,14 +176,14 @@ internal fun HomeArtistsContent(
                             Icon(
                                 imageVector = Icons.Rounded.Person,
                                 contentDescription = null,
-                                tint = IvoryMuted,
+                                tint = AppTheme.colors.muted,
                                 modifier = Modifier.size(64.dp)
                             )
                             Spacer(modifier = Modifier.height(14.dp))
                             Text(
                                 text = "Không có nghệ sĩ nào trong thư viện",
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = TextSecondary,
+                                    color = AppTheme.colors.textSecondary,
                                     fontSize = 14.5.sp
                                 )
                             )
@@ -227,20 +220,20 @@ internal fun HomeArtistsContent(
                                         modifier = Modifier
                                             .size(64.dp)
                                             .clip(CircleShape)
-                                            .border(0.7.dp, IvoryStroke, CircleShape)
+                                            .border(0.7.dp, AppTheme.colors.stroke, CircleShape)
                                     )
                                 } else {
                                     Box(
                                         modifier = Modifier
                                             .size(64.dp)
                                             .clip(CircleShape)
-                                            .background(SurfaceActiveIndicator),
+                                            .background(AppTheme.colors.surfaceActiveIndicator),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(
                                             imageVector = Icons.Rounded.Mic,
                                             contentDescription = null,
-                                            tint = PrimaryIvory,
+                                            tint = AppTheme.colors.textPrimary,
                                             modifier = Modifier.size(32.dp)
                                         )
                                     }
@@ -251,7 +244,7 @@ internal fun HomeArtistsContent(
                                         text = artistItem.name,
                                         style = MaterialTheme.typography.bodyLarge.copy(
                                             fontWeight = FontWeight.Bold,
-                                            color = TextPrimary,
+                                            color = AppTheme.colors.textPrimary,
                                             fontSize = 16.sp
                                         ),
                                         maxLines = 1,
@@ -261,7 +254,7 @@ internal fun HomeArtistsContent(
                                     Text(
                                         text = "${artistItem.trackCount} bài hát",
                                         style = MaterialTheme.typography.bodyMedium.copy(
-                                            color = TextSecondary,
+                                            color = AppTheme.colors.textSecondary,
                                             fontSize = 13.5.sp
                                         )
                                     )
@@ -271,7 +264,7 @@ internal fun HomeArtistsContent(
                                 HorizontalDivider(
                                     modifier = Modifier.padding(start = 94.dp, end = 16.dp),
                                     thickness = 0.6.dp,
-                                    color = SurfaceDivider
+                                    color = AppTheme.colors.divider
                                 )
                             }
                         }
