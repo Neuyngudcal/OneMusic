@@ -43,7 +43,6 @@ import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.ApexRose
 import com.example.onemusic.theme.apexGroupedCardItem
 
 /** HomeSubView.PLAYLISTS: danh sách playlist (Yêu thích + tự tạo), nhập/xuất .m3u8, tạo/xóa playlist. */
@@ -135,13 +134,13 @@ internal fun HomePlaylistsContent(
                             modifier = Modifier
                                 .size(68.dp)
                                 .clip(RoundedCornerShape(16.dp))
-                                .background(ApexRose),
+                                .background(AppTheme.colors.danger),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Favorite,
                                 contentDescription = null,
-                                tint = AppTheme.colors.textPrimary,
+                                tint = AppTheme.colors.onAccent,
                                 modifier = Modifier.size(34.dp)
                             )
                         }
@@ -253,7 +252,7 @@ internal fun HomePlaylistsContent(
                             onClick = { onRequestDeletePlaylist(pl) },
                             size = 38.dp,
                             iconSize = 18.dp,
-                            iconTint = ApexRose.copy(alpha = 0.85f),
+                            iconTint = AppTheme.colors.danger.copy(alpha = 0.85f),
                             backgroundColor = AppTheme.colors.surfaceActiveIndicator.copy(alpha = 0.60f)
                         )
                     }

@@ -27,9 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.theme.ApexPillBorderBrush
-import com.example.onemusic.theme.ApexRose
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.ShadowColor
 import com.example.onemusic.ui.utils.apexBounceClick
 
 /** Dock nổi phía dưới: "Ẩn (n)" (chỉ ẩn khỏi thư viện) và "Xóa File (n)" (mở hộp thoại xác nhận). */
@@ -45,7 +43,7 @@ internal fun DuplicateActionDock(
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 14.dp)
             .navigationBarsPadding()
-            .shadow(16.dp, PillShape, ambientColor = ShadowColor)
+            .shadow(16.dp, PillShape, ambientColor = AppTheme.colors.shadow)
             .clip(PillShape)
             .border(0.85.dp, ApexPillBorderBrush, PillShape)
             .background(AppTheme.colors.surface1.copy(alpha = 0.94f))
@@ -95,7 +93,7 @@ internal fun DuplicateActionDock(
                 modifier = Modifier
                     .weight(1f)
                     .clip(PillShape)
-                    .background(ApexRose.copy(alpha = 0.18f))
+                    .background(AppTheme.colors.danger.copy(alpha = 0.18f))
                     .apexBounceClick(scaleDown = 0.95f, enableHaptic = true) {
                         onDeleteClick()
                     }
@@ -106,7 +104,7 @@ internal fun DuplicateActionDock(
                     Icon(
                         imageVector = Icons.Rounded.DeleteOutline,
                         contentDescription = null,
-                        tint = ApexRose,
+                        tint = AppTheme.colors.danger,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
@@ -114,7 +112,7 @@ internal fun DuplicateActionDock(
                         text = "Xóa File ($totalSelectedCount)",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = ApexRose,
+                            color = AppTheme.colors.danger,
                             fontSize = 13.5.sp
                         )
                     )

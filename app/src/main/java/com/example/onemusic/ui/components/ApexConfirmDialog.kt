@@ -27,7 +27,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.theme.ApexReflectiveBorderBrush
-import com.example.onemusic.theme.ApexRose
 import com.example.onemusic.theme.PillShape
 
 /**
@@ -113,7 +112,7 @@ fun ApexConfirmDialog(
                     Box(
                         modifier = Modifier
                             .clip(PillShape)
-                            .background(if (isDestructive) ApexRose else AppTheme.colors.textPrimary)
+                            .background(if (isDestructive) AppTheme.colors.danger else AppTheme.colors.textPrimary)
                             .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
                                 onConfirm()
                             }
@@ -123,7 +122,7 @@ fun ApexConfirmDialog(
                         Text(
                             text = confirmButtonText,
                             style = MaterialTheme.typography.labelLarge.copy(
-                                color = if (isDestructive) AppTheme.colors.textPrimary else AppTheme.colors.onInverse,
+                                color = if (isDestructive) AppTheme.colors.onAccent else AppTheme.colors.onInverse,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )

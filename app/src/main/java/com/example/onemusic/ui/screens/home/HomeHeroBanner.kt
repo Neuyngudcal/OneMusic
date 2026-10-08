@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.home
 
+import com.example.onemusic.theme.OnImageScope
 import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.PillShape
 import androidx.compose.foundation.lazy.LazyListScope
 
@@ -57,96 +57,98 @@ internal fun LazyListScope.homeHeroBannerSection(
                         onTrackSelect(featuredTrack, tracks)
                     }
             ) {
-                // Background Artwork blurred
-                AsyncImage(
-                    model = featuredTrack.artworkUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .blur(40.dp)
-                )
+                OnImageScope {
+                    // Background Artwork blurred
+                    AsyncImage(
+                        model = featuredTrack.artworkUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .blur(40.dp)
+                    )
 
-                // Dark Scrim Gradient
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Black.copy(alpha = 0.2f),
-                                    Color.Black.copy(alpha = 0.75f)
-                                )
-                            )
-                        )
-                )
-
-                // Content
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    // Badge
+                    // Dark Scrim Gradient
                     Box(
                         modifier = Modifier
-                            .clip(PillShape)
-                            .background(IvoryStroke)
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                    ) {
-                        Text(
-                            text = "NỔI BẬT HÔM NAY",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                color = AppTheme.colors.textPrimary,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Black.copy(alpha = 0.2f),
+                                        Color.Black.copy(alpha = 0.75f)
+                                    )
+                                )
                             )
-                        )
-                    }
+                    )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Bottom
+                    // Content
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                        // Badge
+                        Box(
+                            modifier = Modifier
+                                .clip(PillShape)
+                                .background(AppTheme.colors.stroke)
+                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                        ) {
                             Text(
-                                text = featuredTrack.title,
-                                style = MaterialTheme.typography.titleLarge.copy(
+                                text = "NỔI BẬT HÔM NAY",
+                                style = MaterialTheme.typography.labelSmall.copy(
                                     color = AppTheme.colors.textPrimary,
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 22.sp
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = featuredTrack.artist,
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = AppTheme.colors.textSecondary,
-                                    fontSize = 14.sp
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
                             )
                         }
 
-                        // Play button
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                                .background(AppTheme.colors.textPrimary),
-                            contentAlignment = Alignment.Center
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Bottom
                         ) {
-                            Icon(
-                                imageVector = Icons.Rounded.PlayArrow,
-                                contentDescription = "Phát",
-                                tint = AppTheme.colors.onInverse,
-                                modifier = Modifier.size(28.dp)
-                            )
+                            Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                                Text(
+                                    text = featuredTrack.title,
+                                    style = MaterialTheme.typography.titleLarge.copy(
+                                        color = AppTheme.colors.textPrimary,
+                                        fontWeight = FontWeight.Medium,
+                                        fontSize = 22.sp
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = featuredTrack.artist,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        color = AppTheme.colors.textSecondary,
+                                        fontSize = 14.sp
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
+                            // Play button
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(AppTheme.colors.textPrimary),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.PlayArrow,
+                                    contentDescription = "Phát",
+                                    tint = AppTheme.colors.onInverse,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
                         }
                     }
                 }

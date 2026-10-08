@@ -49,8 +49,6 @@ import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.IvoryMuted
-import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.apexGroupedCardItem
 
 /** HomeSubView.ARTISTS: danh sách nghệ sĩ, menu chọn gộp/tách nghệ sĩ. Chế độ gộp và trạng thái menu do màn cha giữ. */
@@ -178,7 +176,7 @@ internal fun HomeArtistsContent(
                             Icon(
                                 imageVector = Icons.Rounded.Person,
                                 contentDescription = null,
-                                tint = IvoryMuted,
+                                tint = AppTheme.colors.muted,
                                 modifier = Modifier.size(64.dp)
                             )
                             Spacer(modifier = Modifier.height(14.dp))
@@ -222,7 +220,7 @@ internal fun HomeArtistsContent(
                                         modifier = Modifier
                                             .size(64.dp)
                                             .clip(CircleShape)
-                                            .border(0.7.dp, IvoryStroke, CircleShape)
+                                            .border(0.7.dp, AppTheme.colors.stroke, CircleShape)
                                     )
                                 } else {
                                     Box(

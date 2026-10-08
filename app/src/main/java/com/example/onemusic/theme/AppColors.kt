@@ -33,12 +33,25 @@ data class AppColors(
     val textTertiary: Color,
     val textDisabled: Color,
     val onInverse: Color,         // chữ/icon in lên nền màu chữ chính, ví dụ pill đang chọn (CharcoalBlack)
+    val onAccent: Color,          // chữ/icon in lên nền accent hoặc danger (luôn trắng)
     val accent: Color,
     val accentLight: Color,
     val accentDark: Color,
+    val danger: Color,            // xoá / yêu thích / cảnh báo nguy hiểm
+    val warning: Color,
     val shadow: Color,
     val scrim: Color
-)
+) {
+    // Thang màu chữ trong suốt: dùng cho viền, nền nút mờ, icon phụ trên bề mặt (thay cho Ivory*).
+    val hairline: Color get() = textPrimary.copy(alpha = 0.06f)
+    val subtle: Color get() = textPrimary.copy(alpha = 0.10f)
+    val stroke: Color get() = textPrimary.copy(alpha = 0.16f)
+    val muted: Color get() = textPrimary.copy(alpha = 0.24f)
+    val disabled: Color get() = textPrimary.copy(alpha = 0.35f)
+    val faint: Color get() = textPrimary.copy(alpha = 0.45f)
+    val medium: Color get() = textPrimary.copy(alpha = 0.60f)
+    val high: Color get() = textPrimary.copy(alpha = 0.85f)
+}
 
 // Bảng màu tối mới (trắng – xanh dương – đen), xem docs/COLOR_REDESIGN_PLAN.md mục 2.
 val DarkAppColors = AppColors(
@@ -58,9 +71,12 @@ val DarkAppColors = AppColors(
     textTertiary = Color(0xFF8E8E93),
     textDisabled = Color(0xFF636366),
     onInverse = Color(0xFF000000),
+    onAccent = Color(0xFFFFFFFF),
     accent = Color(0xFF0A84FF),            // chữ, icon, thanh trượt trên nền tối
     accentLight = Color(0xFF4DA3FF),
     accentDark = Color(0xFF0066D6),        // nền nút đặc (chữ trắng đạt 5.42)
+    danger = ApexRose,
+    warning = ApexAmber,
     shadow = ShadowColor,
     scrim = ScrimColor
 )
@@ -86,16 +102,49 @@ val LegacyDarkAppColors = AppColors(
     textTertiary = TextTertiary,
     textDisabled = TextDisabled,
     onInverse = CharcoalBlack,
+    onAccent = PrimaryIvory,
     accent = Brand,
     accentLight = BrandLight,
     accentDark = BrandDark,
+    danger = ApexRose,
+    warning = ApexAmber,
     shadow = ShadowColor,
     scrim = ScrimColor
 )
 
-// TODO(bước 4): thay bằng bảng màu sáng thật. Tạm thời giống tối, nên isDark vẫn là true
-// để biểu tượng thanh hệ thống đọc được trên nền đen.
-val LightAppColors = DarkAppColors
+// Bảng màu sáng (nền trắng, chữ đen, nhấn xanh dương), xem docs/COLOR_REDESIGN_PLAN.md mục 2.
+val LightAppColors = AppColors(
+    isDark = false,
+    background = Color(0xFFFFFFFF),
+    surfaceBase = Color(0xFFF8F8FA),
+    surface1 = Color(0xFFF2F2F7),          // dock, mini player, dialog, sheet, popup
+    surfaceControl = Color(0xFFE5E5EA),
+    surface2 = Color(0xFFE5E5EA),          // thẻ card
+    surfaceActive = Color(0xFFDCDCE0),
+    surfaceActiveIndicator = Color(0xFFD1D1D6),
+    activePill = Color(0xFFC7C7CC),
+    divider = Color(0xFFD1D1D6),
+    borderStrong = Color(0xFFC6C6C8),
+    textPrimary = Color(0xFF000000),
+    textSecondary = Color(0xFF3C3C43),
+    textTertiary = Color(0xFF737377),      // 4.7 trên nền trắng
+    textDisabled = Color(0xFFAEAEB2),
+    onInverse = Color(0xFFFFFFFF),
+    onAccent = Color(0xFFFFFFFF),
+    accent = Color(0xFF0066D6),            // 5.42 trên trắng, 4.86 trên #F2F2F7
+    accentLight = Color(0xFF0A84FF),
+    accentDark = Color(0xFF004FA8),
+    danger = Color(0xFFD70015),            // 5.38 trên trắng
+    warning = Color(0xFFB26A00),
+    shadow = Color(0x2E000000),            // đen 18%: bóng nhẹ trên nền sáng
+    scrim = ScrimColor
+)
+
+/** Lớp bọc cho vùng nằm trên ảnh/gradient tối (banner, hero): luôn dùng chữ trắng bất kể theme. */
+@Composable
+fun OnImageScope(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalAppColors provides DarkAppColors, content = content)
+}
 
 val LocalAppColors = staticCompositionLocalOf { DarkAppColors }
 

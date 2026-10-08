@@ -204,3 +204,10 @@ Mỗi bước là một commit, build được và xem được trước khi san
   - Material `ColorScheme` và `Typography` dựng theo `AppColors` (`materialColorSchemeFor`, `typographyFor`); Now Playing dùng bản cũ.
   - Các tham số mặc định từng dùng token cũ (`ApexSlider`, `ApexCard`, `ApexDropdownMenuItem`, `ApexTrackActionSheet`, `ApplePlaybackIcons`, `ApexCircularGlassButton`, `SettingsActionRow`, `ApexDialogContainer`, `apexFrostedGlass`, `apexGlassCard`, `apexGroupedCardItem`) đổi sang `Color.Unspecified` và lấy màu theo theme tại chỗ dùng.
   - Chưa đổi (bước sau): `ObsidianBlack`, `Ivory*` trong suốt, `ApexReflectiveBorderBrush`/`ApexPillBorderBrush`, `PaletteHelper`, XML (`colors.xml`, `themes.xml`, widget, splash).
+- **Bước 4 (xong, chưa build được trong môi trường viết code):** bảng màu **theme sáng** thật và các sửa theo cặp màu đảo.
+  - `LightAppColors`: nền `#FFFFFF`, bề mặt `#F2F2F7`/`#E5E5EA`, chữ `#000000`/`#3C3C43`/`#737377`, nhấn `#0066D6`, lỗi `#D70015`, cảnh báo `#B26A00`, bóng đen 18%. `isDark = false` nên icon thanh hệ thống tự đổi. `materialColorSchemeFor` trả `lightColorScheme` khi `isDark = false`.
+  - `AppColors` thêm `onAccent` (chữ trắng trên nền xanh/đỏ), `danger`, `warning` và thang trong suốt `hairline/subtle/stroke/muted/disabled/faint/medium/high` (thay `Ivory*`).
+  - Đổi `ObsidianBlack`→`background`, `ApexRose`→`danger`, `ApexAmber`→`warning`, `ShadowColor`→`shadow`, `Ivory*`→thang trong suốt ở thêm 110 chỗ (ngữ cảnh composable).
+  - `OnImageScope`: vùng nằm trên ảnh/gradient tối luôn dùng chữ trắng (banner nổi bật ở Trang chủ, ô chọn nhiều bài trên ảnh bìa lưới). Thanh trên màn Chi tiết dùng màu icon cố định theo độ sáng ảnh khi nằm trên ảnh. Huy hiệu Hi-Res giữ chữ tối trên nền vàng.
+  - Đổi `ApexCyan`→`accent` ở thanh chữ cái. Hero màn Chi tiết mờ dần vào `background` của theme.
+  - **Còn lại:** XML (`colors.xml`, `values-night`, `themes.xml`, widget, splash) thuộc bước 7; `DynamicMeshBackground` (mã chết) và `PaletteHelper` giữ nguyên.

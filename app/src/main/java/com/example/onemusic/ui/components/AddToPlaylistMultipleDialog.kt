@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.IvoryMedium
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.ui.utils.apexBounceClick
 
@@ -202,7 +201,7 @@ fun AddToPlaylistMultipleDialog(
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
                                         contentDescription = null,
-                                        tint = IvoryMedium,
+                                        tint = AppTheme.colors.medium,
                                         modifier = Modifier.size(22.dp)
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))

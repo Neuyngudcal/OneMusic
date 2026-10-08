@@ -23,8 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.ApexAmber
-import com.example.onemusic.theme.IvorySubtle
 import com.example.onemusic.theme.apexGlassCard
 
 /** Item 4: thẻ "THÔNG TIN BỘ NHỚ & ĐỊNH DẠNG" (tổng số bài, định dạng hỗ trợ). */
@@ -85,7 +83,7 @@ internal fun FolderInfoCard(totalTrackCount: Int) {
                 HorizontalDivider(
                     modifier = Modifier.padding(start = 56.dp, end = 18.dp),
                     thickness = 0.5.dp,
-                    color = IvorySubtle
+                    color = AppTheme.colors.subtle
                 )
 
                 // Row 2: Định dạng hỗ trợ
@@ -98,7 +96,7 @@ internal fun FolderInfoCard(totalTrackCount: Int) {
                     Icon(
                         imageVector = Icons.Rounded.SdCard,
                         contentDescription = null,
-                        tint = ApexAmber,
+                        tint = AppTheme.colors.warning,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(14.dp))

@@ -42,7 +42,6 @@ import com.example.onemusic.data.search.MatchedArtist
 import com.example.onemusic.data.search.MatchedTrack
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.ApexRose
 import AppTheme.colors.surfaceActiveIndicator
 import com.example.onemusic.theme.apexGroupedCardItem
 import androidx.compose.foundation.lazy.LazyListScope
@@ -92,7 +91,7 @@ internal fun LazyListScope.searchBlankState(
                         Text(
                             text = "Xóa tất cả",
                             style = MaterialTheme.typography.labelMedium.copy(
-                                color = ApexRose,
+                                color = AppTheme.colors.danger,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             ),

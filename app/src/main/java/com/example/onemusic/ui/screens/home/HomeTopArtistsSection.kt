@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.avatarColorFor
 import androidx.compose.foundation.lazy.LazyListScope
 
@@ -105,7 +104,7 @@ internal fun LazyListScope.homeTopArtistsSection(
                                 modifier = Modifier
                                     .size(76.dp)
                                     .clip(CircleShape)
-                                    .border(1.dp, IvoryStroke, CircleShape)
+                                    .border(1.dp, AppTheme.colors.stroke, CircleShape)
                             )
                         } else {
                             val initials = artistName.split(" ").filter { it.isNotBlank() }.take(2)

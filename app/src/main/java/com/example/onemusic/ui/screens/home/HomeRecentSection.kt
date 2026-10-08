@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.IvoryDisabled
 import com.example.onemusic.theme.apexGlassCard
 import androidx.compose.foundation.lazy.LazyListScope
 
@@ -126,7 +125,7 @@ internal fun LazyListScope.homeRecentSection(
                                     Icon(
                                         imageVector = Icons.Rounded.MusicNote,
                                         contentDescription = null,
-                                        tint = IvoryDisabled,
+                                        tint = AppTheme.colors.disabled,
                                         modifier = Modifier.size(36.dp)
                                     )
                                 }
@@ -223,7 +222,7 @@ internal fun LazyListScope.homeRecentSection(
                                     Icon(
                                         imageVector = Icons.Rounded.MusicNote,
                                         contentDescription = null,
-                                        tint = IvoryDisabled,
+                                        tint = AppTheme.colors.disabled,
                                         modifier = Modifier.size(36.dp)
                                     )
                                 }

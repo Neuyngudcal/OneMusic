@@ -47,7 +47,6 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
-import com.example.onemusic.theme.ShadowColor
 import com.example.onemusic.theme.TextPrimary
 
 /**
@@ -103,8 +102,8 @@ fun ApexDropdownMenu(
                     .shadow(
                         elevation = 24.dp,
                         shape = RoundedCornerShape(22.dp),
-                        ambientColor = ShadowColor,
-                        spotColor = ShadowColor
+                        ambientColor = AppTheme.colors.shadow,
+                        spotColor = AppTheme.colors.shadow
                     )
                     .clip(RoundedCornerShape(22.dp))
                     .apexFrostedGlass(

@@ -30,8 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.FolderInfo
-import com.example.onemusic.theme.ApexAmber
-import com.example.onemusic.theme.ApexRose
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 
@@ -78,7 +76,7 @@ internal fun FolderListCard(
                         Icon(
                             imageVector = Icons.Rounded.FolderOpen,
                             contentDescription = null,
-                            tint = ApexAmber,
+                            tint = AppTheme.colors.warning,
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -124,7 +122,7 @@ internal fun FolderListCard(
                                 Icon(
                                     imageVector = Icons.Rounded.Folder,
                                     contentDescription = null, // biểu tượng trang trí, tên thư mục đã có ở cạnh
-                                    tint = ApexAmber,
+                                    tint = AppTheme.colors.warning,
                                     modifier = Modifier.size(26.dp)
                                 )
                             }
@@ -159,7 +157,7 @@ internal fun FolderListCard(
                                 onClick = { onRemoveClick(folder.uriString, folder.displayName) },
                                 size = 38.dp,
                                 iconSize = 18.dp,
-                                iconTint = ApexRose.copy(alpha = 0.85f),
+                                iconTint = AppTheme.colors.danger.copy(alpha = 0.85f),
                                 backgroundColor = AppTheme.colors.surfaceActiveIndicator.copy(alpha = 0.60f)
                             )
                         }

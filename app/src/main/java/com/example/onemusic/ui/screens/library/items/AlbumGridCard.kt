@@ -35,8 +35,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.onemusic.theme.IvoryDisabled
-import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.SquircleLarge
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.utils.apexBounceClick
@@ -56,7 +54,7 @@ fun VinylDiscEffect(
         modifier = modifier
             .clip(CircleShape)
             .background(VinylGray)
-            .border(1.dp, IvoryStroke.copy(alpha = 0.4f), CircleShape),
+            .border(1.dp, AppTheme.colors.stroke.copy(alpha = 0.4f), CircleShape),
         contentAlignment = Alignment.Center
     ) {
         // Outer groove ring
@@ -132,7 +130,7 @@ fun AlbumGridCard(
                     .align(Alignment.BottomStart)
                     .clip(SquircleLarge)
                     .background(AppTheme.colors.surfaceActiveIndicator)
-                    .border(0.7.dp, IvoryStroke.copy(alpha = 0.5f), SquircleLarge)
+                    .border(0.7.dp, AppTheme.colors.stroke.copy(alpha = 0.5f), SquircleLarge)
             ) {
                 if (!artworkUrl.isNullOrBlank()) {
                     AsyncImage(
@@ -151,7 +149,7 @@ fun AlbumGridCard(
                         Icon(
                             imageVector = Icons.Rounded.Album,
                             contentDescription = null,
-                            tint = IvoryDisabled,
+                            tint = AppTheme.colors.disabled,
                             modifier = Modifier.size(52.dp)
                         )
                     }
@@ -254,7 +252,7 @@ fun AlbumListItem(
                             .align(Alignment.CenterStart)
                             .clip(RoundedCornerShape(14.dp))
                             .background(AppTheme.colors.surfaceActiveIndicator)
-                            .border(0.6.dp, IvoryStroke.copy(alpha = 0.5f), RoundedCornerShape(14.dp)),
+                            .border(0.6.dp, AppTheme.colors.stroke.copy(alpha = 0.5f), RoundedCornerShape(14.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         if (!artworkUrl.isNullOrBlank()) {

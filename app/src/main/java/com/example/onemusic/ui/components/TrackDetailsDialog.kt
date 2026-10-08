@@ -35,9 +35,6 @@ import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.data.scanner.AudioMetadataInspector
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.IvoryFaint
-import com.example.onemusic.theme.IvoryMedium
-import com.example.onemusic.theme.IvorySubtle
 import com.example.onemusic.theme.PillShape
 
 /**
@@ -121,7 +118,7 @@ fun TrackDetailsDialog(
                 text = qualitySubtitle,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Normal,
-                    color = IvoryMedium,
+                    color = AppTheme.colors.medium,
                     fontSize = 14.sp,
                     letterSpacing = 0.1.sp
                 ),
@@ -136,14 +133,14 @@ fun TrackDetailsDialog(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
                     .background(AppTheme.colors.surface2)
-                    .border(0.7.dp, IvorySubtle, RoundedCornerShape(16.dp))
+                    .border(0.7.dp, AppTheme.colors.subtle, RoundedCornerShape(16.dp))
                     .padding(horizontal = 14.dp, vertical = 11.dp)
             ) {
                 Row(verticalAlignment = Alignment.Top) {
                     Icon(
                         imageVector = Icons.Rounded.Folder,
                         contentDescription = null,
-                        tint = IvoryFaint,
+                        tint = AppTheme.colors.faint,
                         modifier = Modifier
                             .size(16.dp)
                             .padding(top = 2.dp)
@@ -152,7 +149,7 @@ fun TrackDetailsDialog(
                     Text(
                         text = details.filePath.ifBlank { "Lưu trữ nội bộ" },
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = IvoryMedium,
+                            color = AppTheme.colors.medium,
                             fontSize = 11.sp,
                             lineHeight = 15.sp
                         ),

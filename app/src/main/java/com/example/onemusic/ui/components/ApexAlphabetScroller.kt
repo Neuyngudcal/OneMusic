@@ -39,11 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import com.example.onemusic.haptics.rememberApexHaptics
-import com.example.onemusic.theme.ApexCyan
-import com.example.onemusic.theme.IvoryMedium
-import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.ShadowColor
 
 val ALPHABET_CHAR_LIST = listOf(
     '#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
@@ -161,9 +157,9 @@ fun ApexAlphabetScroller(
                             fontSize = if (isCharActive) 10.sp else 8.sp,
                             fontWeight = if (isCharActive) FontWeight.ExtraBold else FontWeight.Medium,
                             color = when {
-                                isCharActive -> ApexCyan
-                                hasTracks -> IvoryMedium
-                                else -> IvoryStroke
+                                isCharActive -> AppTheme.colors.accent
+                                hasTracks -> AppTheme.colors.medium
+                                else -> AppTheme.colors.stroke
                             }
                         )
                     )
@@ -182,10 +178,10 @@ fun ApexAlphabetScroller(
                 modifier = Modifier
                     .padding(end = 64.dp)
                     .size(72.dp)
-                    .shadow(elevation = 20.dp, shape = RoundedCornerShape(24.dp), ambientColor = ShadowColor)
+                    .shadow(elevation = 20.dp, shape = RoundedCornerShape(24.dp), ambientColor = AppTheme.colors.shadow)
                     .clip(RoundedCornerShape(24.dp))
                     .background(AppTheme.colors.surface1)
-                    .border(1.dp, ApexCyan.copy(alpha = 0.50f), RoundedCornerShape(24.dp)),
+                    .border(1.dp, AppTheme.colors.accent.copy(alpha = 0.50f), RoundedCornerShape(24.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

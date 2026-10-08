@@ -44,7 +44,6 @@ import com.example.onemusic.haptics.rememberApexHaptics
 import com.example.onemusic.playback.AudioEffectManager
 import com.example.onemusic.ui.utils.apexBounceClick
 import kotlin.math.roundToInt
-import com.example.onemusic.theme.IvoryHairline
 import com.example.onemusic.theme.PillShape
 
 private val FREQUENCY_LABELS = listOf(
@@ -176,7 +175,7 @@ fun ApexEqualizerDialog(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(18.dp))
                     .background(AppTheme.colors.surface2)
-                    .border(0.8.dp, IvoryHairline, RoundedCornerShape(18.dp))
+                    .border(0.8.dp, AppTheme.colors.hairline, RoundedCornerShape(18.dp))
                     .padding(horizontal = 16.dp, vertical = 14.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -237,7 +236,7 @@ fun ApexEqualizerDialog(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(18.dp))
                     .background(AppTheme.colors.surface2)
-                    .border(0.8.dp, IvoryHairline, RoundedCornerShape(18.dp))
+                    .border(0.8.dp, AppTheme.colors.hairline, RoundedCornerShape(18.dp))
                     .padding(horizontal = 14.dp, vertical = 14.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {

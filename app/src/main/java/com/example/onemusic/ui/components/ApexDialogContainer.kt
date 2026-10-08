@@ -34,7 +34,6 @@ import com.example.onemusic.theme.LocalApexHazeState
 import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.theme.apexFrostedGlass
 import dev.chrisbanes.haze.HazeState
-import com.example.onemusic.theme.ShadowColor
 
 /**
  * Standard OneMusic Apex Prism Optical Glassmorphic Dialog Container
@@ -93,8 +92,8 @@ fun ApexDialogContainer(
                     .shadow(
                         elevation = elevation,
                         shape = shape,
-                        ambientColor = ShadowColor,
-                        spotColor = ShadowColor
+                        ambientColor = AppTheme.colors.shadow,
+                        spotColor = AppTheme.colors.shadow
                     )
                     .clip(shape)
                     .apexFrostedGlass(

@@ -43,9 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.IvoryDisabled
-import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.components.ApexCircularGlassButton
@@ -104,7 +101,7 @@ fun LazyListScope.playlistsTabContent(
                         Icon(
                             imageVector = Icons.Rounded.Favorite,
                             contentDescription = "Yêu thích",
-                            tint = ApexRose,
+                            tint = AppTheme.colors.danger,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -230,7 +227,7 @@ fun LazyListScope.playlistsTabContent(
                             onClick = { onDeletePlaylist(pl) },
                             size = 36.dp,
                             iconSize = 18.dp,
-                            iconTint = ApexRose
+                            iconTint = AppTheme.colors.danger
                         )
                     }
                 }

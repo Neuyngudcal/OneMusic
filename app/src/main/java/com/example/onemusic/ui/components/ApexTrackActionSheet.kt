@@ -69,9 +69,6 @@ import com.example.onemusic.ui.utils.apexBounceClick
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 import com.example.onemusic.theme.ScrimColor
-import com.example.onemusic.theme.IvoryFaint
-import com.example.onemusic.theme.IvoryMuted
-import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.TextPrimary
 
 /**
@@ -142,7 +139,7 @@ fun ApexTrackActionSheet(
                     modifier = Modifier
                         .size(width = 36.dp, height = 4.5.dp)
                         .clip(CircleShape)
-                        .background(IvoryMuted)
+                        .background(AppTheme.colors.muted)
                 )
             }
 
@@ -176,7 +173,7 @@ fun ApexTrackActionSheet(
                         Icon(
                             imageVector = Icons.Rounded.MusicNote,
                             contentDescription = null,
-                            tint = IvoryFaint,
+                            tint = AppTheme.colors.faint,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -225,7 +222,7 @@ fun ApexTrackActionSheet(
 
             // Thanh phân cách rõ ràng, to bản và nổi bật hơn cho dễ nhìn
             HorizontalDivider(
-                color = IvoryStroke,
+                color = AppTheme.colors.stroke,
                 thickness = 1.5.dp,
                 modifier = Modifier.fillMaxWidth()
             )

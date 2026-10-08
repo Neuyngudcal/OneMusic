@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.ShadowColor
 import com.example.onemusic.ui.utils.apexBounceClick
 
 /** Item 5: nút "Thêm thư mục mới" và (khi đã có thư mục) "Quét lại toàn bộ thư mục". */
@@ -47,7 +46,7 @@ internal fun FolderActionButtons(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(12.dp, PillShape, ambientColor = ShadowColor)
+                .shadow(12.dp, PillShape, ambientColor = AppTheme.colors.shadow)
                 .clip(PillShape)
                 .background(AppTheme.colors.textPrimary)
                 .apexBounceClick(scaleDown = 0.96f, enableHaptic = true) {
@@ -80,7 +79,7 @@ internal fun FolderActionButtons(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .shadow(12.dp, PillShape, ambientColor = ShadowColor)
+                    .shadow(12.dp, PillShape, ambientColor = AppTheme.colors.shadow)
                     .clip(PillShape)
                     .background(AppTheme.colors.surfaceControl)
                     .border(1.5.dp, AppTheme.colors.borderStrong, PillShape)

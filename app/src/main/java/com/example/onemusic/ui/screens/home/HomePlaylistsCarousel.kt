@@ -32,8 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.IvoryFaint
 import androidx.compose.foundation.lazy.LazyListScope
 
 /** Hàng ngang "Playlist": thẻ Yêu thích + các playlist tự tạo. */
@@ -103,7 +101,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                         Icon(
                             imageVector = Icons.Rounded.Favorite,
                             contentDescription = null,
-                            tint = ApexRose,
+                            tint = AppTheme.colors.danger,
                             modifier = Modifier.size(56.dp)
                         )
                     }
@@ -151,7 +149,7 @@ internal fun LazyListScope.homePlaylistsCarouselSection(
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
                             contentDescription = null,
-                            tint = IvoryFaint,
+                            tint = AppTheme.colors.faint,
                             modifier = Modifier.size(48.dp)
                         )
                     }

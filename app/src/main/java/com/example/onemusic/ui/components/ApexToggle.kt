@@ -74,7 +74,7 @@ fun ApexToggle(
                 .offset(x = thumbOffset)
                 .size(24.dp)
                 .clip(CircleShape)
-                .background(AppTheme.colors.textPrimary)
+                .background(if (checked) AppTheme.colors.onAccent else AppTheme.colors.textPrimary)
         )
     }
 }

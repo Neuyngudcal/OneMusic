@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.detail
 
+import com.example.onemusic.theme.DarkAppColors
 import com.example.onemusic.theme.AppTheme
 import android.content.Intent
 import androidx.compose.animation.animateColorAsState
@@ -33,8 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.ui.utils.rememberArtworkTopIsLight
 
@@ -54,17 +53,20 @@ internal fun DetailStickyTopBar(
     onDeleteClick: () -> Unit
 ) {
     val context = LocalContext.current
-    // Icon đen khi nằm trên phần ảnh bìa sáng; còn lại (ảnh tối, chưa có ảnh, đã cuộn qua ảnh) là trắng
+    // Icon đen khi nằm trên phần ảnh bìa sáng, trắng khi ảnh tối; còn lại (chưa có ảnh, đã cuộn qua ảnh) theo màu chữ của theme
     val artworkTopIsLight = rememberArtworkTopIsLight(artworkUrl)
     val iconTint by animateColorAsState(
-        targetValue = if (artworkTopIsLight == true && isOverArtwork) AppTheme.colors.onInverse else AppTheme.colors.textPrimary,
+        targetValue = if (isOverArtwork && artworkTopIsLight != null) {
+            // Nằm trên ảnh bìa: màu cố định theo độ sáng của ảnh, không đổi theo theme
+            if (artworkTopIsLight == true) DarkAppColors.onInverse else DarkAppColors.textPrimary
+        } else AppTheme.colors.textPrimary,
         label = "detail_top_bar_icon_tint"
     )
     Box(
         modifier = Modifier
             .fillMaxWidth()
             // Nền đặt TRƯỚC statusBarsPadding để phủ cả vùng thanh trạng thái
-            .background(ObsidianBlack.copy(alpha = topBarBackgroundAlpha()))
+            .background(AppTheme.colors.background.copy(alpha = topBarBackgroundAlpha()))
             .statusBarsPadding()
             .padding(horizontal = 16.dp, vertical = 6.dp)
     ) {
@@ -116,7 +118,7 @@ internal fun DetailStickyTopBar(
                         icon = Icons.Rounded.Delete,
                         contentDescription = "Xóa playlist",
                         onClick = onDeleteClick,
-                        tint = ApexRose
+                        tint = AppTheme.colors.danger
                     )
                 }
             } else {

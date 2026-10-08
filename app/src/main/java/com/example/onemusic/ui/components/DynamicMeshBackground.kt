@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.components
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.tween
@@ -13,7 +14,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.onemusic.theme.ApexCyan
 import com.example.onemusic.theme.ApexIndigo
-import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.theme.Brand
 
 private val AuroraColorEasing = CubicBezierEasing(0.25f, 0.10f, 0.25f, 1.00f)
@@ -48,7 +48,7 @@ fun DynamicMeshBackground(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
     ) {
         Box(
             modifier = Modifier
@@ -78,8 +78,8 @@ fun DynamicMeshBackground(
                         colors = listOf(
                             Color.Transparent,
                             animatedSecondary,
-                            ObsidianBlack.copy(alpha = 0.88f),
-                            ObsidianBlack
+                            AppTheme.colors.background.copy(alpha = 0.88f),
+                            AppTheme.colors.background
                         )
                     )
                 )

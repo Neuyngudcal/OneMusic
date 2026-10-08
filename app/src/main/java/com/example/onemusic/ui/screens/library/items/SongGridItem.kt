@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library.items
 
+import com.example.onemusic.theme.OnImageScope
 import com.example.onemusic.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,10 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.IvoryDisabled
-import com.example.onemusic.theme.IvoryFaint
-import com.example.onemusic.theme.IvoryMedium
 import com.example.onemusic.theme.ScrimColor
 import com.example.onemusic.ui.components.ApexHiResBadge
 import com.example.onemusic.ui.utils.apexBounceClick
@@ -95,35 +92,37 @@ fun SongGridItem(
                     Icon(
                         imageVector = Icons.Rounded.MusicNote,
                         contentDescription = null,
-                        tint = IvoryDisabled,
+                        tint = AppTheme.colors.disabled,
                         modifier = Modifier.size(48.dp)
                     )
                 }
             }
 
             if (isMultiSelectMode) {
-                // Multi-select Checkbox
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                        .size(26.dp)
-                        .clip(CircleShape)
-                        .background(if (isSelectedInBatch) AppTheme.colors.textPrimary else ScrimColor)
-                        .border(
-                            width = 1.5.dp,
-                            color = if (isSelectedInBatch) AppTheme.colors.textPrimary else IvoryMedium,
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isSelectedInBatch) {
-                        Icon(
-                            imageVector = Icons.Rounded.Check,
-                            contentDescription = null,
-                            tint = AppTheme.colors.onInverse,
-                            modifier = Modifier.size(16.dp)
-                        )
+                OnImageScope {
+                    // Multi-select Checkbox
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .size(26.dp)
+                            .clip(CircleShape)
+                            .background(if (isSelectedInBatch) AppTheme.colors.textPrimary else ScrimColor)
+                            .border(
+                                width = 1.5.dp,
+                                color = if (isSelectedInBatch) AppTheme.colors.textPrimary else AppTheme.colors.medium,
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (isSelectedInBatch) {
+                            Icon(
+                                imageVector = Icons.Rounded.Check,
+                                contentDescription = null,
+                                tint = AppTheme.colors.onInverse,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -170,7 +169,7 @@ fun SongGridItem(
                     Text(
                         text = formatDuration(track.durationMs, padMinutes = true),
                         style = MaterialTheme.typography.labelSmall.copy(
-                            color = IvoryFaint,
+                            color = AppTheme.colors.faint,
                             fontSize = 11.sp
                         )
                     )
@@ -189,7 +188,7 @@ fun SongGridItem(
                     Icon(
                         imageVector = if (track.isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                         contentDescription = if (track.isFavorite) "Bỏ yêu thích" else "Yêu thích",
-                        tint = if (track.isFavorite) ApexRose else IvoryFaint,
+                        tint = if (track.isFavorite) AppTheme.colors.danger else AppTheme.colors.faint,
                         modifier = Modifier.size(18.dp)
                     )
                 }

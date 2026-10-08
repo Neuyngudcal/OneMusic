@@ -56,7 +56,6 @@ import com.example.onemusic.data.dedup.DuplicateGroup
 import com.example.onemusic.data.repository.MusicRepository
 import com.example.onemusic.playback.MusicPlayerController
 import com.example.onemusic.theme.LocalApexHazeState
-import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.components.ApexConfirmDialog
@@ -121,7 +120,7 @@ fun DuplicateCleanerScreen(
                 indication = null,
                 onClick = {}
             )
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

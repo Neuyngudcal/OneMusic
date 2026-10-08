@@ -29,7 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.onemusic.theme.IvoryDisabled
 import com.example.onemusic.ui.utils.apexBounceClick
 
 /** Một hàng lưới 2 cột (ô trống bù bằng Spacer khi hàng cuối lẻ). */
@@ -77,7 +76,7 @@ internal fun HomeAlbumGrid2Row(
                             Icon(
                                 imageVector = Icons.Rounded.Album,
                                 contentDescription = null,
-                                tint = IvoryDisabled,
+                                tint = AppTheme.colors.disabled,
                                 modifier = Modifier.size(52.dp)
                             )
                         }
@@ -163,7 +162,7 @@ internal fun HomeAlbumGrid3Row(
                             Icon(
                                 imageVector = Icons.Rounded.Album,
                                 contentDescription = null,
-                                tint = IvoryDisabled,
+                                tint = AppTheme.colors.disabled,
                                 modifier = Modifier.size(36.dp)
                             )
                         }

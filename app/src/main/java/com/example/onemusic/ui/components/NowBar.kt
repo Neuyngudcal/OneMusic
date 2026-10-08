@@ -72,7 +72,6 @@ import kotlin.math.roundToInt
 import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.LocalHazeState
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.ShadowColor
 import com.example.onemusic.theme.apexFrostedGlass
 
 /**
@@ -134,7 +133,7 @@ fun NowBar(
                 scaleY = scale.value
             }
             .height(58.dp)
-            .shadow(elevation = 16.dp, shape = PillShape, ambientColor = ShadowColor)
+            .shadow(elevation = 16.dp, shape = PillShape, ambientColor = AppTheme.colors.shadow)
             .clip(PillShape)
             .apexFrostedGlass(
                 backgroundColor = AppTheme.colors.surface1.copy(alpha = 0.88f),

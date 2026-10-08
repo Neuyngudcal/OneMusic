@@ -35,8 +35,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.components.ApexHiResBadge
@@ -65,7 +63,7 @@ internal fun DetailTrackRow(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
             .padding(horizontal = 20.dp)
             .apexGroupedCardItem(index = index, total = total)
     ) {
@@ -168,7 +166,7 @@ internal fun DetailTrackRow(
                     Icon(
                         imageVector = if (track.isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                         contentDescription = if (track.isFavorite) "Bỏ yêu thích" else "Yêu thích",
-                        tint = if (track.isFavorite) ApexRose else AppTheme.colors.textSecondary,
+                        tint = if (track.isFavorite) AppTheme.colors.danger else AppTheme.colors.textSecondary,
                         modifier = Modifier.size(19.dp)
                     )
                 }
@@ -202,7 +200,7 @@ internal fun DetailTrackRow(
                         Icon(
                             imageVector = Icons.Rounded.Delete,
                             contentDescription = "Xóa khỏi playlist",
-                            tint = ApexRose.copy(alpha = 0.7f),
+                            tint = AppTheme.colors.danger.copy(alpha = 0.7f),
                             modifier = Modifier.size(18.dp)
                         )
                     }

@@ -38,7 +38,6 @@ import com.example.onemusic.ui.components.ApexConfirmDialog
 
 import com.example.onemusic.playback.AudioEffectManager
 import com.example.onemusic.ui.components.ApexEqualizerDialog
-import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.theme.apexGlassCard
 
 /**
@@ -81,7 +80,7 @@ fun SettingsScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
     ) {
         LazyColumn(
             state = listState,

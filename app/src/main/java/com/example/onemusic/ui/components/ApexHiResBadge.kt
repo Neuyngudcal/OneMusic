@@ -36,7 +36,7 @@ fun ApexHiResBadge(
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall.copy(
-                color = AppTheme.colors.onInverse,
+                color = AppTheme.colors.onInverse, // chữ tối trên nền vàng, không đổi theo theme
                 fontSize = 8.5.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 0.3.sp

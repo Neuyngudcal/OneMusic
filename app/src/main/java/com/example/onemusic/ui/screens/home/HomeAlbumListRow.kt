@@ -31,8 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.IvoryFaint
-import com.example.onemusic.theme.IvoryMuted
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.ui.utils.apexBounceClick
 
@@ -49,7 +47,7 @@ internal fun HomeAlbumsEmptyState() {
             Icon(
                 imageVector = Icons.Rounded.Album,
                 contentDescription = null,
-                tint = IvoryMuted,
+                tint = AppTheme.colors.muted,
                 modifier = Modifier.size(64.dp)
             )
             Spacer(modifier = Modifier.height(14.dp))
@@ -110,7 +108,7 @@ internal fun HomeAlbumListRow(
                         Icon(
                             imageVector = Icons.Rounded.Album,
                             contentDescription = null,
-                            tint = IvoryFaint,
+                            tint = AppTheme.colors.faint,
                             modifier = Modifier.size(34.dp)
                         )
                     }

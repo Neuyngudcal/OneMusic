@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Build
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -19,47 +20,80 @@ import androidx.core.view.WindowCompat
 import com.example.onemusic.data.local.ThemeMode
 
 // Mọi component Material (TextField, Switch, ripple, Snackbar…) lấy màu từ scheme dựng theo AppColors.
-internal fun materialColorSchemeFor(c: AppColors) = darkColorScheme(
-    primary = c.accent,
-    onPrimary = c.textPrimary,
-    primaryContainer = c.accentDark,
-    onPrimaryContainer = c.textPrimary,
-    inversePrimary = c.accentLight,
-    secondary = c.textPrimary,
-    onSecondary = c.onInverse,
-    secondaryContainer = c.surfaceActiveIndicator,
-    onSecondaryContainer = c.textPrimary,
-    tertiary = ApexCyan,
-    onTertiary = c.onInverse,
-    background = c.background,
-    onBackground = c.textPrimary,
-    surface = c.surface1,
-    onSurface = c.textPrimary,
-    surfaceVariant = c.surface2,
-    onSurfaceVariant = c.textSecondary,
-    surfaceTint = Color.Transparent,
-    surfaceBright = c.surfaceActive,
-    surfaceDim = c.background,
-    surfaceContainerLowest = c.background,
-    surfaceContainerLow = c.surfaceBase,
-    surfaceContainer = c.surface1,
-    surfaceContainerHigh = c.surface2,
-    surfaceContainerHighest = c.surfaceActive,
-    inverseSurface = c.textPrimary,
-    inverseOnSurface = c.onInverse,
-    error = ApexRose,
-    onError = c.textPrimary,
-    outline = c.borderStrong,
-    outlineVariant = c.divider,
-    scrim = c.scrim
-)
+internal fun materialColorSchemeFor(c: AppColors) =
+    if (c.isDark) darkColorScheme(
+        primary = c.accent,
+        onPrimary = c.onAccent,
+        primaryContainer = c.accentDark,
+        onPrimaryContainer = c.onAccent,
+        inversePrimary = c.accentLight,
+        secondary = c.textPrimary,
+        onSecondary = c.onInverse,
+        secondaryContainer = c.surfaceActiveIndicator,
+        onSecondaryContainer = c.textPrimary,
+        tertiary = ApexCyan,
+        onTertiary = c.onInverse,
+        background = c.background,
+        onBackground = c.textPrimary,
+        surface = c.surface1,
+        onSurface = c.textPrimary,
+        surfaceVariant = c.surface2,
+        onSurfaceVariant = c.textSecondary,
+        surfaceTint = Color.Transparent,
+        surfaceBright = c.surfaceActive,
+        surfaceDim = c.background,
+        surfaceContainerLowest = c.background,
+        surfaceContainerLow = c.surfaceBase,
+        surfaceContainer = c.surface1,
+        surfaceContainerHigh = c.surface2,
+        surfaceContainerHighest = c.surfaceActive,
+        inverseSurface = c.textPrimary,
+        inverseOnSurface = c.onInverse,
+        error = c.danger,
+        onError = c.onAccent,
+        outline = c.borderStrong,
+        outlineVariant = c.divider,
+        scrim = c.scrim
+    ) else lightColorScheme(
+        primary = c.accent,
+        onPrimary = c.onAccent,
+        primaryContainer = c.accentDark,
+        onPrimaryContainer = c.onAccent,
+        inversePrimary = c.accentLight,
+        secondary = c.textPrimary,
+        onSecondary = c.onInverse,
+        secondaryContainer = c.surfaceActiveIndicator,
+        onSecondaryContainer = c.textPrimary,
+        tertiary = ApexCyan,
+        onTertiary = c.onInverse,
+        background = c.background,
+        onBackground = c.textPrimary,
+        surface = c.surface1,
+        onSurface = c.textPrimary,
+        surfaceVariant = c.surface2,
+        onSurfaceVariant = c.textSecondary,
+        surfaceTint = Color.Transparent,
+        surfaceBright = c.surfaceActive,
+        surfaceDim = c.background,
+        surfaceContainerLowest = c.background,
+        surfaceContainerLow = c.surfaceBase,
+        surfaceContainer = c.surface1,
+        surfaceContainerHigh = c.surface2,
+        surfaceContainerHighest = c.surfaceActive,
+        inverseSurface = c.textPrimary,
+        inverseOnSurface = c.onInverse,
+        error = c.danger,
+        onError = c.onAccent,
+        outline = c.borderStrong,
+        outlineVariant = c.divider,
+        scrim = c.scrim
+    )
 
 internal val DarkMaterialColorScheme = materialColorSchemeFor(DarkAppColors)
 /** Scheme bản cũ (ngà ấm), dùng riêng cho Now Playing. */
 internal val LegacyMaterialColorScheme = materialColorSchemeFor(LegacyDarkAppColors)
 
-// TODO(bước 4): thay bằng lightColorScheme thật. Tạm thời giống tối.
-private val LightMaterialColorScheme = DarkMaterialColorScheme
+private val LightMaterialColorScheme = materialColorSchemeFor(LightAppColors)
 
 @Composable
 fun OneMusicTheme(

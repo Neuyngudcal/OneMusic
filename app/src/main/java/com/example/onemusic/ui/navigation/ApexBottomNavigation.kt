@@ -65,7 +65,6 @@ import kotlin.math.roundToInt
 import com.example.onemusic.theme.ApexGlassSurfaceBg
 import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.ShadowColor
 import com.example.onemusic.theme.SurfaceActiveIndicator
 import com.example.onemusic.theme.apexFrostedGlass
 
@@ -146,8 +145,8 @@ fun ApexBottomNavigation(
                 .shadow(
                     elevation = 16.dp,
                     shape = PillShape,
-                    ambientColor = ShadowColor,
-                    spotColor = ShadowColor
+                    ambientColor = AppTheme.colors.shadow,
+                    spotColor = AppTheme.colors.shadow
                 )
                 .clip(PillShape)
                 .apexFrostedGlass(

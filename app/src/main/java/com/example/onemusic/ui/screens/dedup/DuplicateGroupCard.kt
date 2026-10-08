@@ -38,12 +38,7 @@ import coil.compose.AsyncImage
 import com.example.onemusic.data.dedup.DuplicateAudioDetector
 import com.example.onemusic.data.dedup.DuplicateGroup
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.ApexRose
 import com.example.onemusic.theme.AvatarGreen
-import com.example.onemusic.theme.IvoryHairline
-import com.example.onemusic.theme.IvoryHigh
-import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.IvorySubtle
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.ui.utils.formatDuration
@@ -159,7 +154,7 @@ internal fun DuplicateGroupCard(
                         .minimumInteractiveComponentSize() // vùng chạm ≥ 48dp, hình giữ nguyên
                         .size(36.dp)
                         .clip(CircleShape)
-                        .background(if (isCurrent) AppTheme.colors.accent else IvorySubtle)
+                        .background(if (isCurrent) AppTheme.colors.accent else AppTheme.colors.subtle)
                         .apexBounceClick(scaleDown = 0.85f, enableHaptic = true) {
                             onPlayPreview(primary)
                         },
@@ -168,7 +163,7 @@ internal fun DuplicateGroupCard(
                     Icon(
                         imageVector = if (isCurrent && isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                         contentDescription = if (isCurrent && isPlaying) "Tạm dừng nghe thử" else "Nghe thử",
-                        tint = AppTheme.colors.textPrimary,
+                        tint = if (isCurrent) AppTheme.colors.onAccent else AppTheme.colors.textPrimary,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -187,10 +182,10 @@ internal fun DuplicateGroupCard(
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(if (isSelected) ApexRose.copy(alpha = 0.15f) else AppTheme.colors.surface2)
+                        .background(if (isSelected) AppTheme.colors.danger.copy(alpha = 0.15f) else AppTheme.colors.surface2)
                         .border(
                             0.5.dp,
-                            if (isSelected) ApexRose.copy(alpha = 0.4f) else IvoryHairline,
+                            if (isSelected) AppTheme.colors.danger.copy(alpha = 0.4f) else AppTheme.colors.hairline,
                             RoundedCornerShape(14.dp)
                         )
                         .clickable { onToggleTrack(dupTrack.id) }
@@ -202,14 +197,14 @@ internal fun DuplicateGroupCard(
                         modifier = Modifier
                             .size(24.dp)
                             .clip(CircleShape)
-                            .background(if (isSelected) ApexRose else IvoryStroke),
+                            .background(if (isSelected) AppTheme.colors.danger else AppTheme.colors.stroke),
                         contentAlignment = Alignment.Center
                     ) {
                         if (isSelected) {
                             Icon(
                                 imageVector = Icons.Rounded.Check,
                                 contentDescription = null,
-                                tint = AppTheme.colors.textPrimary,
+                                tint = AppTheme.colors.onAccent,
                                 modifier = Modifier.size(14.dp)
                             )
                         }
@@ -239,7 +234,7 @@ internal fun DuplicateGroupCard(
                                 text = dupTrack.bitRate,
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontWeight = FontWeight.Medium,
-                                    color = IvoryHigh,
+                                    color = AppTheme.colors.high,
                                     fontSize = 12.sp
                                 ),
                                 maxLines = 1
@@ -263,7 +258,7 @@ internal fun DuplicateGroupCard(
                             .minimumInteractiveComponentSize() // vùng chạm ≥ 48dp, hình giữ nguyên
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(if (isCurrent) AppTheme.colors.accent else IvorySubtle)
+                            .background(if (isCurrent) AppTheme.colors.accent else AppTheme.colors.subtle)
                             .apexBounceClick(scaleDown = 0.85f, enableHaptic = true) {
                                 onPlayPreview(dupTrack)
                             },

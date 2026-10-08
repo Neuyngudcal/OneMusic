@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.IvoryStroke
 import com.example.onemusic.theme.apexGlassCard
 import com.example.onemusic.theme.apexGroupedCardItem
 import com.example.onemusic.theme.avatarColorFor
@@ -101,7 +100,7 @@ fun LazyListScope.artistsTabContent(
                                 modifier = Modifier
                                     .size(54.dp)
                                     .clip(CircleShape)
-                                    .border(0.7.dp, IvoryStroke, CircleShape)
+                                    .border(0.7.dp, AppTheme.colors.stroke, CircleShape)
                             )
                         } else {
                             Box(

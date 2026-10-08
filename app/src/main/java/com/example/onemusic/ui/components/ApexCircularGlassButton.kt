@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.ui.utils.apexBounceClick
 import dev.chrisbanes.haze.HazeState
-import com.example.onemusic.theme.ShadowColor
 
 /**
  * Modifier helper to turn any circular element into a Clean Borderless Obsidian Glass component with Real-time GPU Haze.
@@ -35,8 +34,8 @@ fun Modifier.apexCircularGlassButton(
         .shadow(
             elevation = elevation,
             shape = CircleShape,
-            ambientColor = ShadowColor,
-            spotColor = ShadowColor
+            ambientColor = AppTheme.colors.shadow,
+            spotColor = AppTheme.colors.shadow
         )
         .clip(CircleShape)
         .apexFrostedGlass(

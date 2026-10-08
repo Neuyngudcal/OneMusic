@@ -36,10 +36,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.IvoryStroke
-import com.example.onemusic.theme.IvorySubtle
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.ShadowColor
 import com.example.onemusic.ui.utils.LocalBottomOverlayPadding
 import com.example.onemusic.ui.utils.apexBounceClick
 
@@ -70,10 +67,10 @@ fun LibraryBatchActionBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(58.dp)
-                .shadow(18.dp, PillShape, ambientColor = ShadowColor)
+                .shadow(18.dp, PillShape, ambientColor = AppTheme.colors.shadow)
                 .clip(PillShape)
                 .background(AppTheme.colors.surface1.copy(alpha = 0.95f))
-                .border(0.85.dp, IvoryStroke, PillShape)
+                .border(0.85.dp, AppTheme.colors.stroke, PillShape)
                 .padding(horizontal = 12.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -121,7 +118,7 @@ fun LibraryBatchActionBar(
                     Box(
                         modifier = Modifier
                             .clip(PillShape)
-                            .background(IvorySubtle)
+                            .background(AppTheme.colors.subtle)
                             .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
                                 onToggleSelectAll()
                             }
@@ -174,7 +171,7 @@ fun LibraryBatchActionBar(
                                     .minimumInteractiveComponentSize()
                                     .size(36.dp)
                                     .clip(CircleShape)
-                                    .background(IvoryStroke)
+                                    .background(AppTheme.colors.stroke)
                                     .apexBounceClick(scaleDown = 0.90f, enableHaptic = true) {
                                         onPlayNextSelected()
                                     },
@@ -195,7 +192,7 @@ fun LibraryBatchActionBar(
                                 .minimumInteractiveComponentSize()
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(IvoryStroke)
+                                .background(AppTheme.colors.stroke)
                                 .apexBounceClick(scaleDown = 0.92f, enableHaptic = true) {
                                     onAddToPlaylist()
                                 },

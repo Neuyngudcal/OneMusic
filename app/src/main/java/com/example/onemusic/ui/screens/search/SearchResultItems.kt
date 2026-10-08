@@ -47,11 +47,6 @@ import com.example.onemusic.data.search.MatchedAlbum
 import com.example.onemusic.data.search.MatchedArtist
 import com.example.onemusic.data.search.MatchedTrack
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.ApexRose
-import com.example.onemusic.theme.IvoryDisabled
-import com.example.onemusic.theme.IvoryFaint
-import com.example.onemusic.theme.IvoryHigh
-import com.example.onemusic.theme.IvoryStroke
 import AppTheme.colors.surfaceActiveIndicator
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.theme.apexGlassCard
@@ -99,7 +94,7 @@ internal fun SearchAlbumCard(
                     Icon(
                         imageVector = Icons.Rounded.Album,
                         contentDescription = null,
-                        tint = IvoryDisabled,
+                        tint = AppTheme.colors.disabled,
                         modifier = Modifier.size(52.dp)
                     )
                 }
@@ -157,7 +152,7 @@ internal fun ArtistRow(
                 modifier = Modifier
                     .size(68.dp)
                     .clip(CircleShape)
-                    .border(0.7.dp, IvoryStroke, CircleShape)
+                    .border(0.7.dp, AppTheme.colors.stroke, CircleShape)
             )
         } else {
             Box(
@@ -227,7 +222,7 @@ internal fun ArtistCard(
                     modifier = Modifier
                         .size(68.dp)
                         .clip(CircleShape)
-                        .border(0.7.dp, IvoryStroke, CircleShape)
+                        .border(0.7.dp, AppTheme.colors.stroke, CircleShape)
                 )
             } else {
                 Box(
@@ -355,7 +350,7 @@ internal fun TrackResultRow(
                     Text(
                         text = "\"${matchedTrack.matchedLyricSnippet}\"",
                         style = MaterialTheme.typography.labelSmall.copy(
-                            color = IvoryHigh,
+                            color = AppTheme.colors.high,
                             fontStyle = FontStyle.Italic,
                             fontSize = 11.sp
                         ),
@@ -386,7 +381,7 @@ internal fun TrackResultRow(
                 Icon(
                     imageVector = if (track.isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                     contentDescription = if (track.isFavorite) "Bỏ yêu thích" else "Yêu thích",
-                    tint = if (track.isFavorite) ApexRose else IvoryFaint,
+                    tint = if (track.isFavorite) AppTheme.colors.danger else AppTheme.colors.faint,
                     modifier = Modifier.size(20.dp)
                 )
             }

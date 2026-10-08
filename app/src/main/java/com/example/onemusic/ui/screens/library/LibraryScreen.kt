@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.library
 
+import com.example.onemusic.theme.AppTheme
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -23,7 +24,6 @@ import com.example.onemusic.data.model.Track
 import com.example.onemusic.data.repository.ArtistImageRepository
 import com.example.onemusic.data.search.LibraryGrouping
 import com.example.onemusic.theme.LocalApexHazeState
-import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.ui.components.AddToPlaylistMultipleDialog
 import com.example.onemusic.ui.components.TrackActionMenu
 import com.example.onemusic.ui.screens.detail.DetailScreen
@@ -226,7 +226,7 @@ fun LibraryScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(AppTheme.colors.background)
     ) {
         LazyColumn(
             state = listState,

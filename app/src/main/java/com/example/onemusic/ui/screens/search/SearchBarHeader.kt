@@ -53,9 +53,7 @@ import androidx.compose.ui.text.input.ImeAction
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
 import com.example.onemusic.theme.ApexPillBorderBrush
-import com.example.onemusic.theme.IvoryHigh
 import com.example.onemusic.theme.PillShape
-import com.example.onemusic.theme.ShadowColor
 
 /** Ô tìm kiếm ghim ở đầu màn hình. Nút "Tìm" trên bàn phím ẩn bàn phím rồi gọi [onSubmitSearch] (lưu từ khóa). */
 @Composable
@@ -82,7 +80,7 @@ internal fun SearchInputBar(
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 6.dp)
             .height(52.dp)
-            .shadow(elevation = 8.dp, shape = PillShape, ambientColor = ShadowColor)
+            .shadow(elevation = 8.dp, shape = PillShape, ambientColor = AppTheme.colors.shadow)
             .clip(PillShape)
             .background(AppTheme.colors.surface1.copy(alpha = 0.88f))
             .border(0.85.dp, ApexPillBorderBrush, PillShape)
@@ -96,7 +94,7 @@ internal fun SearchInputBar(
             Icon(
                 imageVector = Icons.Rounded.Search,
                 contentDescription = "Tìm kiếm",
-                tint = IvoryHigh,
+                tint = AppTheme.colors.high,
                 modifier = Modifier.size(22.dp)
             )
 

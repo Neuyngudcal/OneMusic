@@ -1,5 +1,6 @@
 package com.example.onemusic.ui.screens.settings
 
+import com.example.onemusic.theme.AppTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CopyAll
 import androidx.compose.material.icons.rounded.DeleteOutline
@@ -9,7 +10,6 @@ import androidx.compose.material.icons.rounded.Navigation
 import androidx.compose.material.icons.rounded.Refresh
 import com.example.onemusic.data.local.AppSettings
 import com.example.onemusic.data.local.SettingsPreferences
-import com.example.onemusic.theme.ApexRose
 import androidx.compose.foundation.lazy.LazyListScope
 
 /** Nhóm "Thư viện & bộ nhớ": quét nhạc, thư mục, dọn trùng lặp, xóa bộ nhớ đệm và lịch sử tìm kiếm. */
@@ -92,7 +92,7 @@ internal fun LazyListScope.settingsLibrarySection(
                 icon = Icons.Rounded.DeleteOutline,
                 title = "Xóa ảnh nghệ sĩ đã tải",
                 subtitle = "Ảnh sẽ được tải lại khi cần",
-                titleColor = ApexRose,
+                titleColor = AppTheme.colors.danger,
                 onClick = onClearArtistCache
             )
 
@@ -103,7 +103,7 @@ internal fun LazyListScope.settingsLibrarySection(
                 icon = Icons.Rounded.DeleteOutline,
                 title = "Xóa bìa động đã tải",
                 subtitle = "Giải phóng dung lượng; bìa sẽ được tải lại khi cần",
-                titleColor = ApexRose,
+                titleColor = AppTheme.colors.danger,
                 onClick = onClearMotionCache
             )
 
@@ -114,7 +114,7 @@ internal fun LazyListScope.settingsLibrarySection(
                 icon = Icons.Rounded.DeleteOutline,
                 title = "Xóa lịch sử tìm kiếm",
                 subtitle = "Xóa các từ khóa tìm kiếm gần đây",
-                titleColor = ApexRose,
+                titleColor = AppTheme.colors.danger,
                 onClick = onClearSearchHistory
             )
         }
