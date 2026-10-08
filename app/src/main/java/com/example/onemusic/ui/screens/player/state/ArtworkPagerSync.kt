@@ -112,3 +112,21 @@ internal fun rememberArtworkPagerState(
 
     return pagerState
 }
+
+/**
+ * Bài hiển thị trên Now Playing. Ở chế độ ảnh bìa theo trang pager (targetPage khi đang cuộn) để tên bài
+ * đổi cùng lúc với ảnh, không nhảy giữa chừng; ở tab Lời/Hàng đợi là bài đang phát.
+ */
+internal fun displayedTrackFor(
+    centerView: NowPlayingCenterView,
+    queue: List<Track>,
+    pagerState: PagerState,
+    track: Track?
+): Track? {
+    return if (centerView == NowPlayingCenterView.ARTWORK && queue.isNotEmpty()) {
+        val targetIdx = if (pagerState.isScrollInProgress) pagerState.targetPage else pagerState.currentPage
+        if (targetIdx in queue.indices) queue[targetIdx] else (track ?: queue.firstOrNull())
+    } else {
+        track ?: (if (queue.isNotEmpty()) queue.firstOrNull() else null)
+    }
+}
