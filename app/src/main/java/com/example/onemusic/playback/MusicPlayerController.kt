@@ -17,12 +17,12 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.extractor.flac.FlacExtractor
 import androidx.media3.extractor.mp3.Mp3Extractor
-import java.io.File
 import androidx.media3.session.MediaSession
 import com.example.onemusic.MainActivity
 import com.example.onemusic.data.local.SettingsPreferences
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.data.scanner.LrclibLyricsProvider
+import com.example.onemusic.playback.motion.MotionArtworkController
 import com.example.onemusic.playback.queue.QueueOperations
 import com.example.onemusic.playback.service.OneMusicPlaybackService
 import kotlinx.coroutines.CoroutineScope
@@ -124,140 +124,32 @@ class MusicPlayerController(
         }
     }
 
+    // Bìa động (video bìa) – player riêng, bộ nhớ đệm và việc tải nằm trong MotionArtworkController
+    private val motionArtwork = MotionArtworkController(
+        context = context,
+        scope = scope,
+        musicRepository = musicRepository,
+        settingsPreferences = settingsPreferences,
+        currentTrackId = { _playbackState.value.currentTrack?.id }
+    )
+
     // Motion Artwork State: Local video path for animated album art on Now Playing
-    private val _motionVideoPath = MutableStateFlow<String?>(null)
-    val motionVideoPath: StateFlow<String?> = _motionVideoPath.asStateFlow()
-    private var motionJob: Job? = null
+    val motionVideoPath: StateFlow<String?> = motionArtwork.motionVideoPath
 
     // Dedicated Pre-warmed Motion Artwork Player instance (Single reusable instance for 0ms instant playback)
-    var motionExoPlayer: androidx.media3.exoplayer.ExoPlayer? = null
-        private set
+    val motionExoPlayer: ExoPlayer?
+        get() = motionArtwork.player
 
     // Chỉ cho phép giải mã video bìa động khi Now Playing đang hiển thị (tránh hao pin khi chạy nền)
-    private var isMotionPlaybackAllowed = false
-
-    fun setMotionPlaybackAllowed(allowed: Boolean) {
-        isMotionPlaybackAllowed = allowed
-        motionExoPlayer?.playWhenReady = allowed
-    }
+    fun setMotionPlaybackAllowed(allowed: Boolean) = motionArtwork.setPlaybackAllowed(allowed)
 
     init {
         setupPlayer()
-        setupMotionPlayer()
-        preloadMotionCacheFromDb()
+        motionArtwork.setupPlayer()
+        motionArtwork.preloadCacheFromDb()
         setupHeadsetCallbacks()
         setupSettingsObserver()
         setupWidgetObserver()
-    }
-
-    private fun preloadMotionCacheFromDb() {
-        scope.launch(Dispatchers.IO) {
-            runCatching {
-                val downloaded = musicRepository.getAllDownloadedMotionArtworks()
-                for (entity in downloaded) {
-                    val file = File(entity.localVideoPath)
-                    if (file.exists() && file.length() > 0) {
-                        if (entity.trackId.isNotBlank()) {
-                            inMemoryMotionCache[entity.trackId] = entity.localVideoPath
-                        }
-                        if (entity.artistName.isNotBlank() && entity.albumName.isNotBlank() &&
-                            !com.example.onemusic.data.scanner.AppleMusicMotionFetcher.isGenericArtist(entity.artistName) &&
-                            !com.example.onemusic.data.scanner.AppleMusicMotionFetcher.isGenericAlbum(entity.albumName)
-                        ) {
-                            val key = "${entity.artistName.lowercase().trim()}_${entity.albumName.lowercase().trim()}"
-                            inMemoryMotionCache[key] = entity.localVideoPath
-                        }
-                    }
-                }
-                android.util.Log.d("MotionArt", "🚀 Preloaded ${downloaded.size} motion artworks into RAM cache (0ms instant access)")
-            }
-        }
-    }
-
-    private fun setupMotionPlayer() {
-        runCatching {
-            val motionLoadControl = DefaultLoadControl.Builder()
-                .setBufferDurationsMs(
-                    /* minBufferMs = */ 15_000,
-                    /* maxBufferMs = */ 30_000,
-                    /* bufferForPlaybackMs = */ 0,
-                    /* bufferForPlaybackAfterRebufferMs = */ 0
-                )
-                .setPrioritizeTimeOverSizeThresholds(true)
-                .build()
-
-            val renderersFactory = object : DefaultRenderersFactory(context) {
-                override fun buildAudioRenderers(
-                    context: Context,
-                    extensionRendererMode: Int,
-                    mediaCodecSelector: androidx.media3.exoplayer.mediacodec.MediaCodecSelector,
-                    enableDecoderFallback: Boolean,
-                    audioSink: androidx.media3.exoplayer.audio.AudioSink,
-                    eventHandler: android.os.Handler,
-                    eventListener: androidx.media3.exoplayer.audio.AudioRendererEventListener,
-                    out: java.util.ArrayList<androidx.media3.exoplayer.Renderer>
-                ) {
-                    // Do not build audio renderers for motion artwork - pure video decoding for 0ms gapless loop
-                }
-            }
-
-            motionExoPlayer = androidx.media3.exoplayer.ExoPlayer.Builder(context, renderersFactory)
-                .setLoadControl(motionLoadControl)
-                .build().apply {
-                    repeatMode = androidx.media3.common.Player.REPEAT_MODE_ONE
-                    volume = 0f
-                    playWhenReady = isMotionPlaybackAllowed
-                    trackSelectionParameters = trackSelectionParameters.buildUpon()
-                        .setTrackTypeDisabled(androidx.media3.common.C.TRACK_TYPE_AUDIO, true)
-                        .build()
-                    addListener(object : androidx.media3.common.Player.Listener {
-                        override fun onPlaybackStateChanged(state: Int) {
-                            if (state == androidx.media3.common.Player.STATE_ENDED) {
-                                seekTo(0L)
-                                playWhenReady = isMotionPlaybackAllowed
-                            }
-                        }
-
-                        override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                            android.util.Log.e("MotionArt", "Motion player error: ${error.message}, recovering...")
-                            val badPath = currentLoadedMotionPath
-                            if (badPath != null && !badPath.startsWith("http")) {
-                                runCatching { File(badPath).delete() }
-                                inMemoryMotionCache.remove(badPath)
-                            }
-                        }
-                    })
-                }
-        }
-    }
-
-    private var currentLoadedMotionPath: String? = null
-
-    private fun updateMotionPlayerMedia(pathOrUrl: String) {
-        if (currentLoadedMotionPath == pathOrUrl && motionExoPlayer?.playbackState != androidx.media3.common.Player.STATE_IDLE) {
-            return
-        }
-        currentLoadedMotionPath = pathOrUrl
-        val isNetworkStream = pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")
-        val uri = if (isNetworkStream) {
-            android.net.Uri.parse(pathOrUrl)
-        } else {
-            val file = File(pathOrUrl)
-            if (file.exists() && file.length() > 0) android.net.Uri.fromFile(file) else return
-        }
-
-        val item = if (pathOrUrl.contains(".m3u8")) {
-            androidx.media3.common.MediaItem.Builder()
-                .setUri(uri)
-                .setMimeType(androidx.media3.common.MimeTypes.APPLICATION_M3U8)
-                .build()
-        } else {
-            androidx.media3.common.MediaItem.fromUri(uri)
-        }
-
-        motionExoPlayer?.setMediaItem(item)
-        motionExoPlayer?.prepare()
-        motionExoPlayer?.playWhenReady = isMotionPlaybackAllowed
     }
 
     private fun setupWidgetObserver() {
@@ -304,18 +196,7 @@ class MusicPlayerController(
         scope.launch {
             settingsPreferences.settingsFlow.collect { settings ->
                 updateReplayGainForTrack(_playbackState.value.currentTrack)
-                if (!settings.isMotionArtworkEnabled) {
-                    withContext(Dispatchers.Main) {
-                        _motionVideoPath.value = null
-                        motionExoPlayer?.stop()
-                        motionExoPlayer?.clearMediaItems()
-                        currentLoadedMotionPath = null
-                    }
-                } else if (_motionVideoPath.value == null) {
-                    _playbackState.value.currentTrack?.let { current ->
-                        fetchMotionArtworkForTrack(current)
-                    }
-                }
+                motionArtwork.onSettingsChanged(settings.isMotionArtworkEnabled, _playbackState.value.currentTrack)
             }
         }
     }
@@ -552,7 +433,6 @@ class MusicPlayerController(
     }
 
     private var preloadJob: Job? = null
-    private val inMemoryMotionCache = java.util.concurrent.ConcurrentHashMap<String, String>()
 
     private fun preloadSurroundingTracks(queue: List<Track>, currentIndex: Int) {
         if (queue.isEmpty()) return
@@ -570,161 +450,24 @@ class MusicPlayerController(
             }
 
             // Predictive Motion Artwork Preload: download next & prev song's video before it plays
-            if (settingsPreferences.getSettings().isMotionArtworkEnabled) {
-                nextTrack?.let { next ->
-                    val cached = inMemoryMotionCache[next.id] ?: musicRepository.getLocalMotionVideoPath(next)
-                    if (cached != null) {
-                        inMemoryMotionCache[next.id] = cached
-                    } else {
-                        val result = musicRepository.getMotionArtwork(next)
-                        if (result != null && result.hasMotion && result.isDownloaded && result.localVideoPath.isNotBlank()) {
-                            inMemoryMotionCache[next.id] = result.localVideoPath
-                        }
-                    }
-                }
-                if (prevTrack?.id != nextTrack?.id) {
-                    prevTrack?.let { prev ->
-                        val cached = inMemoryMotionCache[prev.id] ?: musicRepository.getLocalMotionVideoPath(prev)
-                        if (cached != null) {
-                            inMemoryMotionCache[prev.id] = cached
-                        }
-                    }
-                }
-            }
+            motionArtwork.prefetchNeighbors(nextTrack, prevTrack)
         }
     }
 
-    /**
-     * Fetch animated/motion album artwork for a track.
-     * Checks fast in-memory cache first (0ms), then local disk cache, then Apple Music.
-     * Updates motionVideoPath StateFlow for UI to observe.
-     */
-    private fun fetchMotionArtworkForTrack(track: Track) {
-        motionJob?.cancel()
-
-        // If Motion Artwork is disabled by user in Settings, clear and exit immediately
-        if (!settingsPreferences.getSettings().isMotionArtworkEnabled) {
-            _motionVideoPath.value = null
-            motionExoPlayer?.stop()
-            motionExoPlayer?.clearMediaItems()
-            currentLoadedMotionPath = null
-            return
-        }
-
-        // 1. Kiểm tra In-Memory Cache tức thì (0ms) bằng track ID hoặc Artist+Album (không bao giờ dùng albumName trần)
-        val cleanAlbum = track.album.lowercase().trim()
-        val cleanArtist = track.artist.lowercase().trim()
-        val isGeneric = com.example.onemusic.data.scanner.AppleMusicMotionFetcher.isGenericAlbum(cleanAlbum) ||
-                com.example.onemusic.data.scanner.AppleMusicMotionFetcher.isGenericArtist(cleanArtist)
-        val artistAlbumKey = if (!isGeneric) "${cleanArtist}_${cleanAlbum}" else null
-
-        val memCached = inMemoryMotionCache[track.id]
-            ?: (if (artistAlbumKey != null) inMemoryMotionCache[artistAlbumKey] else null)
-
-        if (memCached != null && File(memCached).exists() && File(memCached).length() > 0) {
-            _motionVideoPath.value = memCached
-            updateMotionPlayerMedia(memCached)
-            android.util.Log.d("MotionArt", "⚡ Instant in-memory cache hit (0ms): $memCached")
-            return
-        }
-
-        // 2. Nếu chưa có trong RAM, RESET NGAY _motionVideoPath để không bao giờ bị kẹt ảnh của bài hát trước
-        _motionVideoPath.value = null
-        motionExoPlayer?.stop()
-        motionExoPlayer?.clearMediaItems()
-        currentLoadedMotionPath = null
-
-        android.util.Log.d("MotionArt", "🎬 Fetching motion art for: ${track.title} - ${track.artist}")
-        motionJob = scope.launch(Dispatchers.IO) {
-            val cachedPath = musicRepository.getLocalMotionVideoPath(track)
-            if (cachedPath != null) {
-                inMemoryMotionCache[track.id] = cachedPath
-                if (artistAlbumKey != null) inMemoryMotionCache[artistAlbumKey] = cachedPath
-                android.util.Log.d("MotionArt", "✅ Disk cache hit! Video at: $cachedPath")
-                withContext(Dispatchers.Main) {
-                    if (_playbackState.value.currentTrack?.id == track.id) {
-                        _motionVideoPath.value = cachedPath
-                        updateMotionPlayerMedia(cachedPath)
-                    }
-                }
-                return@launch
-            }
-
-            android.util.Log.d("MotionArt", "🔍 No cache, querying Apple Music...")
-
-            // 3. Nếu chưa có trên đĩa, truy vấn Apple Music để phát luồng HLS tức thì và tải ngầm vào bộ nhớ
-            val result = runCatching {
-                musicRepository.getMotionArtwork(track)
-            }.onFailure { e ->
-                android.util.Log.e("MotionArt", "❌ Fetch error: ${e.message}")
-            }.getOrNull()
-
-            if (result != null && result.hasMotion) {
-                val streamOrLocal = if (result.isDownloaded && result.localVideoPath.isNotBlank() && File(result.localVideoPath).exists()) {
-                    result.localVideoPath
-                } else if (result.motionSquareUrl.isNotBlank()) {
-                    result.motionSquareUrl
-                } else null
-
-                if (streamOrLocal != null) {
-                    inMemoryMotionCache[track.id] = streamOrLocal
-                    if (artistAlbumKey != null) inMemoryMotionCache[artistAlbumKey] = streamOrLocal
-                    android.util.Log.d("MotionArt", "⚡ Instant Motion stream/file ready: $streamOrLocal")
-                    withContext(Dispatchers.Main) {
-                        if (_playbackState.value.currentTrack?.id == track.id) {
-                            _motionVideoPath.value = streamOrLocal
-                            updateMotionPlayerMedia(streamOrLocal)
-                        }
-                    }
-                }
-            } else {
-                withContext(Dispatchers.Main) {
-                    if (_playbackState.value.currentTrack?.id == track.id) {
-                        _motionVideoPath.value = null
-                        motionExoPlayer?.stop()
-                        motionExoPlayer?.clearMediaItems()
-                        currentLoadedMotionPath = null
-                    }
-                }
-            }
-        }
-    }
+    private fun fetchMotionArtworkForTrack(track: Track) = motionArtwork.fetchForTrack(track)
 
     /**
      * Remove motion artwork for the currently playing track and update UI immediately.
      */
     fun removeMotionArtworkForCurrentTrack() {
         val track = _playbackState.value.currentTrack ?: return
-        scope.launch(Dispatchers.IO) {
-            musicRepository.removeMotionArtworkForTrack(track)
-            inMemoryMotionCache.remove(track.id)
-            val cleanAlbum = track.album.lowercase().trim()
-            val cleanArtist = track.artist.lowercase().trim()
-            inMemoryMotionCache.remove("${cleanArtist}_${cleanAlbum}")
-            withContext(Dispatchers.Main) {
-                _motionVideoPath.value = null
-                motionExoPlayer?.stop()
-                motionExoPlayer?.clearMediaItems()
-                currentLoadedMotionPath = null
-            }
-        }
+        motionArtwork.removeForTrack(track)
     }
 
     /**
      * Completely wipe all motion artwork cache from RAM and disk.
      */
-    fun clearMotionArtworkCache() {
-        scope.launch(Dispatchers.IO) {
-            inMemoryMotionCache.clear()
-            musicRepository.clearAllMotionArtworkCache()
-            withContext(Dispatchers.Main) {
-                _motionVideoPath.value = null
-                motionExoPlayer?.stop()
-                motionExoPlayer?.clearMediaItems()
-                currentLoadedMotionPath = null
-            }
-        }
-    }
+    fun clearMotionArtworkCache() = motionArtwork.clearCache()
 
     fun setQueue(tracks: List<Track>, startIndex: Int = 0, autoPlay: Boolean = true) {
         if (tracks.isEmpty()) return
@@ -1259,7 +1002,7 @@ class MusicPlayerController(
         }
         volumeFader.cancel()
         lyricsJob?.cancel()
-        motionJob?.cancel()
+        motionArtwork.cancelPendingFetch()
         preloadJob?.cancel()
         stopProgressTracker()
         audioOutputManager.release()
@@ -1267,8 +1010,7 @@ class MusicPlayerController(
         mediaSession = null
         try { exoPlayer?.release() } catch (_: Exception) {}
         exoPlayer = null
-        try { motionExoPlayer?.release() } catch (_: Exception) {}
-        motionExoPlayer = null
+        motionArtwork.releasePlayer()
         audioEffectManager.release()
         synchronized(MusicPlayerController::class.java) {
             if (instance === this) {
