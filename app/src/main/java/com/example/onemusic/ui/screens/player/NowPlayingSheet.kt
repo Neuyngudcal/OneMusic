@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Lyrics
-import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,14 +39,11 @@ import com.example.onemusic.playback.AudioEffectManager
 import com.example.onemusic.playback.AudioOutputManager
 import com.example.onemusic.playback.PlaybackState
 import com.example.onemusic.theme.ObsidianBlack
-import com.example.onemusic.ui.components.ApexEqualizerDialog
-import com.example.onemusic.ui.components.ApexTrackActionSheet
-import com.example.onemusic.ui.components.TrackDetailsDialog
 import com.example.onemusic.ui.screens.player.backdrop.NowPlayingBackdrop
 import com.example.onemusic.ui.screens.player.controls.NowPlayingControlsDeck
 import com.example.onemusic.ui.screens.player.dialogs.FavoriteToastBanner
-import com.example.onemusic.ui.screens.player.dialogs.PlaybackSpeedDialog
-import com.example.onemusic.ui.screens.player.dialogs.SleepTimerDialog
+import com.example.onemusic.ui.screens.player.dialogs.NowPlayingDialogLayers
+import com.example.onemusic.ui.screens.player.dialogs.NowPlayingDialogsState
 import com.example.onemusic.ui.screens.player.state.rememberArtworkPagerState
 import com.example.onemusic.ui.screens.player.state.rememberCenterViewAutoScroll
 import com.example.onemusic.ui.screens.player.state.rememberControlsDeckVisibility
@@ -55,6 +51,7 @@ import com.example.onemusic.ui.screens.player.state.rememberNowPlayingSheetState
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 
 
@@ -125,11 +122,7 @@ fun NowPlayingSheet(
 
     val track = playbackState.currentTrack
     var centerView by remember { mutableStateOf(NowPlayingCenterView.ARTWORK) }
-    var showSleepTimerDialog by remember { mutableStateOf(false) }
-    var showTrackDetailsDialog by remember { mutableStateOf(false) }
-    var showEqualizerDialog by remember { mutableStateOf(false) }
-    var isSpeedMenuOpen by remember { mutableStateOf(false) }
-    var showOptionsMenu by remember { mutableStateOf(false) }
+    val dialogs = remember { NowPlayingDialogsState() }
     var favoriteToastMessage by remember { mutableStateOf<String?>(null) }
 
     var favoriteToastJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
@@ -200,8 +193,8 @@ fun NowPlayingSheet(
     )
 
     BackHandler {
-        if (showSleepTimerDialog) {
-            showSleepTimerDialog = false
+        if (dialogs.showSleepTimerDialog) {
+            dialogs.showSleepTimerDialog = false
         } else if (centerView != NowPlayingCenterView.ARTWORK) {
             centerView = NowPlayingCenterView.ARTWORK
         } else {
@@ -256,7 +249,7 @@ fun NowPlayingSheet(
             hazeState = nowPlayingHazeState,
             isSheetFullyVisible = !sheetState.isDismissing,
             controlsDeckHeight = controlsDeckHeightDp,
-            onArtworkLongClick = { showTrackDetailsDialog = true }
+            onArtworkLongClick = { dialogs.showTrackDetailsDialog = true }
         )
 
         // LAYER 2: ONE PAGE FLOATING INTERACTIVE LAYER (Pull handle, In-place Lyrics/Queue, and Collapsible Master Controls)
@@ -303,10 +296,10 @@ fun NowPlayingSheet(
                 onToggleShuffle = onToggleShuffle,
                 onCycleRepeat = onCycleRepeat,
                 onToggleAutoplay = onToggleAutoplay,
-                onOpenSpeedMenu = { isSpeedMenuOpen = true },
-                onOpenSleepTimer = { showSleepTimerDialog = true },
-                onOpenDetails = { showTrackDetailsDialog = true },
-                onOpenOptions = { showOptionsMenu = true },
+                onOpenSpeedMenu = { dialogs.isSpeedMenuOpen = true },
+                onOpenSleepTimer = { dialogs.showSleepTimerDialog = true },
+                onOpenDetails = { dialogs.showTrackDetailsDialog = true },
+                onOpenOptions = { dialogs.showOptionsMenu = true },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -322,12 +315,12 @@ fun NowPlayingSheet(
                 playbackState = playbackState,
                 positionState = positionState,
                 appSettings = appSettings,
-                isEqualizerOpen = showEqualizerDialog,
+                isEqualizerOpen = dialogs.showEqualizerDialog,
                 hazeState = nowPlayingHazeState,
                 onDeckHeightMeasured = { controlsDeckHeightPx = it },
                 onToggleFavorite = handleToggleFavorite,
-                onOpenOptions = { showOptionsMenu = true },
-                onOpenTrackDetails = { showTrackDetailsDialog = true },
+                onOpenOptions = { dialogs.showOptionsMenu = true },
+                onOpenTrackDetails = { dialogs.showTrackDetailsDialog = true },
                 onSeek = onSeek,
                 onPrevious = {
                     val now = android.os.SystemClock.elapsedRealtime()
@@ -345,87 +338,30 @@ fun NowPlayingSheet(
                     }
                 },
                 onCenterViewChange = { centerView = it },
-                onOpenEqualizer = { showEqualizerDialog = true }
+                onOpenEqualizer = { dialogs.showEqualizerDialog = true }
             )
         }
 
-        // LAYER 3: Playback Speed Selection Dialog
-        if (isSpeedMenuOpen) {
-            PlaybackSpeedDialog(
-                currentSpeed = playbackState.playbackSpeed,
-                hazeState = nowPlayingHazeState,
-                onSelectSpeed = { speed -> onSetPlaybackSpeed?.invoke(speed) },
-                onDismiss = { isSpeedMenuOpen = false }
-            )
-        }
-
-        // LAYER 4: Sleep Timer Dialog
-        if (showSleepTimerDialog) {
-            SleepTimerDialog(
-                sleepTimerMinutes = playbackState.sleepTimerMinutes,
-                sleepTimerRemainingSeconds = playbackState.sleepTimerRemainingSeconds,
-                hazeState = nowPlayingHazeState,
-                onSetSleepTimer = onSetSleepTimer,
-                onSetSleepTimerEndOfTrack = onSetSleepTimerEndOfTrack,
-                onCancelSleepTimer = onCancelSleepTimer,
-                onDismiss = { showSleepTimerDialog = false }
-            )
-        }
-
-        // LAYER 5: Track Audio Inspector Dialog
-        val currentInspectedTrack = if (queue.isNotEmpty() && pagerState.currentPage in queue.indices) queue[pagerState.currentPage] else track
-        if (showTrackDetailsDialog && currentInspectedTrack != null) {
-            TrackDetailsDialog(
-                track = currentInspectedTrack,
-                onDismiss = { showTrackDetailsDialog = false }
-            )
-        }
-
-        // LAYER 6: Equalizer & SoundAlive DSP Dialog
-        if (showEqualizerDialog && audioEffectManager != null) {
-            ApexEqualizerDialog(
-                audioEffectManager = audioEffectManager,
-                onDismiss = { showEqualizerDialog = false }
-            )
-        }
-
-        // LAYER 7: OneMusic Apex Prism Track Action Sheet (1:1 Apple Music Modal Bottom Sheet)
-        val actionSheetTrack = displayedTrack ?: track
-        if (showOptionsMenu && actionSheetTrack != null) {
-            ApexTrackActionSheet(
-                track = actionSheetTrack,
-                onDismissRequest = { showOptionsMenu = false },
-                onToggleFavorite = { trackId ->
-                    val isCurrentlyFav = actionSheetTrack.isFavorite
-                    handleToggleFavorite(trackId, isCurrentlyFav)
-                },
-                onAddToPlaylist = onAddToPlaylist,
-                onDeleteTrack = { trk ->
-                    // FIX: Trước đây luôn xóa theo playbackState.currentIndex (bài đang phát),
-                    // bỏ qua tham số trk (bài thực sự đang hiển thị trong Action Sheet, có thể
-                    // khác bài đang phát khi người dùng vừa vuốt xem trước bài kế/trước).
-                    // Ưu tiên dùng pagerState.currentPage (vị trí đang xem trước trong pager) vì
-                    // đó là chỉ số chính xác; chỉ dùng indexOfFirst theo id làm phương án dự phòng
-                    // khi hàng đợi có 2 bài trùng track.id và pager không khớp trk.
-                    val targetIndex = if (pagerState.currentPage in playbackState.queue.indices &&
-                        playbackState.queue[pagerState.currentPage].id == trk.id) {
-                        pagerState.currentPage
-                    } else {
-                        playbackState.queue.indexOfFirst { it.id == trk.id }
-                    }
-                    if (targetIndex != -1) {
-                        onRemoveQueueItem?.invoke(targetIndex)
-                    } else {
-                        onRemoveQueueItem?.invoke(playbackState.currentIndex)
-                    }
-                },
-                onOpenCredits = { showTrackDetailsDialog = true },
-                onOpenSleepTimer = { showSleepTimerDialog = true },
-                hasMotionArtwork = (motionVideoPath != null && track?.id == actionSheetTrack.id),
-                onRemoveMotionArtwork = onRemoveMotionArtwork,
-                hazeState = nowPlayingHazeState
-            )
-        }
+        // LAYER 3–7: tốc độ phát, hẹn giờ ngủ, thông tin bài, EQ, bảng thao tác bài (xem dialogs/NowPlayingDialogLayers.kt)
+        NowPlayingDialogLayers(
+            dialogs = dialogs,
+            playbackState = playbackState,
+            queue = queue,
+            pagerState = pagerState,
+            track = track,
+            displayedTrack = displayedTrack,
+            audioEffectManager = audioEffectManager,
+            motionVideoPath = motionVideoPath,
+            hazeState = nowPlayingHazeState,
+            onSetPlaybackSpeed = onSetPlaybackSpeed,
+            onSetSleepTimer = onSetSleepTimer,
+            onSetSleepTimerEndOfTrack = onSetSleepTimerEndOfTrack,
+            onCancelSleepTimer = onCancelSleepTimer,
+            onToggleFavorite = handleToggleFavorite,
+            onAddToPlaylist = onAddToPlaylist,
+            onRemoveQueueItem = onRemoveQueueItem,
+            onRemoveMotionArtwork = onRemoveMotionArtwork
+        )
 
         // LAYER 8: Floating Favorite Toast Banner (1:1 Apple Music Floating Squircle Pill)
         FavoriteToastBanner(
