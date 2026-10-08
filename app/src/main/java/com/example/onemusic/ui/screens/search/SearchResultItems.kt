@@ -47,7 +47,6 @@ import com.example.onemusic.data.search.MatchedAlbum
 import com.example.onemusic.data.search.MatchedArtist
 import com.example.onemusic.data.search.MatchedTrack
 import com.example.onemusic.ui.utils.apexBounceClick
-import AppTheme.colors.surfaceActiveIndicator
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.theme.apexGlassCard
 
