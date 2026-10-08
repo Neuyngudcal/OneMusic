@@ -565,7 +565,7 @@ fun playNextTracks(tracks: List<Track>) {
 
 Làm dần, ưu tiên file nào **sắp phải sửa** thì tách trước.
 
-### 7.1 `MainActivity.kt` (806 dòng)
+### 7.1 `MainActivity.kt` (806 dòng) ✅ Đã xong (08/10/2026)
 
 ```
 MainActivity.kt                   (~250)  Activity, splash, nhận intent mở file nhạc, xin quyền thông báo
@@ -577,6 +577,15 @@ ui/main/PlaylistM3uLaunchers.kt   (~45)   Launcher xuất/nhập M3U8           
 ```
 
 Package `ui/main` đã có sẵn bên thư mục test (`app/src/test/.../ui/main/`). Lưu ý: file test `MainScreenViewModelTest.kt` thực ra chứa class `MusicRepositoryTest` – nhân tiện đổi tên file cho khớp (PR riêng).
+
+**Kết quả thực tế (08/10/2026) ✅ Đã xong về code – ⚠️ còn chờ build Android + smoke test:** `MainActivity.kt` 806 → 179 dòng (chỉ còn Activity: splash, mở tệp nhạc từ ngoài, quyền thông báo, theo dõi thẻ nhớ). `OneMusicApp` chuyển sang package `ui.main` (public như cũ, `MainActivity` thêm 1 import):
+- `ui/main/OneMusicApp.kt` (247): state điều hướng (tab, Now Playing, các lớp phủ, ô tìm kiếm), Snackbar dùng chung, khôi phục hàng đợi lúc mở app, ẩn/hiện thanh hệ thống, `BackHandler`, `CompositionLocalProvider`.
+- `ui/main/MainTabsHost.kt` (206): `AnimatedContent` 4 tab + `SaveableStateHolder`.
+- `ui/main/BottomControlsOverlay.kt` (164): `BoxScope.BottomControlsOverlay` – chỉ báo quét, NowBar, thanh tab, Snackbar; báo chiều cao thật qua `onHeightMeasured`.
+- `ui/main/AppOverlays.kt` (141): Thư mục nhạc, Dọn trùng lặp, Now Playing (kèm `LaunchedEffect` cho phép video bìa động chạy), hộp thoại thêm vào playlist.
+- `ui/main/PlaylistM3uLaunchers.kt` (90): `rememberPlaylistM3uLaunchers(...)` trả về `exportPlaylist` / `importPlaylist`; giữ luôn `playlistToExport` (trước ở `OneMusicApp`, chỉ launcher dùng).
+- Kiểm tra: `git diff --color-moved` – mọi dòng không phải "di chuyển nguyên vẹn" đều là thay phép gán state bằng callback; `ui/main/` biên dịch thử được với Compose Desktop (stub các màn hình theo chữ ký thật).
+- Đã đổi tên `MainScreenViewModelTest.kt` → `MusicRepositoryTest.kt` (commit riêng, giữ package).
 
 ### 7.2 `AppleMusicMotionFetcher.kt` (843 dòng)
 
