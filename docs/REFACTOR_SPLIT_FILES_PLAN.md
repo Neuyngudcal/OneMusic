@@ -613,7 +613,7 @@ data/scanner/motion/
 - **Test mới** `app/src/test/.../data/scanner/motion/MotionFetcherHelpersTest.kt` (13 test, trước đây fetcher không có test nào): Levenshtein, `resolveUrl`, chọn biến thể HLS (ưu tiên AVC ≤ 1080p), đọc `EXT-X-MAP`, đọc JSON editorialVideo (ưu tiên vuông, bỏ host không phải Apple), `sanitizeQuery`, chấm điểm kết quả iTunes.
 - Kiểm tra: `git diff --color-moved`; bản gốc và bản mới cùng biên dịch được với một bộ stub Android; 13 test chạy đạt bằng JUnit + kotlinx-serialization-json thật.
 
-### 7.3 `ReplayGainExtractor.kt` (634 dòng – đã có test)
+### 7.3 `ReplayGainExtractor.kt` (634 dòng – đã có test) ✅ Đã xong (08/10/2026)
 
 ```
 data/scanner/replaygain/
@@ -626,6 +626,11 @@ data/scanner/replaygain/
 ```
 
 `LocalMusicScanner` gọi `ReplayGainExtractor.extract`; test gọi thêm `parseGainString`, `parseItunNorm`, `parseR128Gain` → **giữ các hàm public này trên `ReplayGainExtractor`** (bản mới chỉ gọi sang file tương ứng), nơi gọi và test không cần sửa. Các parser con đặt `internal`.
+
+**Kết quả thực tế (08/10/2026):** `ReplayGainExtractor.kt` 634 → 98 dòng.
+- Giống 7.2: `ReplayGainExtractor` và `ReplayGainData` **giữ ở package `data.scanner`** (nơi gọi và test không đổi); parser vào package con `data/scanner/replaygain/`, đều `internal object`: `FlacVorbisParser.kt` (144), `Id3v2Parser.kt` (292), `Mp4AtomParser.kt` (52), `OggOpusParser.kt` (42), `GainValueParsers.kt` (60).
+- Thân hàm chép nguyên văn; gọi chéo giữa các parser bằng import thành viên object (vd `import ...GainValueParsers.parseGainString`) nên không phải sửa dòng nào. Các hàm public cũ (`parseGainString`, `parseR128Gain`, `parseItunNorm`, `parseVorbisCommentBlock`) giữ trên `ReplayGainExtractor`, chỉ gọi sang parser.
+- Kiểm tra (JVM thuần, không cần Android): `ReplayGainExtractorTest` 5/5; **test so sánh** bản gốc với bản mới trên 40.000 đầu vào (FLAC/ID3v2.2–2.4/MP4/OGG/Opus dựng ngẫu nhiên, byte rác, tệp bị cắt, 10 phần mở rộng) + 15.000 chuỗi giá trị → kết quả giống hệt (≈14.000 đầu vào có dữ liệu thật). Test so sánh bắt được lỗi khi cố tình sửa 1 ký tự trong chuỗi `origin`.
 
 ### 7.4 `MusicSearchEngine.kt` (572 dòng – đã có test, dễ nhất)
 
