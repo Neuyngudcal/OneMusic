@@ -1,6 +1,5 @@
 package com.example.onemusic.ui.screens.player
 
-
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -17,7 +16,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,8 +33,6 @@ import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -60,28 +56,30 @@ import com.example.onemusic.data.model.Track
 import com.example.onemusic.playback.AudioEffectManager
 import com.example.onemusic.playback.AudioOutputManager
 import com.example.onemusic.playback.PlaybackState
+import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.ui.components.ApexEqualizerDialog
 import com.example.onemusic.ui.components.ApexTrackActionSheet
 import com.example.onemusic.ui.components.TrackDetailsDialog
 import com.example.onemusic.ui.screens.player.backdrop.NowPlayingBackdrop
 import com.example.onemusic.ui.screens.player.controls.AudioQualityBadge
 import com.example.onemusic.ui.screens.player.controls.MasterPlaybackControls
-import com.example.onemusic.ui.screens.player.controls.NowPlayingTrackHeader
-import com.example.onemusic.ui.screens.player.controls.rememberAudioQualityInfo
 import com.example.onemusic.ui.screens.player.controls.NowPlayingActionDock
 import com.example.onemusic.ui.screens.player.controls.NowPlayingProgressSection
-import com.example.onemusic.ui.screens.player.lyrics.NowPlayingLyricsPane
-import com.example.onemusic.ui.screens.player.queue.NowPlayingQueuePane
+import com.example.onemusic.ui.screens.player.controls.NowPlayingTrackHeader
+import com.example.onemusic.ui.screens.player.controls.rememberAudioQualityInfo
 import com.example.onemusic.ui.screens.player.dialogs.FavoriteToastBanner
 import com.example.onemusic.ui.screens.player.dialogs.PlaybackSpeedDialog
 import com.example.onemusic.ui.screens.player.dialogs.SleepTimerDialog
+import com.example.onemusic.ui.screens.player.lyrics.NowPlayingLyricsPane
+import com.example.onemusic.ui.screens.player.queue.NowPlayingQueuePane
 import com.example.onemusic.ui.screens.player.state.rememberArtworkPagerState
+import com.example.onemusic.ui.screens.player.state.rememberCenterViewAutoScroll
 import com.example.onemusic.ui.screens.player.state.rememberControlsDeckVisibility
 import com.example.onemusic.ui.screens.player.state.rememberNowPlayingSheetState
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.example.onemusic.theme.ObsidianBlack
+
 
 /**
  * Modern Fullscreen Music Player (Now Playing Sheet) - ONE PAGE ARCHITECTURE
@@ -213,84 +211,15 @@ fun NowPlayingSheet(
     fun Modifier.sheetDragToDismiss(enabled: Boolean = true): Modifier =
         then(sheetState.dragToDismissModifier(enabled) { pagerState.isScrollInProgress })
 
-    // derivedStateOf: chỉ báo thay đổi khi SANG CÂU MỚI, không phải mỗi 40ms khi vị trí đổi
-    val lyricLines = track?.lyrics.orEmpty()
-    val activeLyricIndex by remember(lyricLines) {
-        derivedStateOf {
-            // indexOfLast trả về -1 khi chưa tới câu nào (đoạn nhạc dạo) → không dòng nào sáng
-            if (lyricLines.isEmpty()) -1
-            else lyricLines.indexOfLast { it.timestampMs <= positionState.value + 60L }
-        }
-    }
-
-    // Theo dõi trạng thái trước đó để phát hiện khoảnh khắc vừa chuyển sang LYRICS hoặc QUEUE
-    var previousCenterView by remember { mutableStateOf(centerView) }
-
-    // User drag detection for lyrics to avoid interrupting manual reading
-    val isLyricsDragged by lyricsListState.interactionSource.collectIsDraggedAsState()
-    var lastLyricsUserScrollTimeMs by remember { mutableLongStateOf(0L) }
-
-    // Tính "người dùng đang đọc" từ lúc cuộn DỪNG HẲN (kể cả sau khi hất/fling), không phải lúc nhấc tay
-    var isUserScrollingLyrics by remember { mutableStateOf(false) }
-
-    LaunchedEffect(isLyricsDragged) {
-        if (isLyricsDragged) {
-            isUserScrollingLyrics = true
-            lastLyricsUserScrollTimeMs = System.currentTimeMillis()
-        }
-    }
-
-    LaunchedEffect(lyricsListState.isScrollInProgress) {
-        if (!lyricsListState.isScrollInProgress && isUserScrollingLyrics) {
-            isUserScrollingLyrics = false
-            lastLyricsUserScrollTimeMs = System.currentTimeMillis()
-        }
-    }
-
-    LaunchedEffect(centerView) {
-        if (centerView == NowPlayingCenterView.LYRICS && previousCenterView != NowPlayingCenterView.LYRICS) {
-            // Nhảy ngay lập tức đến câu hát hiện tại vào trọng tâm quang học
-            if (track != null && track.lyrics.isNotEmpty() && activeLyricIndex in track.lyrics.indices) {
-                lyricsListState.scrollToItem(activeLyricIndex)
-            }
-        } else if (centerView == NowPlayingCenterView.QUEUE && previousCenterView != NowPlayingCenterView.QUEUE) {
-            // Nhảy ngay lập tức đến bài hát đang phát trong hàng đợi
-            if (playbackState.queue.isNotEmpty() && playbackState.currentIndex in playbackState.queue.indices) {
-                queueListState.scrollToItem((playbackState.currentIndex - 1).coerceAtLeast(0))
-            }
-        }
-        previousCenterView = centerView
-    }
-
-    LaunchedEffect(activeLyricIndex) {
-        // Chỉ chạy animation cuộn định tâm khi đang ở màn hình Lyrics và người dùng không đang tự cuộn
-        if (centerView == NowPlayingCenterView.LYRICS && track != null && track.lyrics.isNotEmpty() && activeLyricIndex in track.lyrics.indices) {
-            val isUserReadingAhead = isLyricsDragged || (System.currentTimeMillis() - lastLyricsUserScrollTimeMs < 3500L)
-            if (!isUserReadingAhead && !lyricsListState.isScrollInProgress && previousCenterView == NowPlayingCenterView.LYRICS) {
-                lyricsListState.animateScrollToItem(activeLyricIndex)
-            }
-        }
-    }
-
-    // Đổi bài → đưa danh sách lời về đầu, bỏ trạng thái "đang đọc" của bài cũ.
-    // Bỏ qua lần chạy đầu để không đè lên việc cuộn tới câu đang hát khi mở sheet ở tab Lời.
-    var lastLyricsTrackId by remember { mutableStateOf(track?.id) }
-    LaunchedEffect(track?.id) {
-        if (track?.id != lastLyricsTrackId) {
-            lastLyricsTrackId = track?.id
-            lyricsListState.scrollToItem(0)
-            lastLyricsUserScrollTimeMs = 0L
-        }
-    }
-
-    LaunchedEffect(playbackState.currentIndex) {
-        // Cuộn mượt mà đến bài hát mới khi đổi bài trong lúc đang xem hàng đợi
-        if (centerView == NowPlayingCenterView.QUEUE && playbackState.queue.isNotEmpty()) {
-            if (!queueListState.isScrollInProgress && previousCenterView == NowPlayingCenterView.QUEUE) {
-                queueListState.animateScrollToItem((playbackState.currentIndex - 1).coerceAtLeast(0))
-            }
-        }
-    }
+    // Câu đang hát + tự cuộn Lời / Hàng đợi (xem state/CenterViewAutoScroll.kt)
+    val centerAutoScroll = rememberCenterViewAutoScroll(
+        track = track,
+        playbackState = playbackState,
+        centerView = centerView,
+        positionState = positionState,
+        lyricsListState = lyricsListState,
+        queueListState = queueListState
+    )
 
     BackHandler {
         if (showSleepTimerDialog) {
@@ -421,10 +350,10 @@ fun NowPlayingSheet(
                                 track = track,
                                 listState = lyricsListState,
                                 nestedScrollConnection = deckVisibility.lyricsNestedScrollConnection,
-                                activeLyricIndex = { activeLyricIndex },
+                                activeLyricIndex = { centerAutoScroll.activeLyricIndex },
                                 positionState = positionState,
                                 onSeekToLine = { index, seekTime ->
-                                    lastLyricsUserScrollTimeMs = 0L
+                                    centerAutoScroll.resetLyricsUserScroll()
                                     scope.launch {
                                         lyricsListState.animateScrollToItem(index)
                                     }
