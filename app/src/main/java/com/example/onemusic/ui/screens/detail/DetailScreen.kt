@@ -72,6 +72,10 @@ fun DetailScreen(
     val listState = rememberLazyListState()
     // Đã cuộn qua phần ảnh bìa + tên (item đầu) → hiện tên trên thanh trên cùng, kèm nền tối
     val showTopTitle by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    // Ảnh bìa còn rõ ngay dưới thanh trên cùng (cuộn thêm thì ảnh mờ dần về đen) → icon có thể đổi đen theo ảnh
+    val isTopBarOverArtwork by remember {
+        derivedStateOf { listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset < 240 }
+    }
     val topBarBackgroundAlpha by animateFloatAsState(
         targetValue = if (showTopTitle) 0.85f else 0f,
         label = "detail_top_bar_bg"
@@ -146,7 +150,8 @@ fun DetailScreen(
             tracks = tracks,
             showTopTitle = showTopTitle,
             topBarBackgroundAlpha = { topBarBackgroundAlpha },
-            hazeState = hazeState,
+            artworkUrl = artworkUrl,
+            isOverArtwork = isTopBarOverArtwork,
             customPlaylist = customPlaylist,
             onBack = onBack,
             onRenameClick = { playlist ->

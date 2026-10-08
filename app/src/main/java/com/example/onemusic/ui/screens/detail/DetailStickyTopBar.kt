@@ -1,6 +1,7 @@
 package com.example.onemusic.ui.screens.detail
 
 import android.content.Intent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -9,16 +10,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,10 +33,11 @@ import androidx.compose.ui.unit.sp
 import com.example.onemusic.data.local.CustomPlaylist
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.theme.ApexRose
+import com.example.onemusic.theme.CharcoalBlack
 import com.example.onemusic.theme.ObsidianBlack
 import com.example.onemusic.theme.TextPrimary
-import com.example.onemusic.ui.components.ApexCircularGlassButton
-import dev.chrisbanes.haze.HazeState
+import com.example.onemusic.ui.utils.apexBounceClick
+import com.example.onemusic.ui.utils.rememberArtworkTopIsLight
 
 /** LAYER 3: thanh trên cùng nổi (trong suốt ở đầu trang; cuộn qua ảnh bìa thì hiện nền tối + tên). */
 @Composable
@@ -40,13 +47,20 @@ internal fun DetailStickyTopBar(
     tracks: List<Track>,
     showTopTitle: Boolean,
     topBarBackgroundAlpha: () -> Float,
-    hazeState: HazeState,
+    artworkUrl: String?,
+    isOverArtwork: Boolean,
     customPlaylist: CustomPlaylist?,
     onBack: () -> Unit,
     onRenameClick: (CustomPlaylist) -> Unit,
     onDeleteClick: () -> Unit
 ) {
     val context = LocalContext.current
+    // Icon đen khi nằm trên phần ảnh bìa sáng; còn lại (ảnh tối, chưa có ảnh, đã cuộn qua ảnh) là trắng
+    val artworkTopIsLight = rememberArtworkTopIsLight(artworkUrl)
+    val iconTint by animateColorAsState(
+        targetValue = if (artworkTopIsLight == true && isOverArtwork) CharcoalBlack else TextPrimary,
+        label = "detail_top_bar_icon_tint"
+    )
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -60,13 +74,11 @@ internal fun DetailStickyTopBar(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ApexCircularGlassButton(
+            TopBarIconButton(
                 icon = Icons.AutoMirrored.Rounded.ArrowBackIos,
                 contentDescription = "Quay lại",
                 onClick = onBack,
-                size = 42.dp,
-                iconSize = 19.dp,
-                hazeState = hazeState
+                tint = iconTint
             )
 
             // Tên album/nghệ sĩ/playlist – chỉ hiện khi đã cuộn qua phần ảnh bìa
@@ -92,29 +104,24 @@ internal fun DetailStickyTopBar(
                 }
             }
 
-            // Nút Chia sẻ / Tùy chọn kính mờ góc phải
+            // Nút Chia sẻ / Tùy chọn góc phải
             if (customPlaylist != null) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ApexCircularGlassButton(
+                    TopBarIconButton(
                         icon = Icons.Rounded.Edit,
                         contentDescription = "Đổi tên",
                         onClick = { onRenameClick(customPlaylist) },
-                        size = 42.dp,
-                        iconSize = 19.dp,
-                        hazeState = hazeState
+                        tint = iconTint
                     )
-                    ApexCircularGlassButton(
+                    TopBarIconButton(
                         icon = Icons.Rounded.Delete,
                         contentDescription = "Xóa playlist",
                         onClick = onDeleteClick,
-                        size = 42.dp,
-                        iconSize = 19.dp,
-                        iconTint = ApexRose,
-                        hazeState = hazeState
+                        tint = ApexRose
                     )
                 }
             } else {
-                ApexCircularGlassButton(
+                TopBarIconButton(
                     icon = Icons.Rounded.Share,
                     contentDescription = "Chia sẻ",
                     onClick = {
@@ -127,11 +134,32 @@ internal fun DetailStickyTopBar(
                             context.startActivity(Intent.createChooser(shareIntent, "Chia sẻ"))
                         } catch (_: Exception) {}
                     },
-                    size = 42.dp,
-                    iconSize = 19.dp,
-                    hazeState = hazeState
+                    tint = iconTint
                 )
             }
         }
+    }
+}
+
+/** Nút chỉ có icon (không nền tròn), vùng chạm 48dp. */
+@Composable
+private fun TopBarIconButton(
+    icon: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit,
+    tint: Color
+) {
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .apexBounceClick(scaleDown = 0.85f, enableHaptic = true, onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = tint,
+            modifier = Modifier.size(22.dp)
+        )
     }
 }
