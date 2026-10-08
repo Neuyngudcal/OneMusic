@@ -587,7 +587,7 @@ Package `ui/main` đã có sẵn bên thư mục test (`app/src/test/.../ui/main
 - Kiểm tra: `git diff --color-moved` – mọi dòng không phải "di chuyển nguyên vẹn" đều là thay phép gán state bằng callback; `ui/main/` biên dịch thử được với Compose Desktop (stub các màn hình theo chữ ký thật).
 - Đã đổi tên `MainScreenViewModelTest.kt` → `MusicRepositoryTest.kt` (commit riêng, giữ package).
 
-### 7.2 `AppleMusicMotionFetcher.kt` (843 dòng)
+### 7.2 `AppleMusicMotionFetcher.kt` (843 dòng) ✅ Đã xong (08/10/2026)
 
 ```
 data/scanner/motion/
@@ -600,6 +600,18 @@ data/scanner/motion/
 ```
 
 `MusicSearchEngine.kt` cũng có `computeLevenshteinDistance` (có `maxLimit` để dừng sớm). Có thể đặt cả hai vào chung `util/StringSimilarity.kt`, **nhưng giữ 2 hàm riêng** vì hành vi khác nhau.
+
+**Kết quả thực tế (08/10/2026) – ⚠️ còn chờ build Android + thử tải bìa động trên máy:** `AppleMusicMotionFetcher.kt` 843 → 370 dòng.
+- **Khác cấu trúc dự kiến:** `AppleMusicMotionFetcher.kt` **giữ ở package `data.scanner`** (không chuyển vào `motion/`) để `MusicRepository` và `MotionArtworkController` không phải sửa import; chỉ các phần phụ vào package con `data/scanner/motion/` (đều `internal`).
+- `motion/ItunesSearchClient.kt` (141): `findCollectionId(track)` + `pickBestCollectionId(results, track, onCandidate)` (chấm điểm, **thuần**) + `sanitizeQuery`.
+- `motion/AppleMusicAmpClient.kt` (120): giữ JWT, `fetchEditorialVideo(collectionId)`, làm mới JWT từ web; `parseEditorialVideo(json)` **thuần**. `EditorialVideoResult` chuyển từ class lồng public sang `internal` (không nơi nào khác dùng).
+- `motion/HlsVideoDownloader.kt` (163): `selectBestVariant(content, url)` và `findDirectMp4Url(content, url)` **thuần**, `downloadFile`, `downloadHlsVariant`.
+- `motion/MotionHttpClient.kt` (95): `get`, `getWithAuth`, `getBytes`, `resolveUrl`, User-Agent và timeout.
+- `motion/StringSimilarity.kt` (36): `levenshteinSimilarity` / `levenshteinDistance` – **chưa gộp** với `MusicSearchEngine.computeLevenshteinDistance` (hành vi khác, xem ghi chú dưới).
+- Fetcher còn: API public, quy trình `searchAndFetch`, `downloadAndSave`, negative cache. Log giữ nguyên (log "Candidate match" đi qua tham số `onCandidate` để hàm chấm điểm không phụ thuộc `android.util.Log`).
+- Bỏ hằng `LEVENSHTEIN_THRESHOLD` không được dùng ở đâu.
+- **Test mới** `app/src/test/.../data/scanner/motion/MotionFetcherHelpersTest.kt` (13 test, trước đây fetcher không có test nào): Levenshtein, `resolveUrl`, chọn biến thể HLS (ưu tiên AVC ≤ 1080p), đọc `EXT-X-MAP`, đọc JSON editorialVideo (ưu tiên vuông, bỏ host không phải Apple), `sanitizeQuery`, chấm điểm kết quả iTunes.
+- Kiểm tra: `git diff --color-moved`; bản gốc và bản mới cùng biên dịch được với một bộ stub Android; 13 test chạy đạt bằng JUnit + kotlinx-serialization-json thật.
 
 ### 7.3 `ReplayGainExtractor.kt` (634 dòng – đã có test)
 
