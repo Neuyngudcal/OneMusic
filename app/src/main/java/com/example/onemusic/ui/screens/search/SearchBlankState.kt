@@ -196,7 +196,7 @@ internal fun LazyListScope.searchBlankState(
                             Icon(
                                 imageVector = Icons.Rounded.Search,
                                 contentDescription = null,
-                                tint = com.example.onemusic.theme.SurfaceActiveIndicator,
+                                tint = AppTheme.colors.surfaceActiveIndicator,
                                 modifier = Modifier.size(54.dp)
                             )
                             Spacer(modifier = Modifier.height(14.dp))
