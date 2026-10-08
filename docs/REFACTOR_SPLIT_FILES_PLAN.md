@@ -473,7 +473,7 @@ ui/screens/settings/
 
 ---
 
-## Giai đoạn 6 – `MusicPlayerController.kt` (1.457 dòng → ~9 file)
+## Giai đoạn 6 – `MusicPlayerController.kt` (1.457 dòng → ~9 file) ✅ Đã xong về code (08/10/2026) – ⚠️ còn chờ build Android + smoke test 10.3
 
 Đây là "bộ não" phát nhạc, lỗi ở đây ảnh hưởng toàn app → **viết test trước, tách sau**.
 
@@ -537,6 +537,23 @@ fun playNextTracks(tracks: List<Track>) {
 2. **PR 2 (⭐⭐⭐):** Viết test cho `QueueOperations` **dựa trên các case của `PlaybackQueueTest` hiện tại** (copy các case, đổi helper giả thành lời gọi thật) → tách `QueueOperations` → chạy test. Xóa helper chép tay trong `PlaybackQueueTest`.
 3. **PR 3 (⭐⭐⭐):** `MotionArtworkController` – sở hữu `motionExoPlayer`, `_motionVideoPath`, `motionJob`. Controller vẫn expose `motionVideoPath` và `motionExoPlayer` như cũ (ủy quyền) để `MainActivity` không phải sửa.
 4. **PR 4 (⭐⭐⭐⭐):** `ExoPlayerFactory` + `PlayerEventListener`. Listener cần gọi ngược vào controller (`handleTrackEnded`, cập nhật state) → truyền một interface nhỏ hoặc các lambda, **không** truyền nguyên controller.
+
+**Kết quả thực tế (08/10/2026):** `MusicPlayerController.kt` 1.457 → 895 dòng, 4 commit:
+1. `PlaybackState.kt` (29), `VolumeFader.kt` (70), `PositionTracker.kt` (82), `SleepTimer.kt` (65).
+2. `queue/QueueOperations.kt` (137) – thuật toán hàng đợi thuần Kotlin. `PlaybackQueueTest` bỏ helper chép tay, **gọi thẳng `QueueOperations`**: 9 → 26 test (thêm shuffle, khôi phục thứ tự gốc, xóa lịch sử, chuỗi `moveMediaItem`). Khác biệt nhỏ: xáo dùng `kotlin.random.Random` (tham số để test cố định được) thay cho `Collections.shuffle` – vẫn ngẫu nhiên đều.
+3. `motion/MotionArtworkController.kt` (333) – player video bìa động, `motionVideoPath`, bộ nhớ đệm RAM, job tải. Controller vẫn expose `motionVideoPath`, `motionExoPlayer`, `setMotionPlaybackAllowed`, `removeMotionArtworkForCurrentTrack`, `clearMotionArtworkCache`. Sửa kèm: bộ nhớ đệm RAM trước đây khai báo **sau** khối `init` nên coroutine nạp cache từ DB có thể chạy trước khi nó được gán (lỗi bị `runCatching` nuốt im lặng); giờ được khởi tạo trước.
+4. `player/ExoPlayerFactory.kt` (73), `player/PlayerEventListener.kt` (101) và `TrackPreparation.kt` (94: ReplayGain, tải lời, nạp trước bài kế/trước). Listener gọi ngược controller qua interface `PlayerEventListener.Callbacks` (6 thành viên), không nhận nguyên controller.
+
+**Ai giữ biến nào:** controller giữ `_playbackState`, `_positionMs`, `exoPlayer`, `mediaSession`, `userVolume`, `isReorderingQueue`, `originalQueue`, `lastUserSkipTimestamp`; `PlayerEventListener` giữ `consecutivePlaybackErrors`; `VolumeFader` giữ `fadeJob`; `PositionTracker` giữ `progressJob`; `SleepTimer` giữ `sleepTimerJob`; `TrackPreparation` giữ `lyricsJob`, `preloadJob`; `MotionArtworkController` giữ mọi thứ về bìa động.
+
+**⚠️ Thứ tự khởi tạo:** mọi thuộc tính helper (`volumeFader`, `positionTracker`, `sleepTimer`, `motionArtwork`, `trackPreparation`, `playerEventCallbacks`) **phải khai báo trước khối `init`** – `init` gọi `setupPlayer()` dùng ngay `playerEventCallbacks`; khai báo sau `init` thì giá trị còn null → crash khi mở app.
+
+**Kiểm tra (trong môi trường cloud, không có Android SDK):**
+- API public của controller không đổi (so tự động danh sách `fun`/`val` public trước và sau).
+- Biên dịch toàn bộ `playback/` với stub media3/Android theo chữ ký thật; bản gốc cũng biên dịch được với cùng stub.
+- Chạy `PlaybackQueueTest` (26 test) bằng JUnit thật.
+- **Test so sánh (không commit, chạy trên stub):** khởi tạo controller gốc và controller mới, chạy cùng 24 thao tác (setQueue, playNext, addToQueue, move, remove, playQueueIndex, next/prev, repeat, autoplay, tốc độ, yêu thích, xóa lịch sử, hẹn giờ, tua, xóa hết, bật/tắt shuffle…) – `PlaybackState` và vị trí giống hệt nhau sau mọi bước. Test này cũng bắt được lỗi thứ tự khởi tạo ở trên khi cố tình cài lại.
+- Chưa kiểm tra được: sự kiện ExoPlayer thật (chuyển bài gapless, lỗi phát, hết bài), fade, bìa động → cần smoke test 10.3 trên máy.
 
 **Lưu ý:**
 - Các biến dùng chung giữa nhiều nhóm (`isReorderingQueue`, `originalQueue`, `consecutivePlaybackErrors`) phải có **một chủ sở hữu duy nhất**. Ghi rõ trong KDoc class nào giữ biến nào.

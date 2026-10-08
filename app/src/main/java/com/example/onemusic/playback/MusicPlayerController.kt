@@ -5,24 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.DefaultLoadControl
-import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.extractor.DefaultExtractorsFactory
-import androidx.media3.extractor.flac.FlacExtractor
-import androidx.media3.extractor.mp3.Mp3Extractor
 import androidx.media3.session.MediaSession
 import com.example.onemusic.MainActivity
 import com.example.onemusic.data.local.SettingsPreferences
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.data.scanner.LrclibLyricsProvider
 import com.example.onemusic.playback.motion.MotionArtworkController
+import com.example.onemusic.playback.player.ExoPlayerFactory
+import com.example.onemusic.playback.player.PlayerEventListener
 import com.example.onemusic.playback.queue.QueueOperations
 import com.example.onemusic.playback.service.OneMusicPlaybackService
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +27,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class MusicPlayerController(
@@ -76,9 +68,7 @@ class MusicPlayerController(
         android.util.Log.e("MusicPlayerController", "Uncaught coroutine exception: ${throwable.message}")
     }
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob() + coroutineExceptionHandler)
-    private var lyricsJob: Job? = null
     private var userVolume: Float = 1.0f
-    private var consecutivePlaybackErrors: Int = 0
     private var isReorderingQueue: Boolean = false
 
     // Shuffle kiểu Apple Music: state.queue luôn là THỨ TỰ PHÁT THẬT (đã xáo), ExoPlayer không bật shuffleModeEnabled.
@@ -133,6 +123,16 @@ class MusicPlayerController(
         currentTrackId = { _playbackState.value.currentTrack?.id }
     )
 
+    // ReplayGain, tải lời, nạp trước bài kế/trước khi đổi bài
+    private val trackPreparation = TrackPreparation(
+        context = context,
+        scope = scope,
+        settingsPreferences = settingsPreferences,
+        headroomLimiter = headroomLimiter,
+        playbackState = _playbackState,
+        motionArtwork = motionArtwork
+    )
+
     // Motion Artwork State: Local video path for animated album art on Now Playing
     val motionVideoPath: StateFlow<String?> = motionArtwork.motionVideoPath
 
@@ -142,6 +142,66 @@ class MusicPlayerController(
 
     // Chỉ cho phép giải mã video bìa động khi Now Playing đang hiển thị (tránh hao pin khi chạy nền)
     fun setMotionPlaybackAllowed(allowed: Boolean) = motionArtwork.setPlaybackAllowed(allowed)
+
+    /** Việc controller làm khi ExoPlayer báo sự kiện (xem player/PlayerEventListener.kt). */
+    private val playerEventCallbacks = object : PlayerEventListener.Callbacks {
+        override val isReorderingQueue: Boolean
+            get() = this@MusicPlayerController.isReorderingQueue
+
+        override fun onActivePlaybackChanged(isActivelyPlaying: Boolean) {
+            if (isActivelyPlaying) {
+                startProgressTracker()
+                startPlaybackService()
+            } else {
+                stopProgressTracker()
+            }
+        }
+
+        override fun onCurrentTrackChanged(track: Track, index: Int, queue: List<Track>, reason: Int) {
+            _playbackState.value = _playbackState.value.copy(
+                currentIndex = index,
+                currentTrack = track,
+                currentPositionMs = 0L,
+                durationMs = track.durationMs,
+                activeGainDb = track.replayGainDb ?: 0.0f,
+                hasReplayGain = track.replayGainDb != null,
+                replayGainOrigin = track.replayGainOrigin
+            )
+            _positionMs.value = 0L
+            updateReplayGainForTrack(track)
+            loadLyricsIfMissing(track)
+            preloadSurroundingTracks(queue, index)
+            settingsPreferences.saveLastPlaybackState(track.id, 0L)
+            settingsPreferences.addRecentlyPlayedTrack(track.id)
+            fetchMotionArtworkForTrack(track)
+
+            val settings = settingsPreferences.getSettings()
+            if (settings.isCrossfadeEnabled) {
+                smoothFadeIn(durationMs = (settings.crossfadeDurationSeconds * 500L).coerceIn(500L, 2500L))
+            } else if (!settings.isGaplessPlaybackEnabled && reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
+                smoothFadeIn(durationMs = 250L)
+            } else {
+                exoPlayer?.volume = userVolume
+            }
+        }
+
+        override fun onPlayerReady(audioSessionId: Int) {
+            audioEffectManager.attachAudioSession(audioSessionId)
+        }
+
+        override fun onTrackEnded() {
+            handleTrackEnded()
+        }
+
+        override fun onSkipAfterError() {
+            scope.launch {
+                try {
+                    android.widget.Toast.makeText(context, "Không thể phát tệp âm thanh này, đang chuyển bài...", android.widget.Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {}
+                skipToNext(ignoreThrottle = true)
+            }
+        }
+    }
 
     init {
         setupPlayer()
@@ -217,150 +277,13 @@ class MusicPlayerController(
     }
 
     private fun setupPlayer() {
-        val renderersFactory = object : DefaultRenderersFactory(context) {
-            override fun buildAudioSink(
-                context: Context,
-                enableFloatOutput: Boolean,
-                enableAudioTrackPlaybackParams: Boolean
-            ): androidx.media3.exoplayer.audio.AudioSink {
-                return androidx.media3.exoplayer.audio.DefaultAudioSink.Builder(context)
-                    .setAudioProcessors(arrayOf(headroomLimiter))
-                    .setEnableFloatOutput(enableFloatOutput)
-                    .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
-                    .build()
-            }
-        }.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
-
-        // 1. Accurate MP3, AAC, and FLAC Frame Index Seeking
-        val extractorsFactory = DefaultExtractorsFactory()
-            .setConstantBitrateSeekingEnabled(true)
-            .setMp3ExtractorFlags(
-                Mp3Extractor.FLAG_ENABLE_INDEX_SEEKING or Mp3Extractor.FLAG_ENABLE_CONSTANT_BITRATE_SEEKING
-            )
-            .setFlacExtractorFlags(
-                FlacExtractor.FLAG_DISABLE_ID3_METADATA
-            )
-
-        val mediaSourceFactory = DefaultMediaSourceFactory(context, extractorsFactory)
-
-        // 2. High-Performance Local Audio Load Control (Fast seek & responsive buffering)
-        val loadControl = DefaultLoadControl.Builder()
-            .setBufferDurationsMs(
-                /* minBufferMs = */ 3_000,
-                /* maxBufferMs = */ 20_000,
-                /* bufferForPlaybackMs = */ 500,
-                /* bufferForPlaybackAfterRebufferMs = */ 1_000
-            )
-            .setPrioritizeTimeOverSizeThresholds(true)
-            .build()
-
-        // 3. Professional Media Audio Attributes & Audio Focus Handling
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(C.USAGE_MEDIA)
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-            .build()
-
-        val player = ExoPlayer.Builder(context, renderersFactory)
-            .setMediaSourceFactory(mediaSourceFactory)
-            .setLoadControl(loadControl)
-            .setAudioAttributes(audioAttributes, /* handleAudioFocus = */ true)
-            .setHandleAudioBecomingNoisy(true)
-            .build()
-            .apply {
-                playbackParameters = androidx.media3.common.PlaybackParameters(1.0f, 1.0f)
-                addListener(object : Player.Listener {
-                    override fun onIsPlayingChanged(isPlaying: Boolean) {
-                        val isActivelyPlaying = isPlaying || (exoPlayer?.playWhenReady == true && exoPlayer?.playbackState != Player.STATE_ENDED && exoPlayer?.playbackState != Player.STATE_IDLE)
-                        _playbackState.value = _playbackState.value.copy(isPlaying = isActivelyPlaying)
-                        if (isActivelyPlaying) {
-                            startProgressTracker()
-                            startPlaybackService()
-                        } else {
-                            stopProgressTracker()
-                        }
-                    }
-
-                    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                        if (isReorderingQueue) {
-                            // Sắp xếp thứ tự hàng đợi, không phải chuyển bài hát mới. Bỏ qua để tránh reset playback và nháy UI
-                            return
-                        }
-                        consecutivePlaybackErrors = 0
-                        // Gapless playback transition handling: seamlessly switch track metadata without re-buffering
-                        val mediaId = mediaItem?.mediaId ?: return
-                        val queue = _playbackState.value.queue
-                        val playerIndex = exoPlayer?.currentMediaItemIndex ?: -1
-                        val newIndex = if (playerIndex in queue.indices && queue[playerIndex].id == mediaId) {
-                            playerIndex
-                        } else {
-                            queue.indexOfFirst { it.id == mediaId }
-                        }
-                        if (newIndex != -1) {
-                            val track = queue[newIndex]
-                            _playbackState.value = _playbackState.value.copy(
-                                currentIndex = newIndex,
-                                currentTrack = track,
-                                currentPositionMs = 0L,
-                                durationMs = track.durationMs,
-                                activeGainDb = track.replayGainDb ?: 0.0f,
-                                hasReplayGain = track.replayGainDb != null,
-                                replayGainOrigin = track.replayGainOrigin
-                            )
-                            _positionMs.value = 0L
-                            updateReplayGainForTrack(track)
-                            loadLyricsIfMissing(track)
-                            preloadSurroundingTracks(queue, newIndex)
-                            settingsPreferences.saveLastPlaybackState(track.id, 0L)
-                            settingsPreferences.addRecentlyPlayedTrack(track.id)
-                            fetchMotionArtworkForTrack(track)
-
-                            val settings = settingsPreferences.getSettings()
-                            if (settings.isCrossfadeEnabled) {
-                                smoothFadeIn(durationMs = (settings.crossfadeDurationSeconds * 500L).coerceIn(500L, 2500L))
-                            } else if (!settings.isGaplessPlaybackEnabled && reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
-                                smoothFadeIn(durationMs = 250L)
-                            } else {
-                                exoPlayer?.volume = userVolume
-                            }
-                        }
-                    }
-
-                    override fun onPlaybackStateChanged(playbackState: Int) {
-                        if (playbackState == Player.STATE_READY) {
-                            consecutivePlaybackErrors = 0
-                            val duration = exoPlayer?.duration ?: 0L
-                            _playbackState.value = _playbackState.value.copy(
-                                durationMs = if (duration > 0) duration else _playbackState.value.currentTrack?.durationMs ?: 0L
-                            )
-                            exoPlayer?.audioSessionId?.let { sessionId ->
-                                audioEffectManager.attachAudioSession(sessionId)
-                            }
-                        } else if (playbackState == Player.STATE_ENDED) {
-                            handleTrackEnded()
-                        }
-                    }
-
-                    override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                        android.util.Log.e("MusicPlayerController", "Playback error intercepted: ${error.errorCodeName} - ${error.message}")
-                        consecutivePlaybackErrors++
-                        val queueSize = _playbackState.value.queue.size
-                        if (consecutivePlaybackErrors < queueSize && queueSize > 1) {
-                            scope.launch {
-                                try {
-                                    android.widget.Toast.makeText(context, "Không thể phát tệp âm thanh này, đang chuyển bài...", android.widget.Toast.LENGTH_SHORT).show()
-                                } catch (_: Throwable) {}
-                                skipToNext(ignoreThrottle = true)
-                            }
-                        } else {
-                            consecutivePlaybackErrors = 0
-                            _playbackState.value = _playbackState.value.copy(isPlaying = false)
-                            try {
-                                exoPlayer?.stop()
-                            } catch (_: Throwable) {}
-                        }
-                    }
-                })
-            }
+        val player = ExoPlayerFactory.createMusicPlayer(context, headroomLimiter).apply {
+            addListener(PlayerEventListener(
+                player = { exoPlayer },
+                playbackState = _playbackState,
+                callbacks = playerEventCallbacks
+            ))
+        }
 
         exoPlayer = player
         try {
@@ -396,63 +319,12 @@ class MusicPlayerController(
             .build()
     }
 
-    private fun updateReplayGainForTrack(track: Track?) {
-        val settings = settingsPreferences.getSettings()
-        val targetGain = if (settings.isReplayGainEnabled) (track?.replayGainDb ?: 0.0f) else 0.0f
-        headroomLimiter.setTargetGainDb(targetGain)
-        headroomLimiter.setEnabled(settings.isHeadroomLimiterEnabled)
-        _playbackState.value = _playbackState.value.copy(
-            activeGainDb = targetGain,
-            hasReplayGain = settings.isReplayGainEnabled && track?.replayGainDb != null,
-            replayGainOrigin = if (settings.isReplayGainEnabled) track?.replayGainOrigin else null
-        )
-    }
+    private fun updateReplayGainForTrack(track: Track?) = trackPreparation.updateReplayGain(track)
 
-    private fun loadLyricsIfMissing(track: Track) {
-        if (track.lyrics.isNotEmpty()) return
-        if (!settingsPreferences.getSettings().isOnlineLyricsEnabled) return
-        lyricsJob?.cancel()
-        lyricsJob = scope.launch(Dispatchers.IO) {
-            val fetchedLyrics = LrclibLyricsProvider.getLyrics(context, track)
-            if (fetchedLyrics.isNotEmpty()) {
-                withContext(Dispatchers.Main) {
-                    val current = _playbackState.value.currentTrack
-                    if (current?.id == track.id) {
-                        val updatedTrack = current.copy(lyrics = fetchedLyrics)
-                        val updatedQueue = _playbackState.value.queue.map {
-                            if (it.id == track.id) updatedTrack else it
-                        }
-                        _playbackState.value = _playbackState.value.copy(
-                            currentTrack = updatedTrack,
-                            queue = updatedQueue
-                        )
-                    }
-                }
-            }
-        }
-    }
+    private fun loadLyricsIfMissing(track: Track) = trackPreparation.loadLyricsIfMissing(track)
 
-    private var preloadJob: Job? = null
-
-    private fun preloadSurroundingTracks(queue: List<Track>, currentIndex: Int) {
-        if (queue.isEmpty()) return
-        preloadJob?.cancel()
-        preloadJob = scope.launch(Dispatchers.IO) {
-            val nextIndex = (currentIndex + 1) % queue.size
-            val prevIndex = if (currentIndex > 0) currentIndex - 1 else queue.lastIndex
-
-            val nextTrack = queue.getOrNull(nextIndex)
-            val prevTrack = queue.getOrNull(prevIndex)
-
-            nextTrack?.artworkUrl?.let { com.example.onemusic.ui.utils.preloadArtworkAndColors(context, it) }
-            if (prevTrack?.id != nextTrack?.id) {
-                prevTrack?.artworkUrl?.let { com.example.onemusic.ui.utils.preloadArtworkAndColors(context, it) }
-            }
-
-            // Predictive Motion Artwork Preload: download next & prev song's video before it plays
-            motionArtwork.prefetchNeighbors(nextTrack, prevTrack)
-        }
-    }
+    private fun preloadSurroundingTracks(queue: List<Track>, currentIndex: Int) =
+        trackPreparation.preloadSurroundingTracks(queue, currentIndex)
 
     private fun fetchMotionArtworkForTrack(track: Track) = motionArtwork.fetchForTrack(track)
 
@@ -1001,9 +873,9 @@ class MusicPlayerController(
             settingsPreferences.saveLastPlaybackState(track.id, _positionMs.value)
         }
         volumeFader.cancel()
-        lyricsJob?.cancel()
+        trackPreparation.cancelLyrics()
         motionArtwork.cancelPendingFetch()
-        preloadJob?.cancel()
+        trackPreparation.cancelPreload()
         stopProgressTracker()
         audioOutputManager.release()
         try { mediaSession?.release() } catch (_: Exception) {}
