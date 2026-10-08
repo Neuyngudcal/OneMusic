@@ -4,3 +4,6 @@ plugins {
   alias(libs.plugins.compose.compiler) apply false
   alias(libs.plugins.kotlin.serialization) apply false
 }
+
+// Rào chắn kích thước code: ./gradlew checkSizeLimits (xem gradle/size-limits.gradle.kts, CONTRIBUTING.md)
+apply(from = "gradle/size-limits.gradle.kts")

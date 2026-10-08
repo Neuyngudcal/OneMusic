@@ -111,4 +111,5 @@ dependencies {
   implementation(libs.androidx.media3.exoplayer.hls)
 }
 
-
+// Chạy rào chắn kích thước code (file ≤ 600 dòng, hàm ≤ 250 dòng) cùng ./gradlew :app:check
+tasks.named("check") { dependsOn(":checkSizeLimits") }

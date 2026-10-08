@@ -681,7 +681,7 @@ data/scanner/replaygain/
 
 ---
 
-## Giai đoạn 8 – Rào chắn để file không phình lại
+## Giai đoạn 8 – Rào chắn để file không phình lại ✅ Đã xong (08/10/2026)
 
 1. Thêm script `scripts/check-file-size.sh` báo các file `.kt` vượt **600 dòng**:
    ```bash
@@ -695,11 +695,19 @@ data/scanner/replaygain/
 2. (Tùy chọn) Thêm [detekt](https://detekt.dev) với các luật `LongMethod` (ngưỡng ~200 cho composable), `LargeClass`, `LongParameterList` – chạy ở chế độ cảnh báo trước, chỉ bật chặn khi đã tách xong.
 3. Thêm một mục vào hướng dẫn đóng góp/review: *"File mới > 400 dòng hoặc composable > 200 dòng cần giải thích trong PR."*
 
+**Kết quả thực tế (08/10/2026) – ⚠️ còn chờ chạy `./gradlew :app:check` trên máy có Android SDK:**
+- **Thay script bash bằng task Gradle `checkSizeLimits`** (`gradle/size-limits.gradle.kts`, áp dụng từ `build.gradle.kts` gốc). Lý do: chạy được cả trên Windows (`gradlew.bat`), không cần thêm plugin/thư viện, tương thích configuration cache (dự án đang bật). `:app:check` phụ thuộc task này. Chạy: `./gradlew checkSizeLimits`.
+- Ngoài file > **600** dòng, task kiểm luôn **hàm > 250 dòng** (tiêu chí §9; gồm cả `@Composable` và hàm dựng `LazyListScope` như `searchResultsSection`). Độ dài hàm tính bằng cách khớp ngoặc `{}` sau khi xóa nội dung chuỗi (kể cả `${...}` lồng nhau, chuỗi `"""`), ký tự và chú thích.
+- **Baseline kiểu bánh cóc** `config/size-limits-baseline.txt`: 2 file (`MusicPlayerController.kt` 893, `NowPlayingSheet.kt` 650) và 14 hàm (lớn nhất `NowPlayingSheet` 556, `HomeAlbumsContent` 436, `HomeScreen` 385, `LibraryScreen` 365) đang vượt, ghi kèm số dòng hiện tại. Dài thêm → lỗi; ngắn đi → task nhắc hạ số / xóa dòng (không lỗi); vi phạm mới → lỗi.
+- **detekt (mục 2): chưa thêm.** Task trên đã bao phủ `LongMethod` (hàm) và kích thước file. Plugin detekt với AGP 9 / Gradle 9.1 không kiểm chứng được ở môi trường không có Android SDK. Nếu sau này cần `LongParameterList`/`LargeClass`, thêm detekt ở chế độ cảnh báo.
+- Mục 3: `CONTRIBUTING.md` (giới hạn, cách dùng baseline, quy ước tách file) + `.github/pull_request_template.md` (checklist; mục giải thích khi file mới > 400 dòng hoặc composable > 200 dòng).
+- **Kiểm tra** bằng Gradle **9.1.0** (đúng bản wrapper) trên bản sao `app/src/main`, có bật configuration cache: baseline đúng → OK, chạy lại dùng cache; `NowBar` thêm 3 dòng → lỗi "đã tăng"; bớt 5 dòng → nhắc xóa khỏi baseline; file mới 601 dòng → lỗi; file mẫu nhiều bẫy (ngoặc trong chuỗi/template/raw string/ký tự/chú thích) có hàm đúng 250 dòng → không báo, 251 dòng → báo đúng 251; mục baseline không còn tồn tại → nhắc; dòng baseline sai định dạng → lỗi rõ ràng. `:app:check` → chạy `:checkSizeLimits` trước (thử với project con thay cho app Android). Danh sách vi phạm khớp với một bản đo độc lập bằng Python.
+
 ---
 
 ## 9. Tiêu chí hoàn thành (Definition of Done)
 
-- [ ] Không còn file nào trong `app/src/main` vượt **600 dòng** (script ở Giai đoạn 8 trả `OK`).
+- [ ] Không còn file nào trong `app/src/main` vượt **600 dòng** (script ở Giai đoạn 8 trả `OK`). – *08/10/2026: `checkSizeLimits` đã có; còn 2 file và 14 hàm > 250 dòng trong baseline.*
 - [ ] Không còn hàm `@Composable` nào dài quá **~250 dòng**.
 - [ ] `./gradlew :app:testDebugUnitTest` xanh; `PlaybackQueueTest` gọi code thật (`QueueOperations`).
 - [ ] Smoke test mục 10 đạt trên ít nhất 1 máy thật.

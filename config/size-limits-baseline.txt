@@ -1,0 +1,26 @@
+# Ngoại lệ đã biết của ./gradlew checkSizeLimits (gradle/size-limits.gradle.kts).
+# Giới hạn: file .kt ≤ 600 dòng, hàm ≤ 250 dòng (trong app/src/main).
+#
+# Mỗi dòng: "file <đường dẫn> <số dòng tối đa>" hoặc "fun <đường dẫn>#<tên hàm> <số dòng tối đa>".
+# Con số là kích thước lúc lập baseline (08/10/2026): chỉ được GIẢM. Khi tách nhỏ được, task sẽ nhắc
+# hạ số hoặc xóa dòng. Không thêm dòng mới / tăng số – hãy tách code (xem CONTRIBUTING.md).
+
+# File > 600 dòng
+file app/src/main/java/com/example/onemusic/playback/MusicPlayerController.kt 893
+file app/src/main/java/com/example/onemusic/ui/screens/player/NowPlayingSheet.kt 650
+
+# Hàm > 250 dòng
+fun app/src/main/java/com/example/onemusic/ui/components/ApexEqualizerDialog.kt#ApexEqualizerDialog 314
+fun app/src/main/java/com/example/onemusic/ui/components/ApexTrackActionSheet.kt#ApexTrackActionSheet 330
+fun app/src/main/java/com/example/onemusic/ui/components/NowBar.kt#NowBar 253
+fun app/src/main/java/com/example/onemusic/ui/screens/dedup/DuplicateCleanerScreen.kt#DuplicateCleanerScreen 305
+fun app/src/main/java/com/example/onemusic/ui/screens/home/HomeAlbumsContent.kt#HomeAlbumsContent 436
+fun app/src/main/java/com/example/onemusic/ui/screens/home/HomeScreen.kt#HomeScreen 385
+fun app/src/main/java/com/example/onemusic/ui/screens/library/LibraryScreen.kt#LibraryScreen 365
+fun app/src/main/java/com/example/onemusic/ui/screens/library/tabs/PlaylistsTabContent.kt#playlistsTabContent 292
+fun app/src/main/java/com/example/onemusic/ui/screens/player/NowPlayingSheet.kt#NowPlayingSheet 556
+fun app/src/main/java/com/example/onemusic/ui/screens/player/artwork/MotionArtworkPlayer.kt#MotionArtworkPlayer 291
+fun app/src/main/java/com/example/onemusic/ui/screens/player/queue/NowPlayingQueuePane.kt#NowPlayingQueuePane 263
+fun app/src/main/java/com/example/onemusic/ui/screens/search/SearchBlankState.kt#searchBlankState 263
+fun app/src/main/java/com/example/onemusic/ui/screens/search/SearchResultsSection.kt#searchResultsSection 328
+fun app/src/main/java/com/example/onemusic/ui/screens/search/SearchScreen.kt#SearchScreen 294
