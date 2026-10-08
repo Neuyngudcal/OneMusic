@@ -437,7 +437,7 @@ ui/screens/library/
 
 ---
 
-## Giai đoạn 5 – `SearchScreen.kt` và `SettingsScreen.kt`
+## Giai đoạn 5 – `SearchScreen.kt` và `SettingsScreen.kt` ✅ Đã xong (08/10/2026)
 
 ### 5.1 `SearchScreen.kt` (1.432 dòng → 5 file)
 
@@ -462,6 +462,12 @@ ui/screens/settings/
 ├── SettingsAboutSection.kt      (~65)   Thông tin                                          ← 631–693
 └── SettingsRows.kt              (~185)  SettingsSectionHeader, GroupCard, Divider, ToggleRow, ActionRow ← 757–938
 ```
+
+**Kết quả thực tế (08/10/2026) – ⚠️ còn chờ build Android + smoke test 10.2:**
+
+- **Settings:** `SettingsScreen.kt` 938 → 207 dòng. `SettingsAudioSection.kt` (191), `SettingsDisplaySection.kt` (145), `SettingsHapticsSection.kt` (122), `SettingsLibrarySection.kt` (123), `SettingsAboutSection.kt` (96), `SettingsRows.kt` (233, 5 hàm `private` → `internal`). Mỗi nhóm là một hàm `LazyListScope.settingsXxxSection(...)`, nhận `settings` + `settingsPreferences` và callback; `key` các item giữ nguyên. 4 dialog, các cờ mở dialog và `crossfadeDraft` **vẫn ở `SettingsScreen()`**; `crossfadeDraft` truyền dạng lambda `() -> Float` để lúc kéo thanh trượt chỉ hàng đó vẽ lại như cũ.
+- **Search:** `SearchScreen.kt` 1.427 → 368 dòng. `SearchBarHeader.kt` (219: `SearchInputBar` + `SearchFilterTabsRow`), `SearchBlankState.kt` (316: `LazyListScope.searchBlankState`), `SearchResultsSection.kt` (376: `LazyListScope.searchResultsSection`), `SearchResultItems.kt` (400: `SearchAlbumCard`, `ArtistRow`, `ArtistCard`, `TrackResultRow`, `private` → `internal`). Dựng index, debounce tìm kiếm, mở `DetailScreen`, `BackHandler`, `focusRequester` + tự focus, lịch sử tìm kiếm (`recentSearches`) **vẫn ở `SearchScreen()`**. Việc lưu từ khóa khi mở kết quả gom vào một lambda `recordRecentSearch(query, label)`; nơi nào trước đây không lưu (vd bấm nghệ sĩ/bài ở tab trống) thì vẫn không lưu. `keyboardController` và `BringIntoViewResponder` chuyển vào `SearchInputBar` (luôn hiển thị nên vòng đời không đổi).
+- Kiểm tra: `git diff --color-moved` – mọi dòng không phải "di chuyển nguyên vẹn" đều là thay phép gán state bằng callback. Hai thư mục `search/`, `settings/` đã biên dịch thử được với Compose Desktop 1.7.3 + Kotlin 2.1.0 (stub phần Android/app theo chữ ký thật).
 
 Đây là file **dễ nhất để luyện kỹ thuật 3.2** – các section độc lập, chỉ đọc `settings` và gọi `updateSettings`. Có thể làm Settings **trước** Search nếu là người mới.
 
