@@ -22,8 +22,10 @@ private val topBrightnessCache = LruCache<String, Boolean>(60)
 
 // Phần trên của ảnh nằm dưới thanh trạng thái + nút Quay lại / Chia sẻ (ảnh vuông, tràn ngang)
 private const val TOP_SAMPLE_FRACTION = 0.25f
-// Ngưỡng độ sáng tương đối (0 = đen, 1 = trắng) để coi là nền sáng → dùng icon đen
-private const val LIGHT_LUMINANCE_THRESHOLD = 0.55
+// Độ sáng tương đối (WCAG, thang tuyến tính) mà tại đó icon đen và trắng tương phản ngang nhau:
+// (L + 0.05) / 0.05 == 1.05 / (L + 0.05) → L ≈ 0.179. Trên mức này icon đen dễ đọc hơn.
+// Lưu ý: thang tuyến tính nên màu "nhìn sáng" (vàng nhạt, xanh trời, pastel) chỉ khoảng 0.3–0.5.
+private const val LIGHT_LUMINANCE_THRESHOLD = 0.179
 
 private fun isTopAreaLight(bitmap: Bitmap): Boolean {
     val rows = (bitmap.height * TOP_SAMPLE_FRACTION).toInt().coerceAtLeast(1)
