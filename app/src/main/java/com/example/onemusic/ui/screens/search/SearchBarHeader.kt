@@ -52,7 +52,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
-import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.PillShape
 
 /** Ô tìm kiếm ghim ở đầu màn hình. Nút "Tìm" trên bàn phím ẩn bàn phím rồi gọi [onSubmitSearch] (lưu từ khóa). */
@@ -83,7 +82,7 @@ internal fun SearchInputBar(
             .shadow(elevation = 8.dp, shape = PillShape, ambientColor = AppTheme.colors.shadow)
             .clip(PillShape)
             .background(AppTheme.colors.surface1.copy(alpha = 0.88f))
-            .border(0.85.dp, ApexPillBorderBrush, PillShape)
+            .border(0.85.dp, AppTheme.colors.pillBorderBrush, PillShape)
             .padding(horizontal = 16.dp),
         contentAlignment = Alignment.CenterStart
     ) {

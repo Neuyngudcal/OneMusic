@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
-import com.example.onemusic.theme.ApexReflectiveBorderBrush
 import com.example.onemusic.theme.LocalHazeState
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.ui.utils.apexBounceClick
@@ -111,7 +110,7 @@ fun ApexDropdownMenu(
                         blurRadius = 26.dp,
                         hazeState = effectiveHazeState
                     )
-                    .border(0.85.dp, ApexReflectiveBorderBrush, RoundedCornerShape(22.dp))
+                    .border(0.85.dp, AppTheme.colors.reflectiveBorderBrush, RoundedCornerShape(22.dp))
                     .padding(vertical = 6.dp),
                 color = Color.Transparent
             ) {

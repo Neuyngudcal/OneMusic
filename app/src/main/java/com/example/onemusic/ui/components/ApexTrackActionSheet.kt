@@ -62,13 +62,11 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.onemusic.data.model.Track
-import com.example.onemusic.theme.ApexReflectiveBorderBrush
 import com.example.onemusic.theme.LocalApexHazeState
 import com.example.onemusic.theme.apexFrostedGlass
 import com.example.onemusic.ui.utils.apexBounceClick
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
-import com.example.onemusic.theme.ScrimColor
 import com.example.onemusic.theme.TextPrimary
 
 /**
@@ -107,7 +105,7 @@ fun ApexTrackActionSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         containerColor = Color.Transparent,
-        scrimColor = ScrimColor,
+        scrimColor = AppTheme.colors.scrim,
         dragHandle = null,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         modifier = modifier
@@ -118,7 +116,7 @@ fun ApexTrackActionSheet(
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
                 .border(
                     width = 0.85.dp,
-                    brush = ApexReflectiveBorderBrush,
+                    brush = AppTheme.colors.reflectiveBorderBrush,
                     shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
                 )
                 .apexFrostedGlass(

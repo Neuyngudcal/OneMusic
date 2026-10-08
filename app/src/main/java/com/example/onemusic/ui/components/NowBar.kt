@@ -69,7 +69,6 @@ import com.example.onemusic.ui.utils.ApexSpringRelease
 import com.example.onemusic.ui.utils.apexBounceClick
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.LocalHazeState
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.apexFrostedGlass
@@ -140,7 +139,7 @@ fun NowBar(
                 blurRadius = 20.dp,
                 hazeState = hazeState
             )
-            .border(0.85.dp, ApexPillBorderBrush, PillShape)
+            .border(0.85.dp, AppTheme.colors.pillBorderBrush, PillShape)
 
             .pointerInput(Unit) {
                 // Ngưỡng tính bằng dp (quy ra px theo mật độ màn hình) → cảm giác vuốt giống nhau trên mọi máy.

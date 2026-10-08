@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 /**
@@ -51,6 +52,24 @@ data class AppColors(
     val faint: Color get() = textPrimary.copy(alpha = 0.45f)
     val medium: Color get() = textPrimary.copy(alpha = 0.60f)
     val high: Color get() = textPrimary.copy(alpha = 0.85f)
+
+    // Viền phản chiếu của kính (hộp thoại, menu, thanh dock). Theme sáng đậm hơn một chút vì viền đen mảnh trên nền trắng nhạt hơn.
+    val reflectiveBorderBrush: Brush by lazy {
+        Brush.verticalGradient(
+            listOf(
+                textPrimary.copy(alpha = if (isDark) 0.08f else 0.14f),
+                textPrimary.copy(alpha = if (isDark) 0.04f else 0.08f)
+            )
+        )
+    }
+    val pillBorderBrush: Brush by lazy {
+        Brush.verticalGradient(
+            listOf(
+                textPrimary.copy(alpha = if (isDark) 0.18f else 0.16f),
+                textPrimary.copy(alpha = if (isDark) 0.06f else 0.08f)
+            )
+        )
+    }
 }
 
 // Bảng màu tối mới (trắng – xanh dương – đen), xem docs/COLOR_REDESIGN_PLAN.md mục 2.
@@ -137,7 +156,7 @@ val LightAppColors = AppColors(
     danger = Color(0xFFD70015),            // 5.38 trên trắng
     warning = Color(0xFFB26A00),
     shadow = Color(0x2E000000),            // đen 18%: bóng nhẹ trên nền sáng
-    scrim = ScrimColor
+    scrim = Color(0x66000000)              // đen 40%: lớp phủ sau sheet nhẹ hơn trên nền sáng
 )
 
 /** Lớp bọc cho vùng nằm trên ảnh/gradient tối (banner, hero): luôn dùng chữ trắng bất kể theme. */

@@ -63,7 +63,6 @@ import com.example.onemusic.theme.LocalHazeState
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import com.example.onemusic.theme.ApexGlassSurfaceBg
-import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.theme.SurfaceActiveIndicator
 import com.example.onemusic.theme.apexFrostedGlass
@@ -154,7 +153,7 @@ fun ApexBottomNavigation(
                     blurRadius = 20.dp,
                     hazeState = hazeState
                 )
-                .border(0.85.dp, ApexPillBorderBrush, PillShape)
+                .border(0.85.dp, AppTheme.colors.pillBorderBrush, PillShape)
                 .padding(4.dp),
             contentAlignment = Alignment.CenterStart
         ) {

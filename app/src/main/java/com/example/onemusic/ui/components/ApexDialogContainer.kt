@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.onemusic.haptics.ApexHapticEngine
-import com.example.onemusic.theme.ApexReflectiveBorderBrush
 import com.example.onemusic.theme.LocalApexHazeState
 import com.example.onemusic.theme.SurfaceElevated
 import com.example.onemusic.theme.apexFrostedGlass
@@ -103,7 +102,7 @@ fun ApexDialogContainer(
                     )
                     .border(
                         width = 0.85.dp,
-                        brush = ApexReflectiveBorderBrush,
+                        brush = AppTheme.colors.reflectiveBorderBrush,
                         shape = shape
                     )
                     .clickable(

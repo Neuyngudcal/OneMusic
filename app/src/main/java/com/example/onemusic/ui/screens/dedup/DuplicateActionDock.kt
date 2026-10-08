@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.onemusic.theme.ApexPillBorderBrush
 import com.example.onemusic.theme.PillShape
 import com.example.onemusic.ui.utils.apexBounceClick
 
@@ -45,7 +44,7 @@ internal fun DuplicateActionDock(
             .navigationBarsPadding()
             .shadow(16.dp, PillShape, ambientColor = AppTheme.colors.shadow)
             .clip(PillShape)
-            .border(0.85.dp, ApexPillBorderBrush, PillShape)
+            .border(0.85.dp, AppTheme.colors.pillBorderBrush, PillShape)
             .background(AppTheme.colors.surface1.copy(alpha = 0.94f))
     ) {
 
