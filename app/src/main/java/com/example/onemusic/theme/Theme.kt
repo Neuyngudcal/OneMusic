@@ -1,6 +1,7 @@
 package com.example.onemusic.theme
 
 import android.app.Activity
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -124,6 +125,8 @@ fun OneMusicTheme(
         SideEffect {
             val window = (view.context as? Activity)?.window
             if (window != null) {
+                // Nền cửa sổ theo theme trong app (XML chỉ theo chế độ sáng/tối của hệ thống)
+                window.setBackgroundDrawable(ColorDrawable(colorScheme.background.toArgb()))
                 window.statusBarColor = colorScheme.background.toArgb()
                 window.navigationBarColor = colorScheme.background.toArgb()
                 WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = lightSystemBarIcons

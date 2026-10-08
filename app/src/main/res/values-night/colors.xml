@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- OneMusic palette, THEME TỐI (hệ thống đang ở chế độ tối). Giữ khớp với DarkAppColors trong AppColors.kt. -->
+<resources>
+    <!-- Surfaces -->
+    <color name="background">#FF000000</color>
+    <color name="surface_base">#FF0A0A0B</color>
+    <color name="surface_elevated">#FF1C1C1E</color>
+    <color name="surface_card">#FF2C2C2E</color>
+    <color name="surface_divider">#FF38383A</color>
+
+    <!-- Text -->
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#FFA1A1A6</color>
+    <color name="text_tertiary">#FF8E8E93</color>
+    <color name="ivory_subtle">#1AFFFFFF</color>
+
+    <!-- Accents -->
+    <color name="brand">#FF0A84FF</color>
+    <color name="apex_cyan">#FF00D8F6</color>
+    <color name="apex_rose">#FFFA2D48</color>
+</resources>

@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    OneMusic Warm Ivory Palette (bản XML cho widget, splash, drawable).
-    Nguồn chuẩn: java/com/example/onemusic/theme/Color.kt — sửa ở đó thì sửa cả ở đây.
+    OneMusic palette (bản XML cho widget, splash, drawable): Trắng – Xanh dương – Đen.
+    Bản này là THEME SÁNG; bản tối ở values-night/colors.xml. Widget và màn hình khởi động chỉ theo
+    chế độ sáng/tối của HỆ THỐNG (không theo cài đặt "Chế độ giao diện" trong app).
+    Nguồn chuẩn cho Compose: java/com/example/onemusic/theme/AppColors.kt — sửa ở đó thì sửa cả ở đây.
 -->
 <resources>
-    <!-- Surfaces -->
+    <!-- Luôn đen: nền màn hình khởi động và nền icon launcher (logo thiết kế trên nền đen) -->
     <color name="obsidian_black">#FF000000</color>
-    <color name="surface_base">#FF0E0D0C</color>
-    <color name="surface_elevated">#FF24221F</color>
-    <color name="surface_card">#FF2A2825</color>
-    <color name="surface_divider">#FF2C2A26</color>
 
-    <!-- Text / Ivory -->
-    <color name="text_primary">#FFF4F1EA</color>
-    <color name="text_secondary">#FFDDD9D0</color>
-    <color name="text_tertiary">#FF9C9890</color>
-    <color name="ivory_subtle">#1AF4F1EA</color>
+    <!-- Surfaces -->
+    <color name="background">#FFFFFFFF</color>
+    <color name="surface_base">#FFF8F8FA</color>
+    <color name="surface_elevated">#FFF2F2F7</color>
+    <color name="surface_card">#FFE5E5EA</color>
+    <color name="surface_divider">#FFD1D1D6</color>
+
+    <!-- Text -->
+    <color name="text_primary">#FF000000</color>
+    <color name="text_secondary">#FF3C3C43</color>
+    <color name="text_tertiary">#FF737377</color>
+    <!-- Viền mảnh: chữ chính 10% (tên cũ ivory_subtle giữ để khỏi sửa tham chiếu) -->
+    <color name="ivory_subtle">#1A000000</color>
 
     <!-- Accents -->
-    <color name="brand">#FF228B22</color>
-    <color name="apex_cyan">#FF00D8F6</color>
-    <color name="apex_rose">#FFFA2D48</color>
+    <color name="brand">#FF0066D6</color>
+    <color name="apex_cyan">#FF00728F</color>
+    <color name="apex_rose">#FFD70015</color>
 </resources>
