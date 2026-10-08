@@ -23,6 +23,7 @@ import com.example.onemusic.MainActivity
 import com.example.onemusic.data.local.SettingsPreferences
 import com.example.onemusic.data.model.Track
 import com.example.onemusic.data.scanner.LrclibLyricsProvider
+import com.example.onemusic.playback.queue.QueueOperations
 import com.example.onemusic.playback.service.OneMusicPlaybackService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -736,8 +737,7 @@ class MusicPlayerController(
         val clampedIndex: Int
         if (isShuffling) {
             originalQueue = tracks.toMutableList()
-            val rest = tracks.filterIndexed { i, _ -> i != startInOriginal }.shuffled()
-            playOrder = listOf(tracks[startInOriginal]) + rest
+            playOrder = QueueOperations.shuffledPlayOrder(tracks, startInOriginal)
             clampedIndex = 0
         } else {
             originalQueue = null
@@ -944,8 +944,8 @@ class MusicPlayerController(
             setQueue(listOf(track), startIndex = 0, autoPlay = false)
             return
         }
-        val updatedQueue = state.queue + track
-        _playbackState.value = state.copy(queue = updatedQueue)
+        val result = QueueOperations.append(state.queue, state.currentIndex, track)
+        _playbackState.value = state.copy(queue = result.queue)
         exoPlayer?.addMediaItem(trackToMediaItem(track))
         // Đang shuffle: bài "thêm vào hàng đợi" cũng nối vào cuối thứ tự gốc
         originalQueue?.add(track)
@@ -957,10 +957,9 @@ class MusicPlayerController(
             setQueue(listOf(track), startIndex = 0, autoPlay = false)
             return
         }
-        val insertIndex = (state.currentIndex + 1).coerceIn(0, state.queue.size)
-        val mutableQueue = state.queue.toMutableList()
-        mutableQueue.add(insertIndex, track)
-        _playbackState.value = state.copy(queue = mutableQueue)
+        val insertIndex = QueueOperations.insertIndexAfterCurrent(state.queue, state.currentIndex)
+        val result = QueueOperations.insertNext(state.queue, state.currentIndex, listOf(track))
+        _playbackState.value = state.copy(queue = result.queue)
         exoPlayer?.addMediaItem(insertIndex, trackToMediaItem(track))
         insertAfterCurrentInOriginal(listOf(track), state.currentTrack)
     }
@@ -972,10 +971,9 @@ class MusicPlayerController(
             setQueue(tracks, startIndex = 0, autoPlay = false)
             return
         }
-        val insertIndex = (state.currentIndex + 1).coerceIn(0, state.queue.size)
-        val mutableQueue = state.queue.toMutableList()
-        mutableQueue.addAll(insertIndex, tracks)
-        _playbackState.value = state.copy(queue = mutableQueue)
+        val insertIndex = QueueOperations.insertIndexAfterCurrent(state.queue, state.currentIndex)
+        val result = QueueOperations.insertNext(state.queue, state.currentIndex, tracks)
+        _playbackState.value = state.copy(queue = result.queue)
         val mediaItems = tracks.map { trackToMediaItem(it) }
         exoPlayer?.addMediaItems(insertIndex, mediaItems)
         insertAfterCurrentInOriginal(tracks, state.currentTrack)
@@ -984,37 +982,22 @@ class MusicPlayerController(
     /** Đang shuffle: bài "Phát tiếp" được đặt ngay sau bài đang phát trong thứ tự gốc. */
     private fun insertAfterCurrentInOriginal(tracks: List<Track>, currentTrack: Track?) {
         val original = originalQueue ?: return
-        val currentPos = original.indexOfFirst { it.id == currentTrack?.id }
-        val insertAt = if (currentPos >= 0) currentPos + 1 else original.size
-        original.addAll(insertAt, tracks)
+        QueueOperations.insertAfterCurrentInOriginal(original, tracks, currentTrack?.id)
     }
 
     /** Đang shuffle: xóa 1 lần xuất hiện của bài khỏi thứ tự gốc để khi tắt shuffle không hiện lại. */
     private fun removeFromOriginal(track: Track) {
         val original = originalQueue ?: return
-        val pos = original.indexOfFirst { it.id == track.id }
-        if (pos >= 0) original.removeAt(pos)
+        QueueOperations.removeFromOriginal(original, track)
     }
 
     fun moveQueueItem(fromIndex: Int, toIndex: Int) {
         val state = _playbackState.value
-        val queue = state.queue
-        if (fromIndex !in queue.indices || toIndex !in queue.indices || fromIndex == toIndex) return
-
-        val mutableQueue = queue.toMutableList()
-        val item = mutableQueue.removeAt(fromIndex)
-        mutableQueue.add(toIndex, item)
-
-        val newCurrentIndex = when {
-            state.currentIndex == fromIndex -> toIndex
-            fromIndex < state.currentIndex && toIndex >= state.currentIndex -> state.currentIndex - 1
-            fromIndex > state.currentIndex && toIndex <= state.currentIndex -> state.currentIndex + 1
-            else -> state.currentIndex
-        }
+        val result = QueueOperations.move(state.queue, state.currentIndex, fromIndex, toIndex) ?: return
 
         _playbackState.value = state.copy(
-            queue = mutableQueue,
-            currentIndex = newCurrentIndex
+            queue = result.queue,
+            currentIndex = result.currentIndex
         )
         isReorderingQueue = true
         try {
@@ -1029,10 +1012,10 @@ class MusicPlayerController(
     fun removeQueueItem(index: Int) {
         val state = _playbackState.value
         val queue = state.queue
-        if (index !in queue.indices || queue.isEmpty()) return
+        val result = QueueOperations.remove(queue, state.currentIndex, index) ?: return
         removeFromOriginal(queue[index])
 
-        if (queue.size == 1) {
+        if (result.queue.isEmpty()) {
             exoPlayer?.stop()
             exoPlayer?.clearMediaItems()
             _playbackState.value = state.copy(
@@ -1047,24 +1030,15 @@ class MusicPlayerController(
             return
         }
 
-        val mutableQueue = queue.toMutableList()
-        mutableQueue.removeAt(index)
-
-        val newCurrentIndex = when {
-            index < state.currentIndex -> state.currentIndex - 1
-            index == state.currentIndex -> index.coerceAtMost(mutableQueue.lastIndex)
-            else -> state.currentIndex
-        }
-
         val newCurrentTrack = if (index == state.currentIndex) {
-            mutableQueue.getOrNull(newCurrentIndex)
+            result.queue.getOrNull(result.currentIndex)
         } else {
             state.currentTrack
         }
 
         _playbackState.value = state.copy(
-            queue = mutableQueue,
-            currentIndex = newCurrentIndex,
+            queue = result.queue,
+            currentIndex = result.currentIndex,
             currentTrack = newCurrentTrack
         )
         isReorderingQueue = true
@@ -1130,10 +1104,8 @@ class MusicPlayerController(
 
         if (newShuffle) {
             originalQueue = queue.toMutableList()
-            if (currentIndex in queue.indices && currentIndex + 1 < queue.size) {
-                val head = queue.subList(0, currentIndex + 1)
-                val tail = queue.subList(currentIndex + 1, queue.size).shuffled()
-                val newQueue = head + tail
+            val newQueue = QueueOperations.shuffleUpcoming(queue, currentIndex)
+            if (newQueue != null) {
                 _playbackState.value = state.copy(isShuffle = true, queue = newQueue)
                 reorderPlayerMediaItems(queue, newQueue, currentIndex)
             } else {
@@ -1142,19 +1114,18 @@ class MusicPlayerController(
         } else {
             val original = originalQueue
             originalQueue = null
-            if (original == null || original.size != queue.size || queue.isEmpty()) {
+            val restored = QueueOperations.restoreOriginal(original, queue, state.currentTrack?.id, currentIndex)
+            if (restored == null) {
                 // Không có thứ tự gốc hợp lệ (không nên xảy ra) → giữ nguyên thứ tự hiện tại
                 _playbackState.value = state.copy(isShuffle = false)
                 return
             }
-            val currentId = state.currentTrack?.id
-            val restoredIndex = original.indexOfFirst { it.id == currentId }.takeIf { it >= 0 } ?: currentIndex
             _playbackState.value = state.copy(
                 isShuffle = false,
-                queue = original.toList(),
-                currentIndex = restoredIndex
+                queue = restored.queue,
+                currentIndex = restored.currentIndex
             )
-            reorderPlayerMediaItems(queue, original, restoredIndex)
+            reorderPlayerMediaItems(queue, restored.queue, restored.currentIndex)
         }
     }
 
@@ -1174,14 +1145,8 @@ class MusicPlayerController(
                 player.playWhenReady = wasPlaying
                 return
             }
-            val working = from.toMutableList()
-            for (i in to.indices) {
-                if (working[i].id == to[i].id) continue
-                var j = i + 1
-                while (j < working.size && working[j].id != to[i].id) j++
-                if (j >= working.size) continue
-                player.moveMediaItem(j, i)
-                working.add(i, working.removeAt(j))
+            for ((moveFrom, moveTo) in QueueOperations.reorderMoves(from, to)) {
+                player.moveMediaItem(moveFrom, moveTo)
             }
         } catch (e: Exception) {
             android.util.Log.e("MusicPlayerController", "Error reordering queue for shuffle: ${e.message}")
@@ -1213,13 +1178,12 @@ class MusicPlayerController(
     fun clearPlaybackHistory() {
         val state = _playbackState.value
         val currentIndex = state.currentIndex
-        if (currentIndex <= 0 || state.queue.isEmpty()) return
+        val result = QueueOperations.clearHistory(state.queue, currentIndex) ?: return
 
-        val newQueue = state.queue.subList(currentIndex, state.queue.size).toList()
         state.queue.subList(0, currentIndex).forEach { removeFromOriginal(it) }
         _playbackState.value = state.copy(
-            queue = newQueue,
-            currentIndex = 0
+            queue = result.queue,
+            currentIndex = result.currentIndex
         )
         isReorderingQueue = true
         try {
