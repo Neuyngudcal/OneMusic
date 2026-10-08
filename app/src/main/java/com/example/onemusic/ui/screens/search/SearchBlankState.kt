@@ -42,7 +42,6 @@ import com.example.onemusic.data.search.MatchedArtist
 import com.example.onemusic.data.search.MatchedTrack
 import com.example.onemusic.ui.components.ApexCircularGlassButton
 import com.example.onemusic.ui.utils.apexBounceClick
-import AppTheme.colors.surfaceActiveIndicator
 import com.example.onemusic.theme.apexGroupedCardItem
 import androidx.compose.foundation.lazy.LazyListScope
 
