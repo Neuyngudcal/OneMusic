@@ -1,13 +1,6 @@
 package com.example.onemusic.ui.screens.player
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +15,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Lyrics
-import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -39,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -53,12 +44,7 @@ import com.example.onemusic.ui.components.ApexEqualizerDialog
 import com.example.onemusic.ui.components.ApexTrackActionSheet
 import com.example.onemusic.ui.components.TrackDetailsDialog
 import com.example.onemusic.ui.screens.player.backdrop.NowPlayingBackdrop
-import com.example.onemusic.ui.screens.player.controls.AudioQualityBadge
-import com.example.onemusic.ui.screens.player.controls.MasterPlaybackControls
-import com.example.onemusic.ui.screens.player.controls.NowPlayingActionDock
-import com.example.onemusic.ui.screens.player.controls.NowPlayingProgressSection
-import com.example.onemusic.ui.screens.player.controls.NowPlayingTrackHeader
-import com.example.onemusic.ui.screens.player.controls.rememberAudioQualityInfo
+import com.example.onemusic.ui.screens.player.controls.NowPlayingControlsDeck
 import com.example.onemusic.ui.screens.player.dialogs.FavoriteToastBanner
 import com.example.onemusic.ui.screens.player.dialogs.PlaybackSpeedDialog
 import com.example.onemusic.ui.screens.player.dialogs.SleepTimerDialog
@@ -69,6 +55,7 @@ import com.example.onemusic.ui.screens.player.state.rememberNowPlayingSheetState
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 
 
@@ -327,107 +314,39 @@ fun NowPlayingSheet(
 
             // BỘ ĐIỀU KHIỂN PHÁT NHẠC & DOCK ĐÁY (ẨN KHI CUỘN XUỐNG DUYỆT BÀI / ĐỌC LỜI, HIỆN KHI VUỐT LÊN TRÊN HOẶC ĐẦU TRANG)
             val isControlsDeckVisible = deckVisibility.isVisible(centerView)
-            AnimatedVisibility(
+            NowPlayingControlsDeck(
                 visible = isControlsDeckVisible,
-                enter = expandVertically(
-                    animationSpec = spring(dampingRatio = 0.85f, stiffness = 380f),
-                    expandFrom = Alignment.Bottom
-                ) + fadeIn(tween(200)),
-                exit = shrinkVertically(
-                    animationSpec = spring(dampingRatio = 0.85f, stiffness = 380f),
-                    shrinkTowards = Alignment.Bottom
-                ) + fadeOut(tween(160))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 30.dp)
-                        .onSizeChanged { size ->
-                            // Chỉ đo ở chế độ ảnh bìa: tab Hàng đợi/Lời ẩn hàng tên bài làm cụm nút thấp đi → ảnh bìa nhảy kích thước
-                            if (size.height > 0 && centerView == NowPlayingCenterView.ARTWORK) {
-                                controlsDeckHeightPx = size.height
-                            }
-                        }
-                ) {
-                    // 1. Track Title, Artist & Options Menu (Ẩn khi đang mở Hàng đợi để tối ưu diện tích và tránh lặp thông tin)
-                    if (centerView != NowPlayingCenterView.QUEUE) {
-                        NowPlayingTrackHeader(
-                            track = displayedTrack,
-                            onToggleFavorite = handleToggleFavorite,
-                            onOpenOptions = { showOptionsMenu = true }
-                        )
-
-                        Spacer(modifier = Modifier.height(22.dp))
+                centerView = centerView,
+                displayedTrack = displayedTrack,
+                track = track,
+                playbackState = playbackState,
+                positionState = positionState,
+                appSettings = appSettings,
+                isEqualizerOpen = showEqualizerDialog,
+                hazeState = nowPlayingHazeState,
+                onDeckHeightMeasured = { controlsDeckHeightPx = it },
+                onToggleFavorite = handleToggleFavorite,
+                onOpenOptions = { showOptionsMenu = true },
+                onOpenTrackDetails = { showTrackDetailsDialog = true },
+                onSeek = onSeek,
+                onPrevious = {
+                    val now = android.os.SystemClock.elapsedRealtime()
+                    if (now - lastButtonSkipTimeMs >= buttonThrottleMs) {
+                        lastButtonSkipTimeMs = now
+                        onPrevious()
                     }
-
-                    // Progress Capsule Scrub Bar
-                    // FIX hiệu năng: thanh tua + 2 nhãn thời gian nằm trong NowPlayingProgressSection,
-                    // chỉ composable đó đọc positionState → mỗi 40ms chỉ phần này vẽ lại, không phải cả sheet.
-                    val totalDurMs = if (playbackState.durationMs > 0) playbackState.durationMs else track?.durationMs ?: 0L
-
-                    val audioQuality = rememberAudioQualityInfo(displayedTrack)
-                    val showAudioBadge = (displayedTrack != null) && (appSettings?.isHiResBadgeEnabled != false)
-
-                    NowPlayingProgressSection(
-                        positionState = positionState,
-                        totalDurMs = totalDurMs,
-                        hasTrack = track != null,
-                        onSeek = onSeek,
-                        centerBadge = {
-                            AudioQualityBadge(
-                                visible = showAudioBadge,
-                                info = audioQuality,
-                                onClick = { showTrackDetailsDialog = true },
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(43.dp))
-
-                    // Master Playback Controls (Apple Music Precision: Prev, Play/Pause, Next)
-                    MasterPlaybackControls(
-                        isPlaying = playbackState.isPlaying,
-                        onPrevious = {
-                            val now = android.os.SystemClock.elapsedRealtime()
-                            if (now - lastButtonSkipTimeMs >= buttonThrottleMs) {
-                                lastButtonSkipTimeMs = now
-                                onPrevious()
-                            }
-                        },
-                        onPlayPause = onPlayPause,
-                        onNext = {
-                            val now = android.os.SystemClock.elapsedRealtime()
-                            if (now - lastButtonSkipTimeMs >= buttonThrottleMs) {
-                                lastButtonSkipTimeMs = now
-                                onNext()
-                            }
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(43.dp))
-
-                    // 5. Bottom 3-Action Obsidian Island Dock: Lyrics (♫) - DSP (🎛) - Queue (🄯)
-                    NowPlayingActionDock(
-                        centerView = centerView,
-                        isEqualizerOpen = showEqualizerDialog,
-                        onSelectLyrics = {
-                            centerView = NowPlayingCenterView.LYRICS
-                        },
-                        onOpenEqualizer = {
-                            showEqualizerDialog = true
-                        },
-                        onSelectQueue = {
-                            centerView = NowPlayingCenterView.QUEUE
-                        },
-                        onToggleBackToArtwork = {
-                            centerView = NowPlayingCenterView.ARTWORK
-                        },
-                        hazeState = nowPlayingHazeState
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
+                },
+                onPlayPause = onPlayPause,
+                onNext = {
+                    val now = android.os.SystemClock.elapsedRealtime()
+                    if (now - lastButtonSkipTimeMs >= buttonThrottleMs) {
+                        lastButtonSkipTimeMs = now
+                        onNext()
+                    }
+                },
+                onCenterViewChange = { centerView = it },
+                onOpenEqualizer = { showEqualizerDialog = true }
+            )
         }
 
         // LAYER 3: Playback Speed Selection Dialog
